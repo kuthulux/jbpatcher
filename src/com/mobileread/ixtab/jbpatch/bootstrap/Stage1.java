@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatcher.bootstrap;
+package com.mobileread.ixtab.jbpatch.bootstrap;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

@@ -5,8 +5,8 @@ import serp.bytecode.Code;
 
 import com.amazon.agui.swing.ConfirmationDialog;
 import com.amazon.kindle.settings.SettingsBooklet;
-import com.mobileread.ixtab.jbpatcher.Descriptor;
-import com.mobileread.ixtab.jbpatcher.Patch;
+import com.mobileread.ixtab.jbpatch.Descriptor;
+import com.mobileread.ixtab.jbpatch.Patch;
 
 public class LegalIllegalPatch extends Patch {
 

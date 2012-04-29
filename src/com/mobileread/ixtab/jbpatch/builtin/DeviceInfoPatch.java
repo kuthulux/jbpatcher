@@ -1,13 +1,13 @@
-package com.mobileread.ixtab.jbpatcher.builtin;
+package com.mobileread.ixtab.jbpatch.builtin;
 
 import java.text.MessageFormat;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
-import com.mobileread.ixtab.jbpatcher.Descriptor;
-import com.mobileread.ixtab.jbpatcher.Patch;
-import com.mobileread.ixtab.jbpatcher.Patches;
+import com.mobileread.ixtab.jbpatch.Descriptor;
+import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.jbpatch.Patches;
 
 public class DeviceInfoPatch extends Patch {
 

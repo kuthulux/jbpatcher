@@ -1,6 +1,6 @@
 package test;
 
-import com.mobileread.ixtab.jbpatcher.bootstrap.Stage1;
+import com.mobileread.ixtab.jbpatch.bootstrap.Stage1;
 
 import junit.framework.TestCase;
 

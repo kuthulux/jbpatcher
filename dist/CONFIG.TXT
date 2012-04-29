@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# This is the configuration file for jbpatcher.
+# This is the configuration file for jbpatch.
 # It lists all the patches that are enabled on your Kindle.
 # Empty lines, or lines starting with a "#", such as this one,
 # are ignored. All other lines are interpreted as filenames of
@@ -31,4 +31,4 @@
 # Another sample patch provided with the distribution. This one allows you
 # to turn on Text-to-Speech unconditionally (i.e., not restricted by vendor
 # flags, or if the book language is different from english.
-ixtab-tts-5.1.0.jbpatch
+ixtab_tts-5.1.0.jbpatch

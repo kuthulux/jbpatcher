@@ -1,26 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="KindlePatch" default="build">
+<project name="KindlePatch" default="dist">
 
 	<path id="classpath">
 		<fileset dir="lib" includes="**/*.jar" />
 	</path>
 
 	<target name="build">
-		<delete file="jbpatcher.jar" />
-		<jar destfile="jbpatcher.jar">
+		<delete file="jbpatch.jar" />
+		<jar destfile="jbpatch.jar">
 			<manifest>
-				<attribute name="Bundle-Name" value="KPatcher" />
-				<attribute name="Bundle-Version" value="1.0" />
+				<attribute name="Bundle-Name" value="JBPatch" />
+				<attribute name="Bundle-Version" value="1.0.1" />
 				<attribute name="Bundle-Description" value="Kindle Patcher" />
 				<attribute name="Bundle-Vendor" value="ixtab" />
-				<attribute name="Bundle-Activator" value="com.mobileread.ixtab.jbpatcher.bootstrap.Stage1" />
+				<attribute name="Bundle-Activator" value="com.mobileread.ixtab.jbpatch.bootstrap.Stage1" />
 			</manifest>
-			<fileset dir="bin">
-				<exclude name="test/**/*" />
-			</fileset>
 			<zipfileset src="lib/serp.jar">
 				<include name="**/*.class" />
 			</zipfileset>
+			<fileset dir="bin">
+				<include name="com/mobileread/ixtab/jbpatch/**/*" />
+			</fileset>
 		</jar>
+	</target>
+	
+	<target name="dist" depends="build">
+		<move file="jbpatch.jar" todir="dist" overwrite="true" failonerror="true"/>
+		<!-- sample patches referenced from dist/CONFIG.TXT -->
+		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/ixtab_legal-5.1.0.jbpatch"/>
+		<copy file="bin/com/mobileread/ixtab/patch/TTSPatch.class" tofile="dist/ixtab_tts-5.1.0.jbpatch"/>
 	</target>
 </project>

@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatcher;
+package com.mobileread.ixtab.jbpatch;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.mobileread.ixtab.jbpatcher.builtin.DeviceInfoPatch;
+import com.mobileread.ixtab.jbpatch.builtin.DeviceInfoPatch;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Project;
 
 public class Patches {
 
-	private static final String PCL_CLASSNAME = "com.mobileread.ixtab.jbpatcher.bootstrap.PatchingClassLoader";
+	private static final String PCL_CLASSNAME = "com.mobileread.ixtab.jbpatch.bootstrap.PatchingClassLoader";
 	private static final String PCL_DEFINECLASS_METHODNAME = "defineClass";
 
 	private static final Map patches = new TreeMap();

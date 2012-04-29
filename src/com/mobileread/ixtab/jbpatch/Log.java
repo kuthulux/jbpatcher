@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatcher;
+package com.mobileread.ixtab.jbpatch;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.io.PrintStream;
 public final class Log {
 	
 	private Log() {}
-	private static final String LOGFILE = "/tmp/jbpatcher.log";
+	private static final String LOGFILE = "/tmp/jbpatch.log";
 	
 	public static final PrintStream INSTANCE = instantiate();
 

@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatcher.bootstrap;
+package com.mobileread.ixtab.jbpatch.bootstrap;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -19,15 +19,15 @@ import java.util.jar.Manifest;
 import sun.misc.Resource;
 import sun.misc.URLClassPath;
 
-import com.mobileread.ixtab.jbpatcher.MD5;
-import com.mobileread.ixtab.jbpatcher.Patch;
-import com.mobileread.ixtab.jbpatcher.Patches;
+import com.mobileread.ixtab.jbpatch.MD5;
+import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.jbpatch.Patches;
 
 class PatchingClassLoader extends URLClassLoader {
 
-	private static final String PACKAGE_NOFIND = "com.mobileread.ixtab.jbpatcher.bootstrap.";
-	private static final String PACKAGE_NOPATCH = "com.mobileread.ixtab.jbpatcher.";
-	private static final String LOG_CLASS_NAME = "com.mobileread.ixtab.jbpatcher.Log";
+	private static final String PACKAGE_NOFIND = "com.mobileread.ixtab.jbpatch.bootstrap.";
+	private static final String PACKAGE_NOPATCH = "com.mobileread.ixtab.jbpatch.";
+	private static final String LOG_CLASS_NAME = "com.mobileread.ixtab.jbpatch.Log";
 	private static final String LOG_INSTANCE_NAME = "INSTANCE";
 
 	private final AccessControlContext acc;

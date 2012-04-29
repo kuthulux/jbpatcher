@@ -6,8 +6,8 @@ import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 import serp.bytecode.Instruction;
 
-import com.mobileread.ixtab.jbpatcher.Descriptor;
-import com.mobileread.ixtab.jbpatcher.Patch;
+import com.mobileread.ixtab.jbpatch.Descriptor;
+import com.mobileread.ixtab.jbpatch.Patch;
 
 public class TTSPatch extends Patch {
 

@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatcher;
+package com.mobileread.ixtab.jbpatch;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

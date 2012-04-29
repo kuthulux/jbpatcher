@@ -8,7 +8,7 @@ import serp.bytecode.BCClass;
 import serp.bytecode.BCMethod;
 import serp.bytecode.Project;
 
-import com.mobileread.ixtab.jbpatcher.Patch;
+import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.patch.TTSPatch;
 
 /*

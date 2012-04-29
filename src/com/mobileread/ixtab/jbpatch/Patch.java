@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatcher;
+package com.mobileread.ixtab.jbpatch;
 
 import java.io.ByteArrayInputStream;
 import java.io.PrintStream;

@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatcher;
+package com.mobileread.ixtab.jbpatch;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,9 +8,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class PatcherConfiguration {
-	public static final String KINDLE_BASE_DIRECTORY = "/mnt/us/jbpatcher";
+	private static final int KINDLE_MOUNT_WAIT_MAX_CYCLES = 60;
+	private static final int KINDLE_MOUNT_WAIT_CYCLE_MS = 500;
+	public static final String KINDLE_MOUNT_DIRECTORY = "/mnt/us";
+	public static final String[] KINDLE_MOUNT_CHECK_CMD = new String[] {"/bin/cat", "/proc/mounts" };
+	public static final String KINDLE_BASE_DIRECTORY = "/mnt/us/opt/jbpatch";
 	public static final String CONFIGFILE_NAME = "CONFIG.TXT";
 	public static final String PATCH_EXTENSION = ".jbpatch";
 	private static final char[] SPECIAL_CHARS_OK = new char[] { '.', '_', '-',
@@ -24,10 +29,11 @@ public class PatcherConfiguration {
 
 	private File determineBaseDirectory() {
 		if (Environment.isKindle()) {
+			waitUntilUserPartitionMounted();
 			return new File(KINDLE_BASE_DIRECTORY);
 		}
 		try {
-			File tmp = File.createTempFile("jbpatcher", ".tmp");
+			File tmp = File.createTempFile("jbpatch", ".tmp");
 			File dir = tmp.getParentFile();
 			if (!tmp.delete()) {
 				tmp.deleteOnExit();
@@ -37,6 +43,55 @@ public class PatcherConfiguration {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private void waitUntilUserPartitionMounted() {
+		try {
+			long timestamp = System.currentTimeMillis();
+			boolean announcedWaiting = false;
+			int cycles = 0;
+			while (!isUserPartitionMounted()) {
+				if (!announcedWaiting) {
+					log("I: "+ KINDLE_MOUNT_DIRECTORY+" not mounted yet, waiting until it's mounted");
+					announcedWaiting = true;
+				}
+				if (cycles++ >= KINDLE_MOUNT_WAIT_MAX_CYCLES) {
+					log("E: "+ KINDLE_MOUNT_DIRECTORY + " still not mounted after " + (System.currentTimeMillis() - timestamp) + " ms, giving up");
+					return;
+				}
+				try {
+					Thread.sleep(KINDLE_MOUNT_WAIT_CYCLE_MS);
+				} catch (InterruptedException e) {}
+			}
+			log("I: "+ KINDLE_MOUNT_DIRECTORY + " confirmed mounted after " + (System.currentTimeMillis() - timestamp) + " ms");
+		} catch (IOException e) {
+			e.printStackTrace(Log.INSTANCE);
+		}
+	}
+
+	private boolean isUserPartitionMounted() throws IOException {
+		Process p = Runtime.getRuntime().exec(KINDLE_MOUNT_CHECK_CMD);
+		BufferedReader lines = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		return isPartitionNameInMounts(lines);
+	}
+
+	private boolean isPartitionNameInMounts(BufferedReader lines) throws IOException {
+		// every line is expected to be in the format of /proc/mounts
+		boolean mounted = false;
+		for (String line = lines.readLine(); line != null; line = lines.readLine()) {
+			StringTokenizer tokens = new StringTokenizer(line);
+			// we're interested in the second token
+			if (!tokens.hasMoreTokens()) continue;
+			tokens.nextToken();
+			if (!tokens.hasMoreTokens()) continue;
+			String token = tokens.nextToken();
+			if (KINDLE_MOUNT_DIRECTORY.equals(token)) {
+				mounted = true;
+				break;
+			}
+		}
+		lines.close();
+		return mounted;
 	}
 
 	private void log(String msg) {
