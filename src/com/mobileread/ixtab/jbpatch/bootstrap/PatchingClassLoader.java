@@ -243,7 +243,8 @@ class PatchingClassLoader extends URLClassLoader {
 		for (int i = 0; i < patches.length; ++i) {
 			Patch p = (Patch) patches[i];
 			output = p.patch(name, input, md5);
-			if (output != input) {
+			if (output != input && i < patches.length - 1) {
+				// patches can be chained, so update current state
 				input = output;
 				md5 = MD5.getMd5String(input);
 			}

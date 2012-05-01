@@ -8,7 +8,9 @@ import serp.bytecode.BCClass;
 import serp.bytecode.BCMethod;
 import serp.bytecode.Project;
 
+import com.amazon.kindle.restricted.device.impl.ScreenRotationServiceImpl;
 import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.patch.AllRotationsPatch;
 import com.mobileread.ixtab.patch.TTSPatch;
 
 /*
@@ -18,12 +20,9 @@ import com.mobileread.ixtab.patch.TTSPatch;
 public class TestCurrentGoal extends TestCase {
 	
 	public void testAndDump() throws Throwable {
-		BCClass cls = new Project().loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java/classes/com/amazon/ebook/booklet/reader/plugin/tts/TTSProvider$TTSAction.class"));
-		new TTSPatch().perform("7342c90af8a837f4632d62d74ea86242", cls);
-		BCMethod[] m = cls.getDeclaredMethods();
-		for (int i=0; i  < m.length; ++i) {
-			System.err.println(m[i].getName());
-		}
+		//BCClass cls = new Project().loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java/classes/com/amazon/ebook/booklet/reader/plugin/tts/TTSProvider$TTSAction.class"));
+		BCClass cls = new Project().loadClass(ScreenRotationServiceImpl.class);
+		new AllRotationsPatch().perform("7342c90af8a837f4632d62d74ea86242", cls);
 		cls.write(new File("/tmp/test.class"));
 	}
 	
@@ -33,7 +32,9 @@ public class TestCurrentGoal extends TestCase {
 		return  x+y;
 	}
 	
+	
 	public void testReflect() throws Throwable {
+		if (1 == 1) return;
 		BCClass cls = new Project().loadClass(TestCurrentGoal.class);
 		Patch.dump(cls.getMethods("reflected")[0].getCode(false));
 	}
