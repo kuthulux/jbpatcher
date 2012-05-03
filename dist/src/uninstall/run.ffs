@@ -1,0 +1,20 @@
+#!/bin/sh
+lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 0
+mntroot rw || exit 1
+
+lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 25
+
+MD5=`md5sum /opt/amazon/ebook/bin/init.xargs|awk '{print $1}'`
+
+if [ "$MD5" = "5c7e4b6b7e328076c0d5d1479bf5e1ec" ]; then
+	# patched (5.1.0)
+	grep -v jbpatch.jar /opt/amazon/ebook/bin/init.xargs > /tmp/jbpatch_init.xargs || exit 1
+	mv /tmp/jbpatch_init.xargs /opt/amazon/ebook/bin/init.xargs || exit 1
+lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 50
+else
+	exit 1;
+fi
+
+rm /opt/amazon/ebook/lib/jbpatch.jar || exit 1
+
+lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 100

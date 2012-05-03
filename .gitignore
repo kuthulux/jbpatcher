@@ -1,5 +1,7 @@
 bin/
 *.jar
-dist/*.jar
-dist/*.jbpatch
+dist/*.bin
+dist/*.zip
+dist/src/install/*.jar
+dist/opt/jbpatch/*.jbpatch
 

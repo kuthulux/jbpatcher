@@ -96,7 +96,7 @@ public abstract class Patch {
 			Descriptor descriptor = getDescriptorFor(className);
 			if (descriptor.matches(md5)) {
 				BCClass clazz = loadBCClass(input);
-				log("D: about to invoke "+id+" for "+className);
+//				log("D: about to invoke "+id+" for "+className);
 				String error = perform(md5, clazz);
 				if (error == null) {
 					log("I: Patched " + className + " (" + md5 + ") using "

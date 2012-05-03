@@ -1,0 +1,48 @@
+###############################################################################
+#
+# This is the configuration file for jbpatch.
+#
+# It lists all the patches that are enabled on your Kindle.
+# Empty lines, or lines starting with a "#", such as this one,
+# are ignored. All other lines are interpreted as filenames of
+# patches to apply, but there are a few rules, which are explained
+# below:
+#
+# 1. Patches are considered in the order they appear in this file.
+#    Patches may be able to handle multiple versions of their "target"
+#    files (for instance for different firmware revisions). Similarly,
+#    they might be able to patch files that have previously been altered
+#    by other patches, or they might even depend on such modifications.
+#    This is the reason why ordering is (or at least, might be) important.
+#
+# 2. Patches MUST be in the same directory as this file, their extension
+#    MUST be .jbpatch, and their filename MUST NOT contain characters other
+#    than A-Z,a-z,0-9, and any of the following 4 characters: .-_@
+#
+# 3. You can rename patches (as long as you obey the above rules) at will.
+#
+###############################################################################
+
+# Enable Text-to-Speech unconditionally (i.e., not restricted by
+# vendor flags, or if the book language is different from english)
+ixtab_tts-5.1.0.jbpatch
+
+# Increase the width of scrollbars so that there actually is a chance to
+# use them with a finger. In addition, enable scroll bar functionality
+# for long menus.
+ixtab_scrollbar-5.1.0.jbpatch
+
+# Enable all rotations across the Java UI. To take full
+# advantage of this, you'll probably want to install the Launcher
+# extension, which allows you to actually select the rotation.
+# It is strongly recommended to have the scrollbar patch active as well,
+# because otherwise you may not be able to make full use of the menus
+# in landscape mode.
+ixtab_rotation-5.1.0.jbpatch
+
+# This sample patch replaces the "Legal" information
+# from the settings menu. It is not enabled by default, because
+# it is really only a demo, and it might be confusing for some people.
+# To enable this patch, just uncomment it (i.e., remove the leading "#").
+#ixtab_legal-5.1.0.jbpatch
+
