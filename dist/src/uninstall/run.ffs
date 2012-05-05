@@ -15,6 +15,11 @@ else
 	exit 1;
 fi
 
+lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 50
+
 rm /opt/amazon/ebook/lib/jbpatch.jar || exit 1
+lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 75
+
+rm -rf /var/local/jbpatch
 
 lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 100

@@ -48,13 +48,13 @@ public class PatcherConfiguration {
 		List files = new ArrayList();
 		if (!base.exists()) {
 			log("W: " + base + " does not exist; no patches loaded.");
-			//return files;
+			return files;
 		}
 		if (!base.isDirectory() || !base.canRead()) {
 			log("E: "
 					+ base
 					+ " is not a directory, or not readable; no patches loaded.");
-			//return files;
+			return files;
 		}
 
 		File conf = new File(base.getPath() + File.separator + CONFIGFILE_NAME);

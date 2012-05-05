@@ -21,6 +21,11 @@ public class KindleDirectories {
 			var.mkdir();
 		File us = new File(USERSTORE_DIRECTORY);
 		new SynchThread(us, var).start();
+		try {
+			// give synch thread a chance to run before we try to read files
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	private static class SynchThread extends Thread {
