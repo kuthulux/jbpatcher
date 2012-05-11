@@ -6,6 +6,7 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
 import com.mobileread.ixtab.jbpatch.Descriptor;
+import com.mobileread.ixtab.jbpatch.JBPatchMetadata;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.Patches;
 
@@ -37,10 +38,11 @@ public class DeviceInfoPatch extends Patch {
 	public static String format(String pattern, Object[] arguments) {
 		if (pattern.endsWith("</html>")) {
 			pattern = pattern.substring(0, pattern.length() - 7);
-			pattern += "<br/><b>Patches:</b>&nbsp;{"+arguments.length+",number,integer}&nbsp;<font size=\"8\">⚙</font></html>";
-			Object[] copy = new Object[arguments.length+1];
+			pattern += "<br/><b>jbpatch:</b>&nbsp; {"+arguments.length+",number,integer}/{"+(arguments.length+1)+",number,integer} (v"+ JBPatchMetadata.VERSION + ")</font></html>";
+			Object[] copy = new Object[arguments.length+2];
 			System.arraycopy(arguments, 0, copy, 0, arguments.length);
 			copy[arguments.length] = new Integer(Patches.getActiveCount());
+			copy[arguments.length+1] = new Integer(Patches.getAvailableCount());
 			arguments = copy;
 		}
 		return MessageFormat.format(pattern, arguments);

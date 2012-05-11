@@ -27,6 +27,9 @@ public class Patches {
 	private static final Map patches = new TreeMap();
 	private static final PrintStream log = Log.INSTANCE;
 	
+	private static int active = 0;
+	private static int available = 0;
+	
 	private Patches() {
 	}
 	
@@ -60,6 +63,7 @@ public class Patches {
 		List handlers = getNonNullList(d.className);
 		handlers.add(patch);
 		log("I: Registered " + patch.id() + " for " + d.className);
+		++available;
 	}
 
 	private static List getNonNullList(String className) {
@@ -175,12 +179,15 @@ public class Patches {
 		}
 	}
 
-	private static int active = 0;
 	static void reportActive() {
 		++active;
 	}
 	
 	public static int getActiveCount() {
 		return active;
+	}
+
+	public static int getAvailableCount() {
+		return available;
 	}
 }

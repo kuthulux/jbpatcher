@@ -1,4 +1,4 @@
-jbpatch, version 1.1.0
+jbpatch, version 1.1.1
 ======================
 
 jbpatch is an extremely powerful tool that allows to change almost

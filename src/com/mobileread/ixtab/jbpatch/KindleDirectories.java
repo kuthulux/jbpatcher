@@ -15,6 +15,9 @@ public class KindleDirectories {
 	public static final String USERSTORE_DIRECTORY = "/mnt/us/opt/jbpatch";
 	public static final String LOCAL_DIRECTORY = "/var/local/jbpatch";
 
+	private static final int SYNC_INTERVAL_MS = 5000;
+	private static final int SYNC_WAIT_AFTER_START_MS = 1000;
+	
 	public static void init() {
 		File var = new File(LOCAL_DIRECTORY);
 		if (!var.exists())
@@ -23,7 +26,7 @@ public class KindleDirectories {
 		new SynchThread(us, var).start();
 		try {
 			// give synch thread a chance to run before we try to read files
-			Thread.sleep(1000);
+			Thread.sleep(SYNC_WAIT_AFTER_START_MS);
 		} catch (InterruptedException e) {
 		}
 	}
@@ -35,11 +38,9 @@ public class KindleDirectories {
 		private final ShutdownStatus shutdown = new ShutdownStatus();
 		private final Map knownFiles = new HashMap();
 		private final FilenameFilter fileFilter = new JBPatchFilter();
-		private boolean targetOk = true;
 		
-		private long lastSourceTimestamp = 0;
-		private long lastTargetTimestamp = 0;
-
+		private boolean targetWasOkLastTime = true;
+		
 		public SynchThread(File sourceDir, File targetDir) {
 			super("JBPatchSynchronizerThread");
 			this.setDaemon(true);
@@ -61,7 +62,7 @@ public class KindleDirectories {
 						t.printStackTrace(Log.INSTANCE);
 					}
 					try {
-						shutdown.wait(5000);
+						shutdown.wait(SYNC_INTERVAL_MS);
 					} catch (InterruptedException e) {
 					}
 				}
@@ -70,8 +71,6 @@ public class KindleDirectories {
 		}
 
 		private void synchronize() {
-			if (!timestampsDiffer())
-				return;
 			
 			File[] targetFiles = listTargetFiles();
 			if (targetFiles == null)
@@ -89,25 +88,6 @@ public class KindleDirectories {
 				}
 				synchronize(f);
 			}
-		}
-
-		private boolean timestampsDiffer() {
-			long sourceTimestamp = lastSourceTimestamp;
-			long targetTimestamp = lastSourceTimestamp;
-			try {
-				sourceTimestamp = sourceDir.lastModified();
-				targetTimestamp = targetDir.lastModified();
-			} catch (Throwable t) {
-				// just in case
-				sourceTimestamp = lastSourceTimestamp;
-				targetTimestamp = lastSourceTimestamp;
-			}
-			if (sourceTimestamp != lastSourceTimestamp || targetTimestamp != lastTargetTimestamp) {
-				lastSourceTimestamp = sourceTimestamp;
-				lastTargetTimestamp = targetTimestamp;
-				return true;
-			}
-			return false;
 		}
 
 		private void removeObsoleteFilesInTarget(File[] sourceFiles,
@@ -229,22 +209,22 @@ public class KindleDirectories {
 		private File[] listTargetFiles() {
 			if (!targetDir.exists()) {
 				knownFiles.clear();
-				if (targetOk) {
+				if (targetWasOkLastTime) {
 					log("W: " + new Date() + ": " + LOCAL_DIRECTORY
 							+ " does not exist, attempting to re-create it!");
 				}
 				if (targetDir.mkdir()) {
 					log("I: " + new Date() + ": created " + LOCAL_DIRECTORY);
-					targetOk = true;
+					targetWasOkLastTime = true;
 				} else {
-					if (targetOk) {
+					if (targetWasOkLastTime) {
 						log("E: " + new Date() + ": failed to create "
 								+ LOCAL_DIRECTORY);
 					}
-					targetOk = false;
+					targetWasOkLastTime = false;
 				}
 			}
-			return targetOk ? targetDir.listFiles(fileFilter) : null;
+			return targetWasOkLastTime ? targetDir.listFiles(fileFilter) : null;
 		}
 
 		private void log(String msg) {
