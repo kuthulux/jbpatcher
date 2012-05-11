@@ -38,7 +38,7 @@ public class DeviceInfoPatch extends Patch {
 	public static String format(String pattern, Object[] arguments) {
 		if (pattern.endsWith("</html>")) {
 			pattern = pattern.substring(0, pattern.length() - 7);
-			pattern += "<br/><b>jbpatch:</b>&nbsp; {"+arguments.length+",number,integer}/{"+(arguments.length+1)+",number,integer} (v"+ JBPatchMetadata.VERSION + ")</font></html>";
+			pattern += "<br/><b>jbpatch:</b>&nbsp; {"+arguments.length+",number,integer}/{"+(arguments.length+1)+",number,integer} (v"+ JBPatchMetadata.VERSION + ")</html>";
 			Object[] copy = new Object[arguments.length+2];
 			System.arraycopy(arguments, 0, copy, 0, arguments.length);
 			copy[arguments.length] = new Integer(Patches.getActiveCount());
