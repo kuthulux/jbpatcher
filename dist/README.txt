@@ -64,7 +64,7 @@ this, so you can delete them.
 
 ADDING NEW PATCHES
 ------------------
-Copy the respective .jbpatch files to opt/jbpatch/ on the USB drive,
+Copy the respective patch files to opt/jbpatch/ on the USB drive,
 and modify CONFIG.TXT accordingly. Chances are that you will need to
 restart the device, because patches can only interfere with the system
 when a class is initially loaded.
@@ -76,7 +76,7 @@ that your changes are actually applied.
 
 TROUBLESHOOTING
 ---------------
-While every effort has been made to make this software as reliable
+While every effort has been taken to make this software as reliable
 as possible, I cannot preclude unexpected failures. If you experience
 problems, please report them at:
 http://www.mobileread.com/forums/showthread.php?t=175512

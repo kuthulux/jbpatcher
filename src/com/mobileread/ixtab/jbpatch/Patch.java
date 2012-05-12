@@ -21,14 +21,6 @@ import serp.bytecode.Project;
  * 
  * @author ixtab
  */
-/**
- * @author cl
- *
- */
-/**
- * @author cl
- * 
- */
 public abstract class Patch {
 
 	/*
