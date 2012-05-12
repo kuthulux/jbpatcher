@@ -1,4 +1,4 @@
-jbpatch, version 1.1.1
+jbpatch, version 1.2.0
 ======================
 
 jbpatch is an extremely powerful tool that allows to change almost
@@ -36,17 +36,22 @@ INSTALLATION
    your device. Consult opt/jbpatch/CONFIG.TXT for more information
    about how patches are applied.
 4. Restart your Kindle using Menu > Settings, Menu > Update.
+5. If you do not see all the expected results directly after the
+   installation, reboot your Kindle once more.
 
 
 VERIFYING THAT THE INSTALLATION WORKED
 --------------------------------------
 Go to Menu > Settings, Menu > Device Info. You should see a new entry
-telling you how many patches are currently active. NOTE that "active"
-is not necessarily the same number as "available", because a patch only
-becomes active when its functionality has been accessed at least once
-(for instance, the TTS patch will only show up as active after you
-have tried to access TTS-related functionality. This is because
-classes are only loaded lazily ("on demand") in Java.)
+telling you how many patches are currently active, and how many are
+available, along with the version of jbpatch that you have installed.
+
+Note:
+- it is normal that the "available" count is larger than the number of
+  patch files that you specified in the configuration file. A single patch
+  can potentially alter behavior in many classes.
+- it is also normal that the "active" count is smaller than the "available"
+  count. Patches only become active when they are actually needed.
 
 You can also check /tmp/jbpatch.log on the device.
 
@@ -76,27 +81,10 @@ as possible, I cannot preclude unexpected failures. If you experience
 problems, please report them at:
 http://www.mobileread.com/forums/showthread.php?t=175512
 
+
 DEVELOPING NEW PATCHES
 ----------------------
-This is only a framework for patches, and its usefulness is directly
-proportional to the number of available patches. I created a few patches
-to demonstrate both what it can do, and to provide useful examples to
-get started. If you're interested in developing your own patches, you
-are more than welcome! 
-
-1. Download the source code from https://bitbucket.org/ixtab/jbpatcher
-2. Take a look at the com.mobileread.ixtab.patch.* classes,
-   and most importantly at com.mobileread.ixtab.jbpatch.Patch.
-   The examples show various approaches to modify byte code, and the
-   "Patch" class gives some hints about the general usage.
-3. If you haven't already done so, get familiar with the JVM specification,
-   and a few helpful tools (like Java Bytecode Editor, and JAD). Be
-   prepared for frustratingly slow progress, and frustratingly many weird
-   errors, as you slowly make your way through Reverse Engineering
-   Wonderland. And don't despair, because after going through it, the
-   reward is great.
-4. Post your patches on mobileread so everyone can benefit from them!
-   And feel free to post (non-trivial) questions there as well. ;-)
+Please see the file DEVELOPERS.txt
 
 
 ACKNOWLEDGEMENTS

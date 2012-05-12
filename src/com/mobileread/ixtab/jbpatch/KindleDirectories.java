@@ -271,7 +271,7 @@ public class KindleDirectories {
 			if (name.equals(PatcherConfiguration.CONFIGFILE_NAME)) {
 				return true;
 			}
-			if (name.endsWith(PatcherConfiguration.PATCH_EXTENSION)) {
+			if (name.endsWith(PatcherConfiguration.PATCH_EXTENSION_STANDALONE) || name.endsWith(PatcherConfiguration.PATCH_EXTENSION_ZIPPED)) {
 				if (PatcherConfiguration.checkForWrongCharacters(name) == null) {
 					return true;
 				}

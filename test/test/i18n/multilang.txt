@@ -1,0 +1,24 @@
+# The idea here is:
+# fr_FR is fully present => fr_FR
+# de_DE is present "indirectly" (de) only => de
+# it_IT is not present at all => en
+
+  # There is also weird spacing all over this file. This
+        # is intended.
+
+[a section]
+lang=a section
+
+[fr_FR]
+ lang    =    fr_FR
+
+[en]
+#this is actually the fallback
+ lang=en
+
+[de]
+lang=de
+
+[fr]
+lang=fr
+ 

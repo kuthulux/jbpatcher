@@ -26,10 +26,22 @@
 	
 	<target name="dist" depends="build">
 		<move file="jbpatch.jar" todir="dist/src/install" overwrite="true" failonerror="true"/>
-		<!-- sample patches referenced from distribution CONFIG.TXT -->
+		
+		<!-- patches referenced from distribution CONFIG.TXT -->
 		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/ixtab_legal-5.1.0.jbpatch"/>
-		<copy file="bin/com/mobileread/ixtab/patch/TTSPatch.class" tofile="dist/opt/jbpatch/ixtab_tts-5.1.0.jbpatch"/>
 		<copy file="bin/com/mobileread/ixtab/patch/AllRotationsPatch.class" tofile="dist/opt/jbpatch/ixtab_rotation-5.1.0.jbpatch"/>
 		<copy file="bin/com/mobileread/ixtab/patch/ScrollbarPatch.class" tofile="dist/opt/jbpatch/ixtab_scrollbar-5.1.0.jbpatch"/>
+		
+		<jar destfile="dist/opt/jbpatch/ixtab_tts-5.1.0.zip">
+            <manifest>
+            	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.tts.TTSPatch"/>
+			</manifest>
+            <fileset dir="bin">
+            	<include name="com/mobileread/ixtab/patch/tts/*.class"/>
+        	</fileset>
+            <fileset dir="bin/com/mobileread/ixtab/patch/tts">
+            	<include name="ttspatch.txt"/>
+        	</fileset>
+		</jar>
 	</target>
 </project>

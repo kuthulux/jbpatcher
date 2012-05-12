@@ -9,6 +9,10 @@ import serp.bytecode.Instruction;
 import com.mobileread.ixtab.jbpatch.Descriptor;
 import com.mobileread.ixtab.jbpatch.Patch;
 
+/*
+ * NOTE: This patch is superseded by com.mobileread.ixtab.patch.TTSPatch, which provides
+ * the functionality of this patch, while also allowing to change the descriptions seen in the UI.
+ */
 public class TTSPatch extends Patch {
 
 	public static final String CLASS_TTSPROVIDER = "com.amazon.ebook.booklet.reader.plugin.tts.TTSProvider";

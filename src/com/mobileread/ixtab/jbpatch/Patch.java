@@ -2,6 +2,7 @@ package com.mobileread.ixtab.jbpatch;
 
 import java.io.ByteArrayInputStream;
 import java.io.PrintStream;
+import java.net.URL;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -19,6 +20,14 @@ import serp.bytecode.Project;
  * in additional files after compilation.
  * 
  * @author ixtab
+ */
+/**
+ * @author cl
+ *
+ */
+/**
+ * @author cl
+ * 
  */
 public abstract class Patch {
 
@@ -55,6 +64,42 @@ public abstract class Patch {
 	 *         as if this method had never been invoked.
 	 */
 	public abstract String perform(String md5, BCClass clazz) throws Throwable;
+
+	/**
+	 * If the patch is parameterizable and/or localizable, it should return here
+	 * the URL where the parameters can be found. The recommended procedure is
+	 * to provide a URL which is INSIDE the same jar as the patch itself, in
+	 * order to keep patches "self-contained". You could also use references to
+	 * files (but note that future versions of jbpatch might be installed in a
+	 * different directory), or even online URLs. I strongly recommend the first
+	 * variant.
+	 * 
+	 * @return a URL pointing to the resources, if the patch is parameterizable,
+	 *         or <tt>null</tt> otherwise
+	 */
+	protected URL getResourcesUrl() {
+		return null;
+	}
+
+	/**
+	 * Returns a localized parameterization item. This will simply return the
+	 * parameter given if you do not override the getResourcesUrl() method.
+	 * Otherwise, it will return the value associated with the given key,
+	 * according to the lookup procedure explained in DEVELOPERS.txt. In short,
+	 * lookup is attempted from "most specific" to "most general" locale,
+	 * defaulting to english if no other value is found. If no value is found
+	 * even for english, then the key is returned literally.
+	 * 
+	 * @param key
+	 *            the name of the parameter to look up
+	 * @return the localized value for the given key, or the key itself if no
+	 *         value is found
+	 */
+	protected final String get(String key) {
+		if (i18n == null)
+			return key;
+		return i18n.i18n(key);
+	}
 
 	Descriptor[] descriptors() {
 		if (descriptors == null) {
@@ -96,7 +141,7 @@ public abstract class Patch {
 			Descriptor descriptor = getDescriptorFor(className);
 			if (descriptor.matches(md5)) {
 				BCClass clazz = loadBCClass(input);
-//				log("D: about to invoke "+id+" for "+className);
+				// log("D: about to invoke "+id+" for "+className);
 				String error = perform(md5, clazz);
 				if (error == null) {
 					log("I: Patched " + className + " (" + md5 + ") using "
@@ -136,10 +181,16 @@ public abstract class Patch {
 
 	private String id;
 	private Descriptor[] descriptors;
+	private I18n i18n;
 
 	final Patch setId(String id) {
 		this.id = id;
-		
+
+		URL translations = getResourcesUrl();
+		if (translations != null) {
+			i18n = new I18n(translations);
+		}
+
 		// for chaining
 		return this;
 	}

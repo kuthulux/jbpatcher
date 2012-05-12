@@ -46,8 +46,10 @@ class PatchingClassLoader extends URLClassLoader {
 			return (PatchingClassLoader) parentLoader;
 		}
 
+		URL[] urls = ((URLClassLoader)replacedLoader).getURLs();
+		
 		PatchingClassLoader patchLoader = new PatchingClassLoader(
-				((URLClassLoader) replacedLoader).getURLs(), parentLoader,
+				urls, parentLoader,
 				replacedLoader);
 		replaceParent(replacedLoader, patchLoader);
 		return patchLoader;
@@ -109,25 +111,35 @@ class PatchingClassLoader extends URLClassLoader {
 		if (name.startsWith(PACKAGE_NOFIND))
 			throw new ClassNotFoundException();
 		try {
-			return (Class) AccessController.doPrivileged(
-					new PrivilegedExceptionAction() {
-						public Object run() throws ClassNotFoundException {
-							String path = name.replace('.', '/').concat(
-									".class");
-							Resource res = ucp.getResource(path, false);
-							if (res != null) {
-								try {
-									return defineClass(name, res);
-								} catch (IOException e) {
-									throw new ClassNotFoundException(name, e);
+			try {
+				return (Class) AccessController.doPrivileged(
+						new PrivilegedExceptionAction() {
+							public Object run() throws ClassNotFoundException {
+								String path = name.replace('.', '/').concat(
+										".class");
+								Resource res = ucp.getResource(path, false);
+								if (res != null) {
+									try {
+										return defineClass(name, res);
+									} catch (IOException e) {
+										throw new ClassNotFoundException(name, e);
+									}
+								} else {
+									throw new ClassNotFoundException(name);
 								}
-							} else {
-								throw new ClassNotFoundException(name);
 							}
-						}
-					}, acc);
-		} catch (java.security.PrivilegedActionException pae) {
-			throw (ClassNotFoundException) pae.getException();
+						}, acc);
+			} catch (java.security.PrivilegedActionException pae) {
+				throw (ClassNotFoundException) pae.getException();
+			}
+		} catch (ClassNotFoundException nf) {
+			Throwable cause = nf.getCause();
+			if (cause != null && cause instanceof AvoidThisPackageException) {
+//				log("avoiding: "+name);
+				throw nf;
+			}
+			// I have absolutely no idea why this actually works.
+			return super.findClass(name);
 		}
 	}
 
@@ -136,7 +148,7 @@ class PatchingClassLoader extends URLClassLoader {
 		String pkgname = getPackageName(name);
 		if (pkgname != null) {
 			if (avoidPackages.containsKey(pkgname)) {
-				throw new IOException();
+				throw new AvoidThisPackageException();
 			}
 			defineOrVerifyPackage(res, url, pkgname);
 		}
@@ -252,4 +264,16 @@ class PatchingClassLoader extends URLClassLoader {
 		return output;
 	}
 
+
+	boolean injectUrl(URL jar) {
+		URL[] before = getURLs();
+		addURL(jar);
+		URL[] after = getURLs();
+		return before.length + 1 == after.length;
+	}
+
+	private static class AvoidThisPackageException extends IOException {
+		private static final long serialVersionUID = 1L;
+		
+	}
 }

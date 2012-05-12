@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# This is the configuration file for jbpatch.
+# This is the configuration file for jbpatch (v1.2.0)
 #
 # It lists all the patches that are enabled on your Kindle.
 # Empty lines, or lines starting with a "#", such as this one,
@@ -16,8 +16,8 @@
 #    This is the reason why ordering is (or at least, might be) important.
 #
 # 2. Patches MUST be in the same directory as this file, their extension
-#    MUST be .jbpatch, and their filename MUST NOT contain characters other
-#    than A-Z,a-z,0-9, and any of the following 4 characters: .-_@
+#    MUST be either .jbpatch or .zip, and their filename MUST NOT contain
+#    characters other than A-Z,a-z,0-9, and any of the following 4: .-_@
 #
 # 3. You can rename patches (as long as you obey the above rules) at will.
 #
@@ -25,7 +25,9 @@
 
 # Enable Text-to-Speech unconditionally (i.e., not restricted by
 # vendor flags, or if the book language is different from english)
-ixtab_tts-5.1.0.jbpatch
+# You can also change the description of the voices, by modifying the
+# file "ttspatch.txt" INSIDE that zip file.
+ixtab_tts-5.1.0.zip
 
 # Increase the width of scrollbars so that there actually is a chance to
 # use them with a finger. In addition, enable scroll bar functionality

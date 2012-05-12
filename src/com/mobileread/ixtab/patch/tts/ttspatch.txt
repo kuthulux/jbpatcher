@@ -1,0 +1,37 @@
+# TTSPatch allows you to enable Text-to-Speech on all books, regardless
+# of whether TTS was allowed by the publisher or not, and of the book
+# language. To properly use TTS on books in languages other than english,
+# you will of course need the appropriate TTS files.
+# 
+# In addition, the patch also allows you to modify the textual description
+# that you see on the device. Simply modify the setting corresponding to
+# your language and change the text to what you would like it to be.
+#
+# IMPORTANT: jbpatch expects this patch to be a zip file.
+# So, if you make changes to this file, make sure that you re-zip the patch
+# file correctly afterwards: only change this file, and include all the other
+# directories (com, META-INF) unchanged! 
+
+[en]
+female=Female
+male=Male
+
+[de]
+female=Weiblich (englisch)
+male=Männlich (englisch)
+
+[es]
+female=Femenina (inglés)
+male=Masculina (inglés)
+
+[fr]
+female=Femme (anglais)
+male=Homme (anglais)
+
+[it]
+female=Femminile (inglese)
+male=Maschile (inglese)
+
+[pt]
+female=Femino (inglês)
+male=Masculino (inglês)

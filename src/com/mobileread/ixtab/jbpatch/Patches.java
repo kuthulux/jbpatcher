@@ -3,7 +3,6 @@ package com.mobileread.ixtab.jbpatch;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
@@ -14,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.mobileread.ixtab.jbpatch.builtin.DeviceInfoPatch;
-
 import serp.bytecode.BCClass;
 import serp.bytecode.Project;
+
+import com.mobileread.ixtab.jbpatch.builtin.DeviceInfoPatch;
 
 public class Patches {
 
@@ -76,18 +75,20 @@ public class Patches {
 	}
 
 	private static void add(File file) {
-		try {
-			add(file.getName(), new BufferedInputStream(new FileInputStream(
-					file)));
-		} catch (FileNotFoundException e) {
-		}
-	}
-
-	private static void add(String id, InputStream stream) {
 		ClassLoader cl = Patches.class.getClassLoader();
 		if (isPatchingClassLoader(cl)) {
+			String id = file.getName();
 			try {
-				Patch p = instantiate(stream, cl, id);
+				Patch p = null;
+				if (id.endsWith(PatcherConfiguration.PATCH_EXTENSION_STANDALONE)) {
+					p = instantiate(new BufferedInputStream(new FileInputStream(
+							file)), cl, id);
+				} else if (id.endsWith(PatcherConfiguration.PATCH_EXTENSION_ZIPPED)) {
+					System.err.println();
+					p = PatchContainer.instantiatePatch(file, cl, id);
+				} else {
+					throw new IllegalStateException();
+				}
 				if (p != null) {
 					p.setId(id);
 					add(p);
@@ -96,6 +97,7 @@ public class Patches {
 				log("E: while instantiating " + id + ": ");
 				t.printStackTrace(log);
 			}
+
 		}
 	}
 
@@ -134,23 +136,23 @@ public class Patches {
 		return (Patch) c.newInstance();
 	}
 
-	private static Method defineClass = null;
+	private static Method defineClassMethod = null;
 
 	private static synchronized Class defineClass(ClassLoader cl, String name,
 			byte[] bytes) throws Throwable {
 
 		ensureDefineClassMethodIsSet(cl);
 
-		return (Class) defineClass.invoke(cl, new Object[] { name, bytes });
+		return (Class) defineClassMethod.invoke(cl, new Object[] { name, bytes });
 	}
 
 	private static void ensureDefineClassMethodIsSet(ClassLoader cl)
 			throws NoSuchMethodException {
-		if (defineClass == null) {
+		if (defineClassMethod == null) {
 			Class clc = cl.getClass();
-			defineClass = clc.getDeclaredMethod(PCL_DEFINECLASS_METHODNAME,
+			defineClassMethod = clc.getDeclaredMethod(PCL_DEFINECLASS_METHODNAME,
 					new Class[] { String.class, byte[].class });
-			defineClass.setAccessible(true);
+			defineClassMethod.setAccessible(true);
 		}
 	}
 

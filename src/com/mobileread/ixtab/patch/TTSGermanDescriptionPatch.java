@@ -7,6 +7,10 @@ import serp.bytecode.lowlevel.UTF8Entry;
 import com.mobileread.ixtab.jbpatch.Descriptor;
 import com.mobileread.ixtab.jbpatch.Patch;
 
+/*
+ * NOTE: This patch is superseded by com.mobileread.ixtab.patch.TTSPatch, which provides
+ * the functionality of this patch, while also actually enabling the TTS feature for all books.
+ */
 public class TTSGermanDescriptionPatch extends Patch {
 
 	private final String[] ORIGINAL = new String[] {"Weiblich", "Männlich"};
@@ -50,6 +54,6 @@ public class TTSGermanDescriptionPatch extends Patch {
 		if (id.endsWith(SUFFIX_2)) {
 			return REPLACEMENT_2;
 		}
-		return null;
+		return REPLACEMENT_2;
 	}
 }
