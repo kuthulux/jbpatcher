@@ -29,6 +29,6 @@ install.failed=Die Entwicklerzertifikate von MobileRead konnten nicht korrekt in
 install.succeeded=Die Entwicklerzertifikate von MobileRead wurden erfolgreich installiert. Bitte schließen Sie diese Nachricht und starten Sie die Anwendung erneut. Wenn die Anwendung mit einem der enthaltenen Zertifikate signiert wurde, wird sie funktionieren.
 
 [fr]
-archive.invalid=Le patch pour l'installation automatique des certificats des développeurs de MobileRead n'est pas valide. Veuillez décharger le patch à noveau.
+archive.invalid=Le patch pour l'installation automatique des certificats des développeurs de MobileRead n'est pas valide. Veuillez décharger le patch à nouveau.
 install.failed=L'installation automatique des certificats des développeurs de MobileRead a échouée.
 install.succeeded=Les certificats des développeurs de MobileRead ont été installés. Veuillez fermer ce message, puis relancer l'application. Si l'application est signée par un des certificats inclus, elle fonctionnera.
