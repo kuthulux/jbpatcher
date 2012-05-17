@@ -15,7 +15,6 @@ import serp.bytecode.Instruction;
 import serp.bytecode.LocalVariable;
 
 import com.amazon.kindle.kindlet.internal.KindletExecutionException;
-import com.amazon.kindle.kindlet.internal.developer.install.e;
 import com.mobileread.ixtab.jbpatch.Descriptor;
 import com.mobileread.ixtab.jbpatch.Patch;
 
@@ -90,7 +89,6 @@ public class DevCertInjectPatch extends Patch {
 	}
 
 	private static boolean failedBefore = false;
-	private static int launchesAfterInstallation = 0;
 
 	public static void patch510(Exception sourceException) throws Exception {
 		if (!failedBefore && sourceException instanceof KindletExecutionException) {
@@ -114,9 +112,6 @@ public class DevCertInjectPatch extends Patch {
 	}
 
 	private static KindletExecutionException performInstallation() {
-		if (launchesAfterInstallation > 0) {
-			return handleIdiots();
-		}
 		File targetFile = getKeyStoreFile();
 		if (targetFile != null) {
 			InputStream source = DevCertInjectPatch.class
@@ -135,7 +130,8 @@ public class DevCertInjectPatch extends Patch {
 				closeCarefully(source);
 				closeCarefully(target);
 			}
-			launchesAfterInstallation = 1;
+			// reload keystore
+			com.amazon.kindle.kindlet.internal.portability.g.d().b().K();
 			log("I: ("+ DevCertInjectPatch.class.getName() + ") Developer certificates installed");
 			return buildException(false, "Developer certificates installed", "install.succeeded");
 		}
@@ -183,24 +179,4 @@ public class DevCertInjectPatch extends Patch {
 			}
 		}
 	}
-
-	private static KindletExecutionException handleIdiots() {
-		KindletExecutionException ret = buildException(false, "User too stupid to read instructions", "install.foridiots."+launchesAfterInstallation);
-		if (launchesAfterInstallation == 1) {
-			launchesAfterInstallation = 2;
-		}
-		return ret;
-	}
-
-	/*
-	 * This does something DIFFERENT than what I expected.
-	 * It overrides the "application.keystore" (with a 0-byte file),
-	 * so DON'T USE THIS!!!
-	 */
-	static void notifySystem(File newKeyStore) {
-		e installer = e.k();
-		installer.D(newKeyStore);
-	}
-
-
 }

@@ -93,11 +93,19 @@ public abstract class Patch {
 			return key;
 		return i18n.i18n(key);
 	}
-	
+
+	/**
+	 * Returns all additional permissions that the patch requires in order to
+	 * function properly. Override this method if your patch needs additional
+	 * permissions. Be as specific as you can: if you only need to read/write to
+	 * a single file, then only request a tailored FilePermission, etc.
+	 * 
+	 * @return additional permissions that the patch requires
+	 */
 	public Permission[] getRequiredPermissions() {
 		return null;
 	}
-	
+
 	Descriptor[] descriptors() {
 		if (descriptors == null) {
 			descriptors = getDescriptors();
