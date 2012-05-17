@@ -43,5 +43,19 @@
             	<include name="ttspatch.txt"/>
         	</fileset>
 		</jar>
+		
+		<jar destfile="dist/opt/jbpatch/ixtab_devcertinject-5.1.0.zip">
+            <manifest>
+            	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.devcert.DevCertInjectPatch"/>
+			</manifest>
+            <fileset dir="bin">
+            	<include name="com/mobileread/ixtab/patch/devcert/*.class"/>
+            	<include name="com/mobileread/ixtab/patch/devcert/developer.keystore"/>
+        	</fileset>
+            <fileset dir="bin/com/mobileread/ixtab/patch/devcert">
+            	<include name="ixtab-patch-devcert.txt"/>
+        	</fileset>
+		</jar>
+
 	</target>
 </project>

@@ -44,7 +44,13 @@ public class Patches {
 	private static void add(Patch patch) {
 		Descriptor[] descriptors = validateDescriptors(patch);
 		for (int i = 0; i < descriptors.length; ++i) {
-			register(patch, descriptors[i]);
+			registerForDescriptor(patch, descriptors[i]);
+		}
+		if (descriptors.length > 0) {
+			int special = PatchPolicy.register(patch);
+			if (special > 0) {
+				log("I: Patch "+patch.id()+" has been granted "+ special+" additional permission"+(special==1? "":"s")+" on request");
+			}
 		}
 	}
 
@@ -58,7 +64,7 @@ public class Patches {
 		return d;
 	}
 
-	private static void register(Patch patch, Descriptor d) {
+	private static void registerForDescriptor(Patch patch, Descriptor d) {
 		List handlers = getNonNullList(d.className);
 		handlers.add(patch);
 		log("I: Registered " + patch.id() + " for " + d.className);

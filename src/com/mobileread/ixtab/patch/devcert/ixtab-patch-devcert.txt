@@ -1,0 +1,48 @@
+# IMPORTANT: this file is part of a zipped patch. You can edit this file, but NOTE that
+# the patch requires a correct set of files to function. In other words, you have to correctly
+# re-zip the patch (including this file, but also all other files and directories) for it
+# to work correctly on the device.
+#
+# This file contains the messages that might be displayed to a user who has the
+# "MobileRead development certificates auto-installer patch" (for lack of a shorter description) installed.
+#
+# Messages are localized, and the Kindle will automatically pick the most suitable translation.
+# If a translation for the current Kindle language is not found, then several fallback mechanisms are used.
+# For all real-world purposes, this probably means that the values of "en" will be used as a fallback, but 
+# for exact details, see DEVELOPERS.txt in the jbpatch distribution.
+#
+# You can modify this file as you please. If you think that you have significant improvements that other people
+# could benefit from, especially if you can provide complete translations, or important updates, for a particular
+# language, do not hesitate to post your changes at http://www.mobileread.com/forums/showthread.php?t=175512 .
+# I am always trying to improve my products, and providing good internationalization is an important part of it.
+# But I can only support a limited set of languages by myself, which is why I need your help. So again, please
+# provide your feedback in the abovementioned thread. In the end, it will be beneficial to many people.
+
+
+# Implementation/translation note: Yes, I did include a little joke (or call it "easter-egg" if you want):
+# The definitions below pretty much explain everything. The "hidden" messages show up if a user is
+# repeatedly trying to launch an application, even if he has clearly been told that the device
+# (or framework) should have been restarted in between. To trigger this situation, just delete
+# the developers keystore, and continuously try to start a dev app :-)
+
+
+[en]
+archive.invalid=The patch to automatically install the MobileRead developer certificates is invalid. Please re-download the patch.
+install.failed=The MobileRead developer certificates could not be properly installed.
+install.succeeded=The MobileRead developer certificates have been successfully installed. Please close this message and restart your Kindle. If the application was signed with one of the included certificates, it will work after the restart.
+install.foridiots.1=You have been told to restart your Kindle before attempting to execute apps. Please restart the device NOW!
+install.foridiots.2=You can try as many times as you want: this error message is not going to go away before you restart your Kindle.
+
+[de]
+archive.invalid=Der Patch zum Installieren der MobileRead-Entwicklerzertifikate ist ungültig. Bitte laden Sie den Patch erneut herunter.
+install.failed=Die Entwicklerzertifikate von MobileRead konnten nicht korrekt installiert werden.
+install.succeeded=Die Entwicklerzertifikate von MobileRead wurden erfolgreich installiert. Bitte schließen Sie diese Nachricht und starten Sie Ihren Kindle neu. Wenn die Anwendung mit einem der enthaltenen Zertifikate signiert wurde, wird sie nach dem Neustart funktionieren.
+install.foridiots.1=Sie wurden darauf hingewiesen, dass Sie Ihren Kindle neustarten müssen, bevor Sie versuchen, Apps zu öffnen. Starten Sie das Gerät JETZT neu!
+install.foridiots.2=Sie können das so oft versuchen, wie Sie wollen: diese Fehlernachricht wird nicht verschwinden, bevor Sie Ihren Kindle neu gestartet haben.
+
+[fr]
+archive.invalid=Le patch pour l'installation automatique des certificats des développeurs de MobileRead n'est pas valide. Veuillez décharger le patch à noveau.
+install.failed=L'installation automatique des certificats des développeurs de MobileRead a échouée.
+install.succeeded=Les certificats des développeurs de MobileRead ont été installés. Veuillez fermer ce message, puis redémarrer votre Kindle. Si l'application est signée par un des certificats inclus, elle fonctionnera après le redémarrage.
+install.foridiots.1=Vous avez été informé que vous deviez redémarrer votre Kindle avant d'essayer d'exécuter des applications. Veuillez redémarrer l'appareil MAINTENANT!
+install.foridiots.2=Vous pouvez essayer ça autant que vous voulez: ce message ne disparaîtra pas avant que vous ne redémarriez votre Kindle.

@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# This is the configuration file for jbpatch (v1.2.0)
+# This is the configuration file for jbpatch (v1.3.0)
 #
 # It lists all the patches that are enabled on your Kindle.
 # Empty lines, or lines starting with a "#", such as this one,
@@ -41,6 +41,12 @@ ixtab_scrollbar-5.1.0.jbpatch
 # because otherwise you may not be able to make full use of the menus
 # in landscape mode.
 ixtab_rotation-5.1.0.jbpatch
+
+# Allow the Kindle to run apps published by independent developers,
+# by installing the relevant certificates.
+# This patch can be localized by modifying the contents of the file-
+ixtab_devcertinject-5.1.0.zip
+
 
 # This sample patch replaces the "Legal" information
 # from the settings menu. It is not enabled by default, because

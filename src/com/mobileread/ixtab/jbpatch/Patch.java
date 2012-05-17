@@ -3,6 +3,7 @@ package com.mobileread.ixtab.jbpatch;
 import java.io.ByteArrayInputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.security.Permission;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -92,7 +93,11 @@ public abstract class Patch {
 			return key;
 		return i18n.i18n(key);
 	}
-
+	
+	public Permission[] getRequiredPermissions() {
+		return null;
+	}
+	
 	Descriptor[] descriptors() {
 		if (descriptors == null) {
 			descriptors = getDescriptors();

@@ -3,15 +3,14 @@ package test;
 
 import java.io.File;
 
-import javax.swing.JScrollBar;
-
 import junit.framework.TestCase;
 import serp.bytecode.BCClass;
+import serp.bytecode.BCClassLoader;
+import serp.bytecode.Code;
 import serp.bytecode.Project;
 
 import com.mobileread.ixtab.jbpatch.Patch;
-import com.mobileread.ixtab.patch.ScrollbarPatch;
-import com.mobileread.ixtab.patch.tts.TTSPatch;
+import com.mobileread.ixtab.patch.devcert.DevCertInjectPatch;
 
 /*
  * This isn't really a Unit Test, I know. It ended up just being a quick way to
@@ -20,23 +19,32 @@ import com.mobileread.ixtab.patch.tts.TTSPatch;
 public class TestCurrentGoal extends TestCase {
 	
 	public void testAndDump() throws Throwable {
-		BCClass cls = new Project().loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java/classes/com/amazon/ebook/booklet/reader/plugin/tts/TTSProvider$TTSAction.class"));
-//		BCClass cls = new Project().loadClass(HomeBooklet.class);
-		new TTSPatch().perform(TTSPatch.MD5_TTSACTION, cls);
+		Project p = new Project();
+		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java/classes/com/amazon/kindle/kindlet/internal/security/b.class"));
+//		BCClass cls = p.loadClass(HomeBooklet.class);
+		new DevCertInjectPatch().perform(DevCertInjectPatch.MD5_B510, cls);
 		cls.write(new File("/tmp/test.class"));
+		try {
+			Class loaded = new BCClassLoader(p).loadClass(cls.getName());
+		} catch (Throwable t) {
+			System.err.println("class failed to load. This may be harmless... up to you to know");
+			t.printStackTrace(System.err);
+		}
 	}
 	
-	public void reflected() {
-		JScrollBar scrollbar = null;
-		ScrollbarPatch.INSTANCE.hook(scrollbar, this);
+	public void reflected() throws Exception {
+		// currently nothing.
+	}
+	
+	public void doThings(Object o) throws Exception {
 		
 	}
 	
-	
 	public void testReflect() throws Throwable {
-		if (1 != 1) return;
+		if (1 == 1) return;
 		BCClass cls = new Project().loadClass(TestCurrentGoal.class);
-		Patch.dump(cls.getMethods("reflected")[0].getCode(false));
+		Code c = cls.getDeclaredMethod("reflected").getCode(false);
+		Patch.dump(c);
 	}
 	
 }
