@@ -99,16 +99,6 @@ public class PasswordPatch extends Patch {
 
 		sanitize(c);
 
-		// injectDialogHooks(c, new int[] {72, 120});
-		//
-		// c = clazz.getDeclaredMethod("B").getCode(false);
-		// injectDialogHooks(c, new int[] {52});
-		// sanitize(c);
-		//
-		// c = clazz.getDeclaredMethod("D").getCode(false);
-		// injectDialogHooks(c, new int[] {36});
-		// sanitize(c);
-
 		return null;
 	}
 
@@ -116,25 +106,6 @@ public class PasswordPatch extends Patch {
 		c.calculateMaxLocals();
 		c.calculateMaxStack();
 	}
-
-	// private void injectDialogHooks(Code c, int[] indexes) throws Throwable {
-	// /* The indexes refer to the original code. Because
-	// * they change as we perform modifications, we retrieve the
-	// * instructions before actually tampering with the code.
-	// */
-	// Instruction[] instructions = new Instruction[indexes.length];
-	// for (int i=0; i < indexes.length; ++i) {
-	// c.before(indexes[i]);
-	// instructions[i] = c.next();
-	// }
-	//
-	// for (int i=0; i < instructions.length; ++i) {
-	// c.after(instructions[i]);
-	// c.dup();
-	// c.invokestatic().setMethod(PasswordPatch.class.getMethod("onShowDetails",
-	// new Class[] {Object.class}));
-	// }
-	// }
 
 	private String patchDetailView510(BCClass clazz) throws Throwable {
 		Code c = clazz.getDeclaredMethod("createMenuPanel").getCode(false);
@@ -194,10 +165,19 @@ public class PasswordPatch extends Patch {
 			injectedAction = new UnprotectAction(key, password);
 		}
 		if (injectedAction != null) {
-			// actions.add(0, injectedAction);
 			actions.add(injectedAction);
 		}
 	}
+
+	private static void showDialog(String messageKey, String titleKey) {
+		String message = PasswordPatch
+				.getResource(messageKey);
+		String title = PasswordPatch.getResource(titleKey);
+		ConfirmationDialog.showDialog(PasswordDialog.APP_ID,
+				message, title,
+				ConfirmationDialog.OK_ONLY_OPTIONS);
+	}
+
 
 	private static class ProtectAction extends AbstractAction {
 
@@ -214,21 +194,10 @@ public class PasswordPatch extends Patch {
 						PasswordDialog.MODE_VERIFY, passwd);
 				if (passwd.matches(second)) {
 					boolean committed = PasswordStore.set(key, passwd);
-					if (!committed) {
-						String message = PasswordPatch
-								.getResource("error.message");
-						String title = PasswordPatch.getResource("error.title");
-						ConfirmationDialog.showDialog(PasswordDialog.APP_ID,
-								message, title,
-								ConfirmationDialog.OK_ONLY_OPTIONS);
+					if (committed) {
+						showDialog("protected.message", "protected.title");
 					} else {
-						String message = PasswordPatch
-								.getResource("protected.message");
-						String title = PasswordPatch
-								.getResource("protected.title");
-						ConfirmationDialog.showDialog(PasswordDialog.APP_ID,
-								message, title,
-								ConfirmationDialog.OK_ONLY_OPTIONS);
+						showDialog("error.message", "error.title");
 					}
 				}
 			}
@@ -253,18 +222,10 @@ public class PasswordPatch extends Patch {
 					encrypted);
 			if (verify != null && encrypted.matches(verify)) {
 				boolean committed = PasswordStore.remove(key, encrypted);
-				if (!committed) {
-					String message = PasswordPatch.getResource("error.message");
-					String title = PasswordPatch.getResource("error.title");
-					ConfirmationDialog.showDialog(PasswordDialog.APP_ID,
-							message, title, ConfirmationDialog.OK_ONLY_OPTIONS);
+				if (committed) {
+					showDialog("unprotected.message", "unprotected.title");
 				} else {
-					String message = PasswordPatch
-							.getResource("unprotected.message");
-					String title = PasswordPatch
-							.getResource("unprotected.title");
-					ConfirmationDialog.showDialog(PasswordDialog.APP_ID,
-							message, title, ConfirmationDialog.OK_ONLY_OPTIONS);
+					showDialog("error.message", "error.title");
 				}
 			}
 		}
