@@ -170,14 +170,11 @@ public class PasswordPatch extends Patch {
 	}
 
 	private static void showDialog(String messageKey, String titleKey) {
-		String message = PasswordPatch
-				.getResource(messageKey);
+		String message = PasswordPatch.getResource(messageKey);
 		String title = PasswordPatch.getResource(titleKey);
-		ConfirmationDialog.showDialog(PasswordDialog.APP_ID,
-				message, title,
+		ConfirmationDialog.showDialog(PasswordDialog.APP_ID, message, title,
 				ConfirmationDialog.OK_ONLY_OPTIONS);
 	}
-
 
 	private static class ProtectAction extends AbstractAction {
 
