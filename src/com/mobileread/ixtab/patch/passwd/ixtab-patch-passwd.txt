@@ -61,10 +61,10 @@ error.title=Erreur
 error.message=La mise à jour des mots de passe a échouée. Ceci n'aurait pas du arriver. Veuillez nous aviser de cette erreur.
 password.enter=Entrez le mot de passe
 password.set=Définissez le mot de passe
-password.verify=Confirmez le mot de passe
-item.protected=Cet élément est protégé. Entrez le mot de passe pour y accéder.
-item.protecting=Veuillez definir le mot de passe qui sera utilisé pour protéger l'accès à cet élément.
-item.verify=Veuillez confirmer le mot de passe pour cet élément.
+password.verify=Vérifiez le mot de passe
+item.protected=Cet élément est protegé. Entrez le mot de passe pour y accéder.
+item.protecting=Veuillez definir le mot de passe qui sera utilisé pour proteger l'accès à cet élément.
+item.verify=Veuillez vérifier le mot de passe pour cet élément.
 menu.protect=Protéger par mot de passe
 menu.unprotect=Enlever le mot de passe
 protected.title=Élément protégé
@@ -72,3 +72,21 @@ protected.message=La protection est activée. Dès lors, le mot de passe est req
 unprotected.title=Protection désactivée
 unprotected.message=Désormais, la protection par mot de passe est désactivée pour cet élément.
 
+[it]
+# Thanks to silver18 for this translation!
+ok=OK
+cancel=Cancella
+error.title=Errore
+error.message=Il database delle password non può essere aggiornato. Questo non dovrebbe succedere, quindi si prega di segnalare l'errore.
+password.enter=Inserire la password
+password.set=Impostare la password
+password.verify=Confermare la password
+item.protected=Questo oggetto è protetto. Si prega di inserire la password per accedere.
+item.protecting=Si prega di inserire la password da utilizzare per proteggere questo oggetto.
+item.verify=Si prega di confermare la password per proteggere questo oggetto.
+menu.protect=Proteggi con una password
+menu.unprotect=Rimuovi la protezione con password
+protected.title=Oggetto protetto
+protected.message=Protezione con password abilitata. I prossimi tentativi di accedere a questo oggetto richiederanno una password.
+unprotected.title=Oggetto non protetto
+unprotected.message=La protezione con password è stata disabilitata per questo oggetto.
