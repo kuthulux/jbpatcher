@@ -1,0 +1,89 @@
+# IMPORTANT: this file is part of a zipped patch. You can edit this file, but NOTE that
+# the patch requires a correct set of files to function. In other words, you have to correctly
+# re-zip the patch (including this file, but also all other files and directories) for it
+# to work correctly on the device.
+
+# This file lets you redefine the margins that are applied when
+# the Kindle displays content. Before changing any setting, please
+# make sure that you have read ALL of the documentation available
+# in this file. 
+# 
+
+# DO NOT REMOVE THE NEXT LINE ("[en]"), IT IS IMPORTANT !!!
+[en]
+
+# The following setting applies to the "normal" reader, and controls the left/right
+# margins in pixels for the words per line (fewest, fewer, default), in this
+# order. The line should consist of three positive integers, separated by a space.
+#
+# IMPORTANT:
+# Because these preferences are cached by the Kindle, the effect of changing the
+# value here may not have an immediately noticeable effect. If you are stuck with
+# the old settings after changing the values here, try changing the setting to a
+# different value (e.g. "fewest"), then back to the intended setting.
+#
+# The Kindle's default behavior is:
+# font.wordsperline.margin.list=120 80 40
+
+font.wordsperline.margin.list=120 80 40
+
+
+
+# Left/right margins. 
+# These values are overridden in by the "font.wordsperline.margin.list"
+# setting in the "normal" ebook reader, but they are important for the
+# PDF reader.
+#
+# The Kindle's default behavior is:
+# reader.content.leftMargin=40
+# reader.content.rightMargin=40
+
+reader.content.leftMargin=40
+reader.content.rightMargin=40
+
+
+
+# This value determines the height of the footer (displaying the current location,
+# percentage, etc.), and is *subtracted* from reader.content.bottomMargin (see
+# below). You can completely hide the footer by setting this value to 0.
+#
+# The Kindle's default behavior is:
+# reader.progressbar.footer.height=30
+
+reader.progressbar.footer.height=30
+
+
+
+# To change the bottom margin, modify the following value.
+# WARNING: this value should not be less than the value
+# of reader.progressbar.footer.height (see above).
+# If you set a wrong value here, you are on your own.
+
+# The Kindle's default behavior is:
+# reader.content.bottomMargin=30
+
+reader.content.bottomMargin=30
+
+
+
+# To change the top margin, modify the following value.
+# WARNING: this value should not be less than the value
+# of reader.content.topMarginOffset (see below).
+# If you set a wrong value here, you are on your own.
+#
+# The Kindle's default behavior is:
+# reader.content.topMargin=30
+
+reader.content.topMargin=30
+
+
+
+# This value is *subtracted* from reader.content.topMargin (see above)
+# when a book is opened. Presumably, it accounts for the height of the
+# title bar (which is hidden afterwards).
+# DO NOT CHANGE THIS VALUE UNLESS YOU KNOW WHAT YOU ARE DOING.
+#
+# The Kindle's default behavior is:
+# reader.content.topMarginOffset=10
+
+reader.content.topMarginOffset=10

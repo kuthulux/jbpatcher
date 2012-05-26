@@ -11,6 +11,7 @@ import serp.bytecode.Project;
 
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.patch.ads.NoAdsPatch;
+import com.mobileread.ixtab.patch.margins.MarginsPatch;
 
 /*
  * This isn't really a Unit Test, I know. It ended up just being a quick way to
@@ -21,11 +22,9 @@ public class TestCurrentGoal extends TestCase {
 	public void testAndDump() throws Throwable {
 		Project p = new Project();
 		
-//		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java/classes/com/amazon/ebook/booklet/reader/impl/ui/ProgressBarImpl.class"));
-		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java/classes/com/amazon/kindle/restricted/ad/manager/AdManagerImpl.class"));
+		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java/classes/com/amazon/ebook/booklet/pdfreader/impl/g.class"));
 //		BCClass cls = p.loadClass(HomeBooklet.class);
-//		String result = new MarginsPatch().perform(MarginsPatch.MD5_PROGRESSBARIMPL_510, cls);
-		String result = new NoAdsPatch().perform(NoAdsPatch.MD5_ADMANAGERIMPL, cls);
+		String result = new MarginsPatch().perform(MarginsPatch.MD5_PDFVIEWPORT_510, cls);
 		if (result != null) {
 			System.err.println("patch failed to perform, error is: "+result);
 			fail(result);
@@ -48,7 +47,7 @@ public class TestCurrentGoal extends TestCase {
 	}
 	
 	public void testReflect() throws Throwable {
-		if (Math.sqrt(4.0) != 2.0) return;
+		if (1 == 1 ) return;
 		BCClass cls = new Project().loadClass(TestCurrentGoal.class);
 		Code c = cls.getDeclaredMethod("reflected").getCode(false);
 		Patch.dump(c);

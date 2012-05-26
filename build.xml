@@ -69,16 +69,17 @@
         	</fileset>
 		</jar>
 
-		<!-- upcoming, but not in this commit:
 		<jar destfile="dist/opt/jbpatch/ixtab_margins-5.1.0.zip">
             <manifest>
             	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.margins.MarginsPatch"/>
 			</manifest>
             <fileset dir="bin">
-            	<include name="com/mobileread/ixtab/patch/margins/*.*"/>
+            	<include name="com/mobileread/ixtab/patch/margins/*.class"/>
+        	</fileset>
+            <fileset dir="bin/com/mobileread/ixtab/patch/margins">
+            	<include name="ixtab-patch-margins.txt"/>
         	</fileset>
 		</jar>
-		-->
 
 	</target>
 </project>
