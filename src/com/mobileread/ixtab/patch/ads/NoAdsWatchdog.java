@@ -9,6 +9,15 @@ import com.amazon.kindle.util.lipc.LipcException;
 import com.amazon.kindle.util.lipc.helper.DelegatingLipcTarget;
 import com.mobileread.ixtab.jbpatch.Log;
 
+/**
+ * This is a good example of how trying to be non-invasive can
+ * massively complicate things :-D.
+ * 
+ * This class is unused at the moment, and the entire method seems
+ * fragile in that it depends on the "correct" timing (FIXUP_DELAY_MS).
+ * Wrong delays cause crashes on the device :-(
+ *
+ */
 public class NoAdsWatchdog extends DelegatingLipcTarget implements
 		LipcEventListener {
 
