@@ -90,6 +90,27 @@ public class KindleDirectories {
 			}
 		}
 
+		private File[] listTargetFiles() {
+			if (!targetDir.exists()) {
+				knownFiles.clear();
+				if (targetWasOkLastTime) {
+					log("W: " + new Date() + ": " + LOCAL_DIRECTORY
+							+ " does not exist, attempting to re-create it!");
+				}
+				if (targetDir.mkdir()) {
+					log("I: " + new Date() + ": created " + LOCAL_DIRECTORY);
+					targetWasOkLastTime = true;
+				} else {
+					if (targetWasOkLastTime) {
+						log("E: " + new Date() + ": failed to create "
+								+ LOCAL_DIRECTORY);
+					}
+					targetWasOkLastTime = false;
+				}
+			}
+			return targetWasOkLastTime ? targetDir.listFiles() : null;
+		}
+		
 		private void removeObsoleteFilesInTarget(File[] sourceFiles,
 				File[] targetFiles) {
 			Set sourceNames = new HashSet();
@@ -206,26 +227,6 @@ public class KindleDirectories {
 			}
 		}
 
-		private File[] listTargetFiles() {
-			if (!targetDir.exists()) {
-				knownFiles.clear();
-				if (targetWasOkLastTime) {
-					log("W: " + new Date() + ": " + LOCAL_DIRECTORY
-							+ " does not exist, attempting to re-create it!");
-				}
-				if (targetDir.mkdir()) {
-					log("I: " + new Date() + ": created " + LOCAL_DIRECTORY);
-					targetWasOkLastTime = true;
-				} else {
-					if (targetWasOkLastTime) {
-						log("E: " + new Date() + ": failed to create "
-								+ LOCAL_DIRECTORY);
-					}
-					targetWasOkLastTime = false;
-				}
-			}
-			return targetWasOkLastTime ? targetDir.listFiles(fileFilter) : null;
-		}
 
 		private void log(String msg) {
 			Log.INSTANCE.println(msg);
@@ -271,7 +272,7 @@ public class KindleDirectories {
 			if (name.equals(PatcherConfiguration.CONFIGFILE_NAME)) {
 				return true;
 			}
-			if (name.endsWith(PatcherConfiguration.PATCH_EXTENSION_STANDALONE) || name.endsWith(PatcherConfiguration.PATCH_EXTENSION_ZIPPED)) {
+			if (name.endsWith(PatcherConfiguration.PATCH_EXTENSION_STANDALONE) || name.endsWith(PatcherConfiguration.PATCH_EXTENSION_JARRED)) {
 				if (PatcherConfiguration.checkForWrongCharacters(name) == null) {
 					return true;
 				}

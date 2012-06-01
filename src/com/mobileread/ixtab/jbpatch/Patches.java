@@ -89,7 +89,7 @@ public class Patches {
 				if (id.endsWith(PatcherConfiguration.PATCH_EXTENSION_STANDALONE)) {
 					p = instantiate(new BufferedInputStream(new FileInputStream(
 							file)), cl, id);
-				} else if (id.endsWith(PatcherConfiguration.PATCH_EXTENSION_ZIPPED)) {
+				} else if (id.endsWith(PatcherConfiguration.PATCH_EXTENSION_JARRED)) {
 					System.err.println();
 					p = PatchContainer.instantiatePatch(file, cl, id);
 				} else {
@@ -169,6 +169,13 @@ public class Patches {
 			return;
 		}
 		initialized = true;
+		if (KindleDevice.FIRMWARE_ID == null) {
+			log("FATAL ERROR: Firmware ID could not be determined.");
+			return;
+		}
+		log("Kindle firmware version : " + KindleDevice.getFirmwareName());
+		log("jbpatch version         : " + JBPatchMetadata.VERSION);
+		log("");
 		addBuiltins();
 		addExternals();
 	}

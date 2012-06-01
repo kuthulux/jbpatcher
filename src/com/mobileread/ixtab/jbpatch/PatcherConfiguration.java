@@ -12,8 +12,8 @@ import java.util.List;
 public class PatcherConfiguration {
 	
 	public static final String CONFIGFILE_NAME = "CONFIG.TXT";
-	public static final String PATCH_EXTENSION_STANDALONE = ".jbpatch";
-	public static final String PATCH_EXTENSION_ZIPPED = ".zip";
+	public static final String PATCH_EXTENSION_STANDALONE = ".class";
+	public static final String PATCH_EXTENSION_JARRED = ".jar";
 	private static final char[] SPECIAL_CHARS_OK = new char[] { '.', '_', '-',
 			'@' };
 
@@ -95,9 +95,9 @@ public class PatcherConfiguration {
 							+ "\" are allowed for filenames.");
 					continue;
 				}
-				if (!(line.endsWith(PATCH_EXTENSION_STANDALONE) || line.endsWith(PATCH_EXTENSION_ZIPPED))) {
+				if (!(line.endsWith(PATCH_EXTENSION_STANDALONE) || line.endsWith(PATCH_EXTENSION_JARRED))) {
 					log("W: line " + ln + " in file " + conf
-							+ " ignored: patches must have " + PATCH_EXTENSION_STANDALONE + " or " + PATCH_EXTENSION_ZIPPED
+							+ " ignored: patches must have " + PATCH_EXTENSION_STANDALONE + " or " + PATCH_EXTENSION_JARRED
 							+ " extension");
 					continue;
 				}

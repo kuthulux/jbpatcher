@@ -97,8 +97,7 @@ class PatchingClassLoader extends URLClassLoader {
 		log("");
 		log(""+new Date());
 		log("=== Patching class loader initialized.  ===");
-		log("");
-		log("!Packages still handled by original loader:");
+		log("Packages still handled by original loader:");
 		Iterator it = avoidPackages.keySet().iterator();
 		while (it.hasNext()) {
 			log(it.next().toString());
