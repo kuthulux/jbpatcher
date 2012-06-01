@@ -11,6 +11,7 @@ import serp.bytecode.Project;
 
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.patch.ads.NoAdsPatch;
+import com.mobileread.ixtab.patch.hyphenation.HyphenationPatch;
 import com.mobileread.ixtab.patch.margins.MarginsPatch;
 
 /*
@@ -22,9 +23,9 @@ public class TestCurrentGoal extends TestCase {
 	public void testAndDump() throws Throwable {
 		Project p = new Project();
 		
-		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java/classes/com/amazon/ebook/booklet/pdfreader/impl/g.class"));
+		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java/classes/com/mobipocket/common/library/reader/hyphenation/j.class"));
 //		BCClass cls = p.loadClass(HomeBooklet.class);
-		String result = new MarginsPatch().perform(MarginsPatch.MD5_PDFVIEWPORT_510, cls);
+		String result = new HyphenationPatch().perform(HyphenationPatch.MD5_HYPHENATIONMANAGER_510, cls);
 		if (result != null) {
 			System.err.println("patch failed to perform, error is: "+result);
 			fail(result);

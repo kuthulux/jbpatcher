@@ -81,5 +81,14 @@
         	</fileset>
 		</jar>
 
+		<jar destfile="dist/opt/jbpatch/ixtab_hyphenation-5.1.0.zip">
+            <manifest>
+            	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.hyphenation.HyphenationPatch"/>
+			</manifest>
+            <fileset dir="bin">
+            	<include name="com/mobileread/ixtab/patch/hyphenation/*.class"/>
+        	</fileset>
+		</jar>
+
 	</target>
 </project>
