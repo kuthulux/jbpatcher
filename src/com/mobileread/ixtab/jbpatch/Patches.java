@@ -49,7 +49,7 @@ public class Patches {
 		if (descriptors.length > 0) {
 			int special = PatchPolicy.register(patch);
 			if (special > 0) {
-				log("I: Patch "+patch.id()+" has been granted "+ special+" additional permission"+(special==1? "":"s")+" on request");
+				log("I: "+ patch.id()+" has been granted "+ special+" additional permission"+(special==1? "":"s")+" on request");
 			}
 		}
 	}
@@ -67,7 +67,7 @@ public class Patches {
 	private static void registerForDescriptor(Patch patch, Descriptor d) {
 		List handlers = getNonNullList(d.className);
 		handlers.add(patch);
-		log("I: Registered " + patch.id() + " for " + d.className);
+		log("I: " + patch.id() + " registered for " + d.className);
 		++available;
 	}
 
@@ -90,7 +90,6 @@ public class Patches {
 					p = instantiate(new BufferedInputStream(new FileInputStream(
 							file)), cl, id);
 				} else if (id.endsWith(PatcherConfiguration.PATCH_EXTENSION_JARRED)) {
-					System.err.println();
 					p = PatchContainer.instantiatePatch(file, cl, id);
 				} else {
 					throw new IllegalStateException();
@@ -117,7 +116,7 @@ public class Patches {
 		String name = bc.getName();
 		byte[] bytes = bc.toByteArray();
 		try {
-			return instantiate(name, bytes, cl);
+			return instantiate(name, bytes, cl, potentialId);
 		} catch (InvocationTargetException e) {
 			Throwable cause = e.getCause();
 			if (cause != null && cause instanceof LinkageError) {
@@ -132,11 +131,15 @@ public class Patches {
 		}
 	}
 
-	private static Patch instantiate(String name, byte[] bytes, ClassLoader cl)
+	private static Patch instantiate(String name, byte[] bytes, ClassLoader cl, String containerFileName)
 			throws Throwable {
 		Class c = defineClass(cl, name, bytes);
 		if (!Patch.class.isAssignableFrom(c)) {
 			log("E: "+name+" is not a valid patch.");
+			return null;
+		}
+		if (!containerFileName.equals(c.getName() + PatcherConfiguration.PATCH_EXTENSION_STANDALONE )) {
+			log("W: "+c.getName()+" deployed with mismatching file name, ignoring: Expected "+c.getName()+ PatcherConfiguration.PATCH_EXTENSION_STANDALONE + ", but filename is "+containerFileName);
 			return null;
 		}
 		return (Patch) c.newInstance();

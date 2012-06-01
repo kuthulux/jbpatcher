@@ -149,8 +149,7 @@ public abstract class Patch {
 				// log("D: about to invoke "+id+" for "+className);
 				String error = perform(md5, clazz);
 				if (error == null) {
-					log("I: Patched " + className + " (" + md5 + ") using "
-							+ id);
+					log("I: " + id+ " applied to "+ className + " (" + md5 + ")");
 					Patches.reportActive();
 					return clazz.toByteArray();
 				}

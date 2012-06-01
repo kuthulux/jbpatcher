@@ -24,17 +24,11 @@ public final class PatchContainer {
 		}
 		URL zipUrl = zip.toURI().toURL();
 		ensurePatchIsValid(cl, patchClassName, zipUrl);
+		if (! validateName(potentialId, patchClassName)) {
+			return null;
+		}
 		injectUrlIntoClassLoader(zipUrl, cl);
 		return (Patch) cl.loadClass(patchClassName).newInstance();
-	}
-
-	private static void injectUrlIntoClassLoader(URL jar, ClassLoader cl)
-			throws Throwable {
-		ensureInjectMethodIsSet(cl);
-		Boolean ok = (Boolean) injectMethod.invoke(cl, new Object[] {jar});
-		if (!ok.booleanValue()) {
-			throw new RuntimeException("Unable to inject "+jar+ " into classpath");
-		}
 	}
 
 	private static JarFile verifyAsJar(File zip) {
@@ -67,6 +61,29 @@ public final class PatchContainer {
 		} catch (Throwable t) {
 			throw new IllegalArgumentException(patchClassName + " in " + zipUrl
 					+ " is not a valid Patch");
+		}
+	}
+
+	private static boolean validateName(String potentialId, String patchClassName) {
+		int lastDotIndex = patchClassName.lastIndexOf('.');
+		if (lastDotIndex == -1) {
+			throw new IllegalArgumentException("Main class \""+patchClassName+"\" in patch \""+potentialId+" \" must not be in default package");
+		}
+		String pkgName = patchClassName.substring(0, lastDotIndex);
+		if (!(pkgName + PatcherConfiguration.PATCH_EXTENSION_JARRED).equals(potentialId)) {
+			Log.INSTANCE.println("W: "+potentialId+" deployed with mismatching file name, ignoring: Expected "+(pkgName+PatcherConfiguration.PATCH_EXTENSION_JARRED)+", but filename is "+ potentialId);
+			return false;
+		}
+		return true;
+	}
+
+	private static void injectUrlIntoClassLoader(URL jar, ClassLoader cl)
+			throws Throwable {
+		ensureInjectMethodIsSet(cl);
+		Boolean ok = (Boolean) injectMethod.invoke(cl, new Object[] { jar });
+		if (!ok.booleanValue()) {
+			throw new RuntimeException("Unable to inject " + jar
+					+ " into classpath");
 		}
 	}
 
