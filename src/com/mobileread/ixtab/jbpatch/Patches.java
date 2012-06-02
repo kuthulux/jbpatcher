@@ -171,13 +171,14 @@ public class Patches {
 		if (initialized) {
 			return;
 		}
+		log("jbpatch Patches initializing");
 		initialized = true;
 		if (KindleDevice.FIRMWARE_ID == null) {
 			log("FATAL ERROR: Firmware ID could not be determined.");
 			return;
 		}
-		log("Kindle firmware version : " + KindleDevice.getFirmwareName());
-		log("jbpatch version         : " + JBPatchMetadata.VERSION);
+		log("   Kindle firmware version : " + KindleDevice.getFirmwareName());
+		log("   jbpatch version         : " + JBPatchMetadata.VERSION);
 		log("");
 		addBuiltins();
 		addExternals();

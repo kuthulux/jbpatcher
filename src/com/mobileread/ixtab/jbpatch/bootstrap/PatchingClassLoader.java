@@ -94,15 +94,13 @@ class PatchingClassLoader extends URLClassLoader {
 	}
 
 	private void onInit() {
-		log("");
-		log(""+new Date());
-		log("=== Patching class loader initialized.  ===");
-		log("Packages still handled by original loader:");
+		log("jbpatch log start: " + new Date());
+		log("jbpatch bootstrap ok: PatchingClassLoader instantiated");
+		log("   Packages still handled by original ClassLoader:");
 		Iterator it = avoidPackages.keySet().iterator();
 		while (it.hasNext()) {
-			log(it.next().toString());
+			log("   - " + it.next().toString());
 		}
-		log("===========================================");
 		log("");
 	}
 
