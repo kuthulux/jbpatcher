@@ -25,7 +25,7 @@ import serp.bytecode.Project;
  * 
  * @author ixtab
  */
-public abstract class Patch {
+public abstract class Patch implements Comparable {
 
 	public static final int RESOURCE_REQUIREMENT_NONE = 0;
 	public static final int RESOURCE_REQUIREMENT_LOCALIZATION = 1;
@@ -235,6 +235,11 @@ public abstract class Patch {
 	
 	public final Descriptor[] getDescriptors() {
 		return null;
+	}
+
+	public int compareTo(Object arg0) {
+		Patch other = (Patch)arg0;
+		return id().compareTo(other.id());
 	}
 
 }

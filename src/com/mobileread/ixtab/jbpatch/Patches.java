@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import serp.bytecode.BCClass;
@@ -43,11 +44,11 @@ public class Patches {
 		return result == null ? null : result.toArray();
 	}
 
-	private static void add(Patch patch) {
+	private static boolean enable(Patch patch) {
 		PatchableDevice device = validateDevice(patch.metadata().supportedDevices);
 		if (device == null) {
 			log("E: "+patch.id()+ " does not support current device "+KindleDevice.THIS_DEVICE);
-			return;
+			return false;
 		}
 		List classes = device.supportedClasses;
 		
@@ -58,9 +59,11 @@ public class Patches {
 			}
 			int permissions = PatchPolicy.register(patch);
 			if (permissions > 0) {
-				log("I: Patch "+patch.id()+" has been granted "+ permissions+" additional permission"+(permissions==1? "":"s")+" on request");
+				log("I: "+patch.id()+" has been granted "+ permissions+" additional permission"+(permissions==1? "":"s")+" on request");
 			}
+			return true;
 		}
+		return false;
 	}
 
 	private static PatchableDevice validateDevice(List supportedDevices) {
@@ -94,7 +97,7 @@ public class Patches {
 		return list;
 	}
 
-	private static void add(File file) {
+	private static Patch add(File file, boolean enable) {
 		ClassLoader cl = Patches.class.getClassLoader();
 		if (isPatchingClassLoader(cl)) {
 			String id = file.getName();
@@ -113,7 +116,12 @@ public class Patches {
 				}
 				if (p != null) {
 					p.setId(shortId);
-					add(p);
+					if (!enable) {
+						return p;
+					}
+					if (enable && enable(p)) {
+						return p;
+					}
 				}
 			} catch (Throwable t) {
 				log("E: while instantiating " + id + ": ");
@@ -121,6 +129,7 @@ public class Patches {
 			}
 
 		}
+		return null;
 	}
 
 	private static boolean isPatchingClassLoader(ClassLoader cl) {
@@ -188,7 +197,7 @@ public class Patches {
 		if (initialized) {
 			return;
 		}
-		log("jbpatch Patches initializing");
+		log("Initializing patches");
 		initialized = true;
 		KindleDevice kindle = KindleDevice.THIS_DEVICE;
 		if (kindle.getDescription() == null) {
@@ -198,22 +207,37 @@ public class Patches {
 		log("   Kindle firmware version : " + kindle.getDescription());
 		log("   jbpatch version         : " + JBPatchMetadata.VERSION);
 		log("");
+		KindleDirectories.init();
 		addBuiltins();
 		addExternals();
 	}
 
 	private static void addBuiltins() {
-		// why on earth is that cast needed here?!
-		add(((Patch)new DeviceInfoPatch()).setId("(builtin) DeviceInfo"));
+		if(!enable(((Patch)new DeviceInfoPatch()).setId("(builtin) DeviceInfo"))) {
+			log("E: built-in device info patch could not be enabled!");
+		}
 	}
 
 	private static void addExternals() {
-		List fileList = new PatcherConfiguration().getActiveFiles();
-		Iterator files = fileList.iterator();
-		while (files.hasNext()) {
-			File file = (File) files.next();
-			add(file);
+		PatchRepository repo = PatchRepository.getInstance();
+		Map patchMap = repo.initialize();
+		Iterator it = patchMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Entry) it.next();
+			File file = (File) entry.getKey();
+			Boolean active = (Boolean) entry.getValue();
+			log("FIXME: about to register "+file+" with status "+active);
+			Patch patch = add(file, active.booleanValue());
+			if (patch != null) {
+				repo.addAvailable(patch, active);
+			}
 		}
+//		List fileList = new PatcherConfiguration().getActiveFiles();
+//		Iterator files = fileList.iterator();
+//		while (files.hasNext()) {
+//			File file = (File) files.next();
+//			add(file);
+//		}
 	}
 
 	static void reportActive() {

@@ -1,12 +1,9 @@
 package com.mobileread.ixtab.jbpatch.conf;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import com.mobileread.ixtab.jbpatch.Log;
 
 public class LocalizationResource implements KeyValueResource {
 
@@ -44,12 +41,8 @@ public class LocalizationResource implements KeyValueResource {
 		for (int i=0; i < max.length; ++i) {
 			File file = PatchResource.determineFile(baseName, localeCodes[i]);
 			if (file.exists() && file.isFile() && file.canRead()) {
-				try {
-					KeyValueFile loaded = new KeyValueFile(KeyValueFile.FLAG_NONE, file, null);
-					max[count++] = loaded;
-				} catch (IOException e) {
-					Log.INSTANCE.println("E: Unable to load "+ file);
-				}
+				KeyValueFile loaded = new KeyValueFile(KeyValueFile.FLAG_NONE, file, null);
+				max[count++] = loaded;
 			}
 		}
 		if (count == max.length) {

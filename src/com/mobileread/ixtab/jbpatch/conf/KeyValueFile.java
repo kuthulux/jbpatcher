@@ -30,6 +30,13 @@ public class KeyValueFile implements KeyValueResource {
 	private long lastTimestamp = 0;
 	
 	
+	public KeyValueFile(int flags, File primary, File secondary) {
+		this.primaryFile = primary;
+		this.secondaryFile = secondary;
+		this.flags = flags;
+		reload();
+	}
+
 	public String getValue(String key) {
 		if (isDynamic()) {
 			if (primaryFile.lastModified() != lastTimestamp) {
@@ -40,13 +47,6 @@ public class KeyValueFile implements KeyValueResource {
 		return index < 0 ? null : values[index];
 	}
 	
-	public KeyValueFile(int flags, File primary, File secondary) throws IOException {
-		this.primaryFile = primary;
-		this.secondaryFile = secondary;
-		this.flags = flags;
-		reload();
-	}
-
 	private boolean reload() {
 		BufferedReader r = null;
 		List keyList = new ArrayList();
@@ -104,6 +104,10 @@ public class KeyValueFile implements KeyValueResource {
 	}
 
 	public boolean setValue(String key, String value) {
+		return setValue(key, value, true);
+	}
+	
+	public boolean setValue(String key, String value, boolean autoCommit) {
 		if (!isWritable()) {
 			throw new IllegalStateException(primaryFile+" was opened in readonly mode");
 		}
@@ -135,6 +139,40 @@ public class KeyValueFile implements KeyValueResource {
 		if (!dirty) {
 			return true;
 		}
+		if (autoCommit) {
+			return commitChanges();
+		} else {
+			return true;
+		}
+	}
+	
+	public boolean remove(String key) {
+		return remove(key, true);
+	}
+
+	public boolean remove(String key, boolean autoCommit) {
+		if (!isWritable()) {
+			throw new IllegalStateException(primaryFile+" was opened in readonly mode");
+		}
+		int pos = Arrays.binarySearch(keys, key);
+		if (pos < 0 ) return true;
+		String[] nKeys = new String[keys.length-1];
+		String[] nVals = new String[nKeys.length];
+		System.arraycopy(keys, 0, nKeys, 0, pos);
+		System.arraycopy(values, 0, nVals, 0, pos);
+		System.arraycopy(keys, pos+1, nKeys, pos, nKeys.length-pos);
+		System.arraycopy(values, pos+1, nVals, pos, nVals.length-pos);
+		keys = nKeys;
+		values = nVals;
+		
+		if (autoCommit) {
+			return commitChanges();
+		}
+		return true;
+	}
+	
+
+	public boolean commitChanges() {
 		return write(secondaryFile) && write(primaryFile);
 	}
 
@@ -204,5 +242,9 @@ public class KeyValueFile implements KeyValueResource {
 	private boolean isDynamic() {
 		return (flags & FLAG_DYNAMIC) == FLAG_DYNAMIC;
 	}
-	
+
+	public List listKeys() {
+		return Arrays.asList(keys);
+	}
+
 }

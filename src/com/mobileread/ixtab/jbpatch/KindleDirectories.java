@@ -37,7 +37,7 @@ public class KindleDirectories {
 		private final File targetDir;
 		private final ShutdownStatus shutdown = new ShutdownStatus();
 		private final Map knownFiles = new HashMap();
-		private final FilenameFilter fileFilter = new JBPatchFilter();
+		private final FilenameFilter fileFilter = new PatchRepository.FilenamesFilter(true);
 		
 		private boolean targetWasOkLastTime = true;
 		
@@ -266,20 +266,4 @@ public class KindleDirectories {
 			}
 		}
 	}
-
-	private static class JBPatchFilter implements FilenameFilter {
-
-		public boolean accept(File dir, String name) {
-			if (name.equals(PatcherConfiguration.CONFIGFILE_NAME)) {
-				return true;
-			}
-			if (name.endsWith(PatcherConfiguration.PATCH_EXTENSION_STANDALONE) || name.endsWith(PatcherConfiguration.PATCH_EXTENSION_JARRED)) {
-				if (PatcherConfiguration.checkForWrongCharacters(name) == null) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-	};
 }

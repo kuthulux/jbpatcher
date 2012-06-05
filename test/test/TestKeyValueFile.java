@@ -76,6 +76,12 @@ public class TestKeyValueFile extends TestCase {
 		assertEquals("B", kvf.getValue("b"));
 		assertEquals("C\nlb1\nlb2", kvf.getValue("c"));
 		assertEquals("X\nlb1\nlb2", kvf.getValue("bla"));
+		
+		assertTrue(kvf.remove("inexistent"));
+		assertTrue(kvf.remove("b"));
+		assertTrue(kvf.remove("a"));
+		assertTrue(kvf.remove("c"));
+		assertEquals(1, kvf.listKeys().size());
 	}
 	
 }
