@@ -15,14 +15,25 @@ import serp.bytecode.Instruction;
 
 import com.amazon.agui.swing.ConfirmationDialog;
 import com.amazon.kindle.content.catalog.CatalogEntry;
-import com.mobileread.ixtab.jbpatch.Descriptor;
+import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.jbpatch.PatchMetadata;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class PasswordPatch extends Patch {
 
-	public static final String MD5_OPENITEMACTION_510 = "4fb5c0bc58d97807f3c589452f0c26a6";
-	public static final String MD5_OPENDETAILSACTION_510 = "689382577ea0cd5e8bb4c452c4f0fcb9";
-	public static final String MD5_DETAILVIEW_510 = "43b9d37a3eabb49728ef2021ff3a9e31";
+	private static final String CLASS_DETAILVIEW = "com.amazon.kindle.swing.DetailView";
+	private static final String CLASS_OPENDETAILSACTION = "com.amazon.kindle.home.action.OpenDetailsAction";
+	private static final String CLASS_OPENITEMACTION = "com.amazon.kindle.home.action.OpenItemAction";
+
+	public static final String MD5_OPENITEMACTION_510_BEFORE = "4fb5c0bc58d97807f3c589452f0c26a6";
+	public static final String MD5_OPENDETAILSACTION_510_BEFORE = "689382577ea0cd5e8bb4c452c4f0fcb9";
+	public static final String MD5_DETAILVIEW_510_BEFORE = "43b9d37a3eabb49728ef2021ff3a9e31";
+
+	public static final String MD5_OPENITEMACTION_510_AFTER = "3e2085590a40ff1644dd0d10b3ef3e43";
+	public static final String MD5_OPENDETAILSACTION_510_AFTER = "a1e3a1e7b65058b4047de07d2b94e572";
+	public static final String MD5_DETAILVIEW_510_AFTER = "13975eac8c19e963fd3ccc57434bfee8";
 
 	private static PasswordPatch instance;
 
@@ -32,17 +43,20 @@ public class PasswordPatch extends Patch {
 		instance = this;
 	}
 
-	protected Descriptor[] getDescriptors() {
-		return new Descriptor[] {
-				new Descriptor("com.amazon.kindle.home.action.OpenItemAction",
-						new String[] { MD5_OPENITEMACTION_510 }),
-				new Descriptor(
-						"com.amazon.kindle.home.action.OpenDetailsAction",
-						new String[] { MD5_OPENDETAILSACTION_510 }),
-				new Descriptor("com.amazon.kindle.swing.DetailView",
-						new String[] { MD5_DETAILVIEW_510 }),
+	public String getPatchName() {
+		return "Password protection";
+	}
 
-		};
+	protected int getPatchVersion() {
+		return 20120605;
+	}
+
+	public PatchMetadata getMetadata() {
+		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);
+		pd.withClass(new PatchableClass(CLASS_DETAILVIEW).withChecksums(MD5_DETAILVIEW_510_BEFORE, MD5_DETAILVIEW_510_AFTER));
+		pd.withClass(new PatchableClass(CLASS_OPENDETAILSACTION).withChecksums(MD5_OPENDETAILSACTION_510_BEFORE, MD5_OPENDETAILSACTION_510_AFTER));
+		pd.withClass(new PatchableClass(CLASS_OPENITEMACTION).withChecksums(MD5_OPENITEMACTION_510_BEFORE, MD5_OPENITEMACTION_510_AFTER));
+		return new PatchMetadata(this).withDevice(pd);
 	}
 
 	public Permission[] getRequiredPermissions() {
@@ -54,17 +68,17 @@ public class PasswordPatch extends Patch {
 	}
 
 	static String getResource(String key) {
-		return instance.get(key);
+		return instance.localize(key);
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
-		if (md5.equals(MD5_OPENITEMACTION_510)) {
+		if (md5.equals(MD5_OPENITEMACTION_510_BEFORE)) {
 			return patchItemAction510(clazz);
 		}
-		if (md5.equals(MD5_OPENDETAILSACTION_510)) {
+		if (md5.equals(MD5_OPENDETAILSACTION_510_BEFORE)) {
 			return patchDetailsAction510(clazz);
 		}
-		if (md5.equals(MD5_DETAILVIEW_510)) {
+		if (md5.equals(MD5_DETAILVIEW_510_BEFORE)) {
 			return patchDetailView510(clazz);
 		}
 		return "Unexpected error: unknown MD5 " + md5;

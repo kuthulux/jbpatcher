@@ -15,19 +15,33 @@ import serp.bytecode.Instruction;
 import serp.bytecode.LocalVariable;
 
 import com.amazon.kindle.kindlet.internal.KindletExecutionException;
-import com.mobileread.ixtab.jbpatch.Descriptor;
+import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.jbpatch.PatchMetadata;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class DevCertInjectPatch extends Patch {
 
 	private static final String KEYSTORE_DIRECTORY = "/var/local/java/keystore/";
 	private static final String KEYSTORE_FILE = "developer.keystore";
-	public static final String MD5_B510 = "ec7e6cba592cdfdb1bdaf3fd7ae6f613";
 
-	protected Descriptor[] getDescriptors() {
-		return new Descriptor[] { new Descriptor(
-				"com.amazon.kindle.kindlet.internal.security.b",
-				new String[] { MD5_B510 }), };
+	private static final String CLASS = "com.amazon.kindle.kindlet.internal.security.b";
+	private static final String MD5_BEFORE = "ec7e6cba592cdfdb1bdaf3fd7ae6f613";
+	private static final String MD5_AFTER = "b1ea6c018cbddb9fde405e3947e612f5";
+
+	public String getPatchName() {
+		return "Inject Developer certificates";
+	}
+
+	protected int getPatchVersion() {
+		return 20120605;
+	}
+
+	public PatchMetadata getMetadata() {
+		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_BEFORE, MD5_AFTER);
+		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049).withClass(pc);
+		return new PatchMetadata(this).withDevice(pd);
 	}
 
 	static DevCertInjectPatch INSTANCE;
@@ -41,7 +55,7 @@ public class DevCertInjectPatch extends Patch {
 	}
 
 	String getResource(String key) {
-		return get(key);
+		return localize(key);
 	}
 
 	public Permission[] getRequiredPermissions() {
@@ -49,7 +63,7 @@ public class DevCertInjectPatch extends Patch {
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
-		if (md5.equals(MD5_B510)) {
+		if (md5.equals(MD5_BEFORE)) {
 			return patchB510(clazz);
 		}
 		return "Unexpected error: unknown MD5 " + md5;

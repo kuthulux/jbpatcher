@@ -11,15 +11,24 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
 import com.amazon.agui.swing.PagingContainer;
-import com.mobileread.ixtab.jbpatch.Descriptor;
+import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.jbpatch.PatchMetadata;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class ScrollbarPatch extends Patch implements AdjustmentListener {
 
 	private static final int SCROLLBAR_WIDTH = 66;
-	private static final String MD5_THEME = "26150e376f27cf44484e788e35af8829";
-	private static final String MD5_PAGINGCONTAINER = "c3b30042a1bbab39b1c5cb33a5603dde";
 	public static ScrollbarPatch INSTANCE;
+
+	private static final String THEME_CLASS = "com.amazon.agui.swing.plaf.kindle.KindleTheme";
+	private static final String THEME_MD5_BEFORE = "26150e376f27cf44484e788e35af8829";
+	private static final String THEME_MD5_AFTER = "e5bc21f8a2cd91b526bdfb0f1bb0391d";
+
+	private static final String PAGINGCONTAINER_CLASS = "com.amazon.agui.swing.PagingContainer";
+	private static final String PAGINGCONTAINER_MD5_BEFORE = "c3b30042a1bbab39b1c5cb33a5603dde";
+	private static final String PAGINGCONTAINER_MD5_AFTER = "31e20abf2204ea67363f09d2384a2957";
 
 	public ScrollbarPatch() {
 		synchronized (ScrollbarPatch.class) {
@@ -29,16 +38,23 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 		}
 	}
 
-	protected Descriptor[] getDescriptors() {
-		return new Descriptor[] {
-				new Descriptor("com.amazon.agui.swing.plaf.kindle.KindleTheme",
-						new String[] { MD5_THEME }),
-				new Descriptor("com.amazon.agui.swing.PagingContainer",
-						new String[] { MD5_PAGINGCONTAINER }) };
+	public String getPatchName() {
+		return "Usable scrollbars";
+	}
+
+	protected int getPatchVersion() {
+		return 20120605;
+	}
+
+	public PatchMetadata getMetadata() {
+		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);
+		pd.withClass(new PatchableClass(THEME_CLASS).withChecksums(THEME_MD5_BEFORE, THEME_MD5_AFTER));
+		pd.withClass(new PatchableClass(PAGINGCONTAINER_CLASS).withChecksums(PAGINGCONTAINER_MD5_BEFORE, PAGINGCONTAINER_MD5_AFTER));
+		return new PatchMetadata(this).withDevice(pd);
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
-		if (md5.equals(MD5_THEME)) {
+		if (md5.equals(THEME_MD5_BEFORE)) {
 			patchTheme167(clazz);
 			patchTheme212(clazz);
 		} else {

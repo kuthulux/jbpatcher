@@ -10,7 +10,7 @@ import serp.bytecode.Code;
 import serp.bytecode.Project;
 
 import com.mobileread.ixtab.jbpatch.Patch;
-import com.mobileread.ixtab.patch.ads.NoAdsPatch;
+import com.mobileread.ixtab.patch.NoAdsPatch;
 import com.mobileread.ixtab.patch.hyphenation.HyphenationPatch;
 import com.mobileread.ixtab.patch.margins.MarginsPatch;
 

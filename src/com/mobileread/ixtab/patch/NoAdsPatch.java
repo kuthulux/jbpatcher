@@ -1,42 +1,63 @@
 package com.mobileread.ixtab.patch;
 
-import serp.bytecode.BCClass;
-import serp.bytecode.BCMethod;
-import serp.bytecode.Code;
+import java.io.File;
+import java.io.FilePermission;
+import java.security.Permission;
 
-import com.mobileread.ixtab.jbpatch.Descriptor;
+import serp.bytecode.BCClass;
+import serp.bytecode.Code;
+import serp.bytecode.ConstantInstruction;
+
+import com.mobileread.ixtab.jbpatch.KindleDevice;
+import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.jbpatch.PatchMetadata;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class NoAdsPatch extends Patch {
 
-	private static final String MD5_HOMEBOOKLET = "83836d8792099cdf7c2dac9866ae845d";
-	private static final String MD5_IMAGEBANNER = "34253b8581da00581fb0d13d43ec9f39";
-	private static final String MD5_ADMANAGERIMPL = "c1c94a1e2924c89baac9ad0811589d07";
 
-	protected Descriptor[] getDescriptors() {
-		return new Descriptor[] {
-		// new Descriptor("com.amazon.kindle.home.HomeBooklet", new String[]
-		// {MD5_HOMEBOOKLET}),
-		// new Descriptor("com.amazon.kindle.home.view.browse.ImageBanner", new
-		// String[] {MD5_IMAGEBANNER}),
-		new Descriptor("com.amazon.kindle.restricted.ad.manager.AdManagerImpl",
-				new String[] { MD5_ADMANAGERIMPL }), };
+	private static final String ADS_FOLDER = "/var/local/adunits";
+	
+	private static final String CLASS = "com.amazon.kindle.restricted.ad.manager.AdManagerImpl";
+	public static final String MD5_ADMANAGERIMPL_BEFORE = "c1c94a1e2924c89baac9ad0811589d07";
+	private static final String MD5_ADMANAGERIMPL_AFTER = "ef65c12bd004ebfebb59a64595f0753e";
+
+	public String getPatchName() {
+		return "Enable all rotations";
 	}
+
+	protected int getPatchVersion() {
+		return 20120605;
+	}
+
+	public PatchMetadata getMetadata() {
+		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_ADMANAGERIMPL_BEFORE, MD5_ADMANAGERIMPL_AFTER);
+		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049).withClass(pc);
+		return new PatchMetadata(this).withDevice(pd);
+	}
+
+	
+	public Permission[] getRequiredPermissions() {
+		return new Permission[] {
+				new FilePermission(ADS_FOLDER, "read,delete"),
+				new FilePermission(ADS_FOLDER+"/-", "read,delete"),
+		};
+	}
+
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
-		if (md5.equals(MD5_HOMEBOOKLET)) {
-			patchHomeBooklet(clazz);
-		} else if (md5.equals(MD5_IMAGEBANNER)) {
-			patchImageBanner(clazz);
-		} else if (md5.equals(MD5_ADMANAGERIMPL)) {
-			patchAdManagerImpl(clazz);
+		if (md5.equals(MD5_ADMANAGERIMPL_BEFORE)) {
+			return patchAdManagerImpl(clazz);
 		}
-		return null;
+		return "Unexpected error: unknown MD5 "+md5;
 	}
 
-	private void patchAdManagerImpl(BCClass clazz) {
-		BCMethod m = clazz.getDeclaredMethod("m");
-		Code c = m.getCode(false);
+	private String patchAdManagerImpl(BCClass clazz) throws Throwable {
+		// make the UI (home screen) believe that there are no ads:
+		// always return false in m()
+		Code c = clazz.getDeclaredMethod("m").getCode(false);
 		c.beforeFirst();
 		c.constant().setValue(false);
 		for (int i = 0; i < 7; ++i) {
@@ -45,48 +66,43 @@ public class NoAdsPatch extends Patch {
 		}
 		c.calculateMaxLocals();
 		c.calculateMaxStack();
+		
+		// on instantiation, delete /var/local/adunits if it exists
+		c = clazz.getDeclaredMethod("<init>").getCode(false);
+		c.before(2);
+		c.invokestatic().setMethod(NoAdsPatch.class.getMethod("onAdManagerInstantiated", new Class[0]));
+		
+		// just in case: reverse load/unload logic of method c(),
+		// i.e. make it behave like method l().
+		c = clazz.getDeclaredMethod("c").getCode(false);
+		c.before(20);
+		((ConstantInstruction)c.next()).setValue("screensaver");
+		c.before(24);
+		((ConstantInstruction)c.next()).setValue("ad_screensaver");
+		return null;
 	}
 
-	private void patchHomeBooklet(BCClass clazz) {
-		BCMethod m = clazz.getDeclaredMethod("D",
-				new String[] { "com.amazon.kindle.ad.event.AdEvent" });
-		Code c = m.getCode(false);
-		c.beforeFirst();
-		for (int i = 0; i < 35; ++i) {
-			c.next();
-			c.remove();
+	public static void onAdManagerInstantiated() {
+		// This accounts for the method of manually touching
+		// /var/local/adunits as a file (instead of a directory).
+		try {
+			deleteRecursively(new File(ADS_FOLDER), false);
+		} catch (Throwable t) {
+			t.printStackTrace(Log.INSTANCE);
 		}
-		c.calculateMaxLocals();
-		c.calculateMaxStack();
 	}
 
-	private void patchImageBanner(BCClass clazz) {
-		patchGetPreferredSize(clazz);
-		patchPaintComponent(clazz);
-	}
-
-	private void patchGetPreferredSize(BCClass clazz) {
-		BCMethod m = clazz.getDeclaredMethod("getPreferredSize");
-		Code c = m.getCode(false);
-		c.before(4);
-		for (int i = 0; i < 74; ++i) {
-			c.next();
-			c.remove();
+	private static void deleteRecursively(File dir, boolean deleteIfIsFile) {
+		if (dir.exists()) {
+			if (dir.isDirectory()) {
+				File[] files = dir.listFiles();
+				for (int i=0; i < files.length; ++i) {
+					deleteRecursively(files[i], true);
+				}
+				dir.delete();
+			} else if (deleteIfIsFile) {
+				dir.delete();
+			}
 		}
-		c.calculateMaxLocals();
-		c.calculateMaxStack();
 	}
-
-	private void patchPaintComponent(BCClass clazz) {
-		BCMethod m = clazz.getDeclaredMethod("paintComponent");
-		Code c = m.getCode(false);
-		c.beforeFirst();
-		for (int i = 0; i < 153; ++i) {
-			c.next();
-			c.remove();
-		}
-		c.calculateMaxLocals();
-		c.calculateMaxStack();
-	}
-
 }

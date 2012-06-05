@@ -3,15 +3,30 @@ package com.mobileread.ixtab.patch;
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
-import com.mobileread.ixtab.jbpatch.Descriptor;
+import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.jbpatch.PatchMetadata;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class AllRotationsPatch extends Patch {
 
-	protected Descriptor[] getDescriptors() {
-		return new Descriptor[] { new Descriptor(
-				"com.amazon.kindle.restricted.device.impl.ScreenRotationServiceImpl",
-				new String[] { "ee50633a567ab87e2521df075d5fd9db" }) };
+	private static final String CLASS = "com.amazon.kindle.restricted.device.impl.ScreenRotationServiceImpl";
+	private static final String MD5_BEFORE = "ee50633a567ab87e2521df075d5fd9db";
+	private static final String MD5_AFTER = "c72c7094a534cefc440b792363024b7f";
+
+	public String getPatchName() {
+		return "Enable all rotations";
+	}
+
+	protected int getPatchVersion() {
+		return 20120605;
+	}
+
+	public PatchMetadata getMetadata() {
+		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_BEFORE, MD5_AFTER);
+		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049).withClass(pc);
+		return new PatchMetadata(this).withDevice(pd);
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {

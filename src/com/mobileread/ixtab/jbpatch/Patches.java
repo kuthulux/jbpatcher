@@ -16,6 +16,8 @@ import java.util.TreeMap;
 import serp.bytecode.BCClass;
 import serp.bytecode.Project;
 
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 import com.mobileread.ixtab.jbpatch.builtin.DeviceInfoPatch;
 
 public class Patches {
@@ -42,34 +44,46 @@ public class Patches {
 	}
 
 	private static void add(Patch patch) {
-		Descriptor[] descriptors = validateDescriptors(patch);
-		for (int i = 0; i < descriptors.length; ++i) {
-			registerForDescriptor(patch, descriptors[i]);
+		PatchableDevice device = validateDevice(patch.metadata().supportedDevices);
+		if (device == null) {
+			log("E: "+patch.id()+ " does not support current device "+KindleDevice.THIS_DEVICE);
+			return;
 		}
-		if (descriptors.length > 0) {
-			int special = PatchPolicy.register(patch);
-			if (special > 0) {
-				log("I: "+ patch.id()+" has been granted "+ special+" additional permission"+(special==1? "":"s")+" on request");
+		List classes = device.supportedClasses;
+		
+		if (classes != null) {
+			for (int i= 0; i < classes.size(); ++i) {
+				PatchableClass clazz = (PatchableClass) classes.get(i);
+				registerForClass(clazz, patch);
+			}
+			int permissions = PatchPolicy.register(patch);
+			if (permissions > 0) {
+				log("I: Patch "+patch.id()+" has been granted "+ permissions+" additional permission"+(permissions==1? "":"s")+" on request");
 			}
 		}
 	}
 
-	private static Descriptor[] validateDescriptors(Patch patch) {
-		Descriptor[] d = patch.descriptors();
-		if (d == null || d.length == 0) {
-			log("W: " + patch.id()
-					+ " not considered because it does not provide descriptors");
-			return new Descriptor[0];
+	private static PatchableDevice validateDevice(List supportedDevices) {
+		if (supportedDevices == null) {
+			return null;
 		}
-		return d;
+		for (int i = 0; i < supportedDevices.size(); ++i) {
+			PatchableDevice supported = (PatchableDevice) supportedDevices.get(i);
+			if (KindleDevice.THIS_DEVICE.equals(supported.device)) {
+				return supported;
+			}
+		}
+		return null;
 	}
 
-	private static void registerForDescriptor(Patch patch, Descriptor d) {
-		List handlers = getNonNullList(d.className);
+	private static void registerForClass(PatchableClass pclass, Patch patch) {
+		String className = pclass.className;
+		List handlers = getNonNullList(className);
 		handlers.add(patch);
-		log("I: " + patch.id() + " registered for " + d.className);
+		log("I: " + patch.id() + " registered for " + className);
 		++available;
 	}
+
 
 	private static List getNonNullList(String className) {
 		List list = (List) patches.get(className);
@@ -86,16 +100,19 @@ public class Patches {
 			String id = file.getName();
 			try {
 				Patch p = null;
+				String shortId = null;
 				if (id.endsWith(PatcherConfiguration.PATCH_EXTENSION_STANDALONE)) {
+					shortId = id.substring(0, id.length() - PatcherConfiguration.PATCH_EXTENSION_STANDALONE.length());
 					p = instantiate(new BufferedInputStream(new FileInputStream(
 							file)), cl, id);
 				} else if (id.endsWith(PatcherConfiguration.PATCH_EXTENSION_JARRED)) {
+					shortId = id.substring(0, id.length() - PatcherConfiguration.PATCH_EXTENSION_JARRED.length());
 					p = PatchContainer.instantiatePatch(file, cl, id);
 				} else {
 					throw new IllegalStateException();
 				}
 				if (p != null) {
-					p.setId(id);
+					p.setId(shortId);
 					add(p);
 				}
 			} catch (Throwable t) {
@@ -173,11 +190,12 @@ public class Patches {
 		}
 		log("jbpatch Patches initializing");
 		initialized = true;
-		if (KindleDevice.FIRMWARE_ID == null) {
+		KindleDevice kindle = KindleDevice.THIS_DEVICE;
+		if (kindle.getDescription() == null) {
 			log("FATAL ERROR: Firmware ID could not be determined.");
 			return;
 		}
-		log("   Kindle firmware version : " + KindleDevice.getFirmwareName());
+		log("   Kindle firmware version : " + kindle.getDescription());
 		log("   jbpatch version         : " + JBPatchMetadata.VERSION);
 		log("");
 		addBuiltins();

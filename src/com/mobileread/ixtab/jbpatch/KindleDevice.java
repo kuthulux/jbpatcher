@@ -7,29 +7,16 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public final class KindleDevice {
+	
+	/* The order of the declarations in this file is somewhat strange.
+	 * This is due to the order that classes are initialized. In other
+	 * words: if you change the order here, you might get weird exceptions.
+	 */
 	private static final String VERSION_FILENAME = "/etc/version.txt";
 	
-	public static final String KT_510_1557760049 = "4d14b7af911080e6a073121eb3262e54";
+	private static final String MD5_KT_510_1557760049 = "4d14b7af911080e6a073121eb3262e54";
 	
-	private static Map buildFirmwareMap() {
-		Map map = new TreeMap();
-		map.put(KT_510_1557760049, "Kindle 5.1.0 (1557760049)");
-		return map;
-	}
-	
-	public static String getFirmwareName() {
-		String result = (String) firmwareMap.get(FIRMWARE_ID);
-		if (result == null) {
-			result = "UNKNOWN FIRMWARE WITH INTERNAL ID "+FIRMWARE_ID;
-		}
-		return result;
-	}
-	
-	private static final Map firmwareMap = buildFirmwareMap();
-
-	public static final String FIRMWARE_ID = getVersion();
-	
-	private static String getVersion() {
+	private static String getVersionMd5() {
 		/* The Amazon logic to determine the version seems to use the native
 		 * libraries liblab126utilsjni and liblab126utils, to determine the
 		 * "revision" of the Kindle from /etc/version.txt. Without having
@@ -64,4 +51,53 @@ public final class KindleDevice {
 		return md5;
 	}
 
+	private static Map buildFirmwareMap() {
+		Map map = new TreeMap();
+		map.put(MD5_KT_510_1557760049, "Kindle 5.1.0 (1557760049)");
+		return map;
+	}
+	
+	private static final Map md5Map = buildFirmwareMap();
+	
+	public static KindleDevice THIS_DEVICE = new KindleDevice(getVersionMd5());
+
+	public static final KindleDevice KT_510_1557760049 = new KindleDevice(MD5_KT_510_1557760049);
+	
+	private final String md5;
+	private final String description;
+	
+	private KindleDevice(String md5) {
+		this.md5 = md5;
+		this.description = (String) md5Map.get(md5);
+	}
+
+	public String getDescription() {
+		return description;
+	}
+	
+	public String getSafeDescription() {
+		return description != null ? description : "UNKNOWN FIRMWARE WITH ID "+md5;
+	}
+
+	public String toString() {
+		return getSafeDescription();
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		KindleDevice other = (KindleDevice) obj;
+		if (md5 == null) {
+			if (other.md5 != null)
+				return false;
+		} else if (!md5.equals(other.md5))
+			return false;
+		return true;
+	}
+
+	
 }

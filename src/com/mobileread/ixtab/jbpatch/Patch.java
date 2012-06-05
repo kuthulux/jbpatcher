@@ -5,6 +5,9 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.security.Permission;
 
+import com.mobileread.ixtab.jbpatch.conf.KeyValueResource;
+import com.mobileread.ixtab.jbpatch.conf.PatchResource;
+
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 import serp.bytecode.Instruction;
@@ -24,6 +27,11 @@ import serp.bytecode.Project;
  */
 public abstract class Patch {
 
+	public static final int RESOURCE_REQUIREMENT_NONE = 0;
+	public static final int RESOURCE_REQUIREMENT_LOCALIZATION = 1;
+	public static final int RESOURCE_REQUIREMENT_CONFIGURATION_STATIC = 2;
+	public static final int RESOURCE_REQUIREMENT_CONFIGURATION_DYNAMIC = 4;
+	
 	/*
 	 * ***********************************************************************
 	 * This is what you need to implement, and a few methods which may come in
@@ -31,12 +39,16 @@ public abstract class Patch {
 	 * ***********************************************************************
 	 */
 
+	public int getResourceRequirements() {
+		return RESOURCE_REQUIREMENT_NONE;
+	}
+	
 	/**
 	 * Returns an array of descriptors informing about which versions of which
 	 * classes this patch can handle. For a patch to be considered valid, this
 	 * must return a non-empty array.
 	 */
-	protected abstract Descriptor[] getDescriptors();
+//	protected abstract Descriptor[] getDescriptors();
 
 	/**
 	 * Actually applies the patch to the given input. The class definition can
@@ -73,6 +85,15 @@ public abstract class Patch {
 	protected URL getResourcesUrl() {
 		return null;
 	}
+	
+	private KeyValueResource localizationResource = null;
+	
+	private void initResources() {
+		int req = getResourceRequirements();
+		if ((req & RESOURCE_REQUIREMENT_LOCALIZATION) == RESOURCE_REQUIREMENT_LOCALIZATION) {
+			localizationResource = PatchResource.getResource(this, PatchResource.TYPE_LOCALIZATION);
+		}
+	}
 
 	/**
 	 * Returns a localized parameterization item. This will simply return the
@@ -88,10 +109,12 @@ public abstract class Patch {
 	 * @return the localized value for the given key, or the key itself if no
 	 *         value is found
 	 */
-	protected final String get(String key) {
-		if (i18n == null)
+	public final String localize(String key) {
+		if (localizationResource != null) {
+			return localizationResource.getValue(key);
+		} else {
 			return key;
-		return i18n.i18n(key);
+		}
 	}
 
 	/**
@@ -106,14 +129,14 @@ public abstract class Patch {
 		return null;
 	}
 
-	Descriptor[] descriptors() {
-		if (descriptors == null) {
-			descriptors = getDescriptors();
-		}
-		return descriptors;
-	}
+//	Descriptor[] descriptors() {
+//		if (descriptors == null) {
+//			descriptors = getDescriptors();
+//		}
+//		return descriptors;
+//	}
 
-	protected final String id() {
+	public final String id() {
 		return id;
 	}
 
@@ -133,6 +156,12 @@ public abstract class Patch {
 			}
 		}
 	}
+	
+	protected String md5(BCClass clazz) {
+		return MD5.getMd5String(clazz.toByteArray());
+	}
+
+
 
 	/*
 	 * *********************************************************************
@@ -143,22 +172,16 @@ public abstract class Patch {
 
 	public final byte[] patch(String className, byte[] input, final String md5) {
 		try {
-			Descriptor descriptor = getDescriptorFor(className);
-			if (descriptor.matches(md5)) {
-				BCClass clazz = loadBCClass(input);
-				// log("D: about to invoke "+id+" for "+className);
-				String error = perform(md5, clazz);
-				if (error == null) {
-					log("I: " + id+ " applied to "+ className + " (" + md5 + ")");
-					Patches.reportActive();
-					return clazz.toByteArray();
-				}
-				log("E: " + id + " failed to patch " + className + " (" + md5
-						+ "): " + error);
-			} else {
-				log("W: " + id + " does not support MD5 " + md5 + " for "
-						+ className);
+			BCClass clazz = loadBCClass(input);
+			// log("D: about to invoke "+id+" for "+className);
+			String error = perform(md5, clazz);
+			if (error == null) {
+				log("I: " + id+ " applied to "+ className + " (" + md5 + ")");
+				Patches.reportActive();
+				return clazz.toByteArray();
 			}
+			log("E: " + id + " failed to patch " + className + " (" + md5
+					+ "): " + error);
 		} catch (Throwable t) {
 			log("E: " + id + " failed to patch " + className + " (" + md5
 					+ "):");
@@ -167,36 +190,51 @@ public abstract class Patch {
 		return input;
 	}
 
-	private Descriptor getDescriptorFor(String className) {
-		Descriptor[] descriptors = descriptors();
-		if (descriptors != null && descriptors.length != 0) {
-			for (int i = 0; i < descriptors.length; ++i) {
-				if (className.equals(descriptors[i].className)) {
-					return descriptors[i];
-				}
-			}
-		}
-		return null;
-	}
-
 	static BCClass loadBCClass(byte[] input) {
 		return new Project().loadClass(new ByteArrayInputStream(input));
 	}
 
 	private String id;
-	private Descriptor[] descriptors;
-	private I18n i18n;
 
 	final Patch setId(String id) {
 		this.id = id;
 
-		URL translations = getResourcesUrl();
-		if (translations != null) {
-			i18n = new I18n(translations);
-		}
+		initResources();
 
 		// for chaining
 		return this;
+	}
+
+	protected abstract int getPatchVersion();
+
+	private String description = null;
+	
+	public final String description() {
+		if (description == null) {
+			description = getDescription();
+		}
+		return description;
+	}
+
+	protected final String getDescription() {
+		return null;
+	}
+	
+	public abstract String getPatchName();
+	
+	public abstract PatchMetadata getMetadata();
+
+	private PatchMetadata metadata = null;
+	
+	public final PatchMetadata metadata() {
+		if (metadata == null) {
+			metadata = getMetadata();
+		}
+		return metadata;
+	}
+	
+	public final Descriptor[] getDescriptors() {
+		return null;
 	}
 
 }

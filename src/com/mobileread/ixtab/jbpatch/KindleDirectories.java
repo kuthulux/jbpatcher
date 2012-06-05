@@ -80,7 +80,8 @@ public class KindleDirectories {
 			if (sourceFiles == null)
 				return;
 			
-			removeObsoleteFilesInTarget(sourceFiles, targetFiles);
+			// FIXME
+			//removeObsoleteFilesInTarget(sourceFiles, targetFiles);
 			for (int i = 0; i < sourceFiles.length; ++i) {
 				File f = sourceFiles[i];
 				if (!f.isFile() || !f.canRead()) {

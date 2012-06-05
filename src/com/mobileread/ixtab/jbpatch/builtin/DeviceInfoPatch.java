@@ -5,20 +5,36 @@ import java.text.MessageFormat;
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
-import com.mobileread.ixtab.jbpatch.Descriptor;
 import com.mobileread.ixtab.jbpatch.JBPatchMetadata;
+import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.jbpatch.PatchMetadata;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 import com.mobileread.ixtab.jbpatch.Patches;
 
 public class DeviceInfoPatch extends Patch {
 
-	protected Descriptor[] getDescriptors() {
-		return new Descriptor[] {
-			new Descriptor("com.amazon.kindle.settings.dialog.DeviceInfoDialog", new String[] {"9f393118b394eaa5ffcca7f44e47db2b"})	
-		};
+	private static final String MD5_KT510_IN = "9f393118b394eaa5ffcca7f44e47db2b";
+	private static final String MD5_KT510_OUT= "d12a6b3fdcd14d39a8beb9cd4436e6cc";
+	private static final String DIALOG_CLASS = "com.amazon.kindle.settings.dialog.DeviceInfoDialog";
+
+
+	public String getPatchName() {
+		return "JBPatch Version Info";
+	}
+
+	protected int getPatchVersion() {
+		return 20120605;
 	}
 
 
+	public PatchMetadata getMetadata() {
+		PatchableClass pc = new PatchableClass(DIALOG_CLASS).withChecksums(MD5_KT510_IN, MD5_KT510_OUT);
+		PatchableDevice pd = new PatchableDevice(KindleDevice.THIS_DEVICE).withClass(pc);
+		return new PatchMetadata(this).withDevice(pd);
+	}
+	
 	public String perform(String md5, BCClass clazz) throws Throwable {
 		Code c = clazz.getDeclaredMethods("h")[0].getCode(false);
 		
@@ -47,4 +63,6 @@ public class DeviceInfoPatch extends Patch {
 		}
 		return MessageFormat.format(pattern, arguments);
 	}
+
+
 }

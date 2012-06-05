@@ -28,11 +28,12 @@
 		<move file="jbpatch.jar" todir="dist/src/install" overwrite="true" failonerror="true"/>
 		
 		<!-- patches referenced from distribution CONFIG.TXT -->
-		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/ixtab_legal-5.1.0.jbpatch"/>
-		<copy file="bin/com/mobileread/ixtab/patch/AllRotationsPatch.class" tofile="dist/opt/jbpatch/ixtab_rotation-5.1.0.jbpatch"/>
-		<copy file="bin/com/mobileread/ixtab/patch/ScrollbarPatch.class" tofile="dist/opt/jbpatch/ixtab_scrollbar-5.1.0.jbpatch"/>
+		<copy file="bin/com/mobileread/ixtab/patch/AllRotationsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.AllRotationsPatch.class"/>
+		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.LegalIllegalPatch.class"/>
+		<copy file="bin/com/mobileread/ixtab/patch/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.NoAdsPatch.class"/>
+		<copy file="bin/com/mobileread/ixtab/patch/ScrollbarPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.ScrollbarPatch.class"/>
 		
-		<jar destfile="dist/opt/jbpatch/ixtab_tts-5.1.0.zip">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.tts.jar">
             <manifest>
             	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.tts.TTSPatch"/>
 			</manifest>
@@ -44,7 +45,7 @@
         	</fileset>
 		</jar>
 		
-		<jar destfile="dist/opt/jbpatch/ixtab_devcertinject-5.1.0.zip">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.devcert.jar">
             <manifest>
             	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.devcert.DevCertInjectPatch"/>
 			</manifest>
@@ -57,7 +58,7 @@
         	</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/ixtab_passwd-5.1.0.zip">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.passwd.jar">
             <manifest>
             	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.passwd.PasswordPatch"/>
 			</manifest>
@@ -69,7 +70,7 @@
         	</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/ixtab_margins-5.1.0.zip">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.margins.jar">
             <manifest>
             	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.margins.MarginsPatch"/>
 			</manifest>
@@ -81,6 +82,7 @@
         	</fileset>
 		</jar>
 
+		<!--
 		<jar destfile="dist/opt/jbpatch/ixtab_hyphenation-5.1.0.zip">
             <manifest>
             	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.hyphenation.HyphenationPatch"/>
@@ -89,6 +91,6 @@
             	<include name="com/mobileread/ixtab/patch/hyphenation/*.class"/>
         	</fileset>
 		</jar>
-
+		-->
 	</target>
 </project>
