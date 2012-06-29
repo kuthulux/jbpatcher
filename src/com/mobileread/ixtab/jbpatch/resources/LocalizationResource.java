@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatch.conf;
+package com.mobileread.ixtab.jbpatch.resources;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,12 +35,13 @@ public class LocalizationResource implements KeyValueResource {
 	
 	private final KeyValueFile[] localeFiles;
 
-	LocalizationResource(String baseName) {
+	LocalizationResource(ResourceMapProvider provider) {
 		KeyValueFile[] max = new KeyValueFile[localeCodes.length];
 		int count =0;
+		String baseFileName = provider.id();
 		for (int i=0; i < max.length; ++i) {
-			File file = PatchResource.determineFile(baseName, localeCodes[i]);
-			if (file.exists() && file.isFile() && file.canRead()) {
+			File file = JBPatchResource.useFile(baseFileName, localeCodes[i], provider);
+			if (file != null) {
 				KeyValueFile loaded = new KeyValueFile(KeyValueFile.FLAG_NONE, file, null);
 				max[count++] = loaded;
 			}

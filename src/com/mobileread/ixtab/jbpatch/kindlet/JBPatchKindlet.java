@@ -81,6 +81,7 @@ public class JBPatchKindlet extends SuicidalKindlet {
 
 	private void setCentralMessage(String centered) {
 		centerLabel.setText(centered);
+		context.getRootContainer().validate();
 	}
 
 	

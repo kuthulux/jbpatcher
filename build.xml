@@ -3,6 +3,7 @@
 
 	<property file="build.properties"/>
 	
+	
 	<path id="classpath">
 		<fileset dir="lib" includes="**/*.jar" />
 	</path>
@@ -69,7 +70,8 @@
 		<!-- patches referenced from distribution CONFIG.TXT -->
 		<copy file="bin/com/mobileread/ixtab/patch/AllRotationsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.AllRotationsPatch.class"/>
 		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.LegalIllegalPatch.class"/>
-		<copy file="bin/com/mobileread/ixtab/patch/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.NoAdsPatch.class"/>
+		<!-- temporarily disabled, FIXME! -->
+		<!-- <copy file="bin/com/mobileread/ixtab/patch/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.NoAdsPatch.class"/> -->
 		<copy file="bin/com/mobileread/ixtab/patch/ScrollbarPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.ScrollbarPatch.class"/>
 		
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.tts.jar">
@@ -132,4 +134,22 @@
 		</jar>
 		-->
 	</target>
+	
+	<!-- This is a private (and moving) target which will probably only work on ixtab's computer.
+	It's really only meant to simplify my life.
+	-->
+	
+	<property name="dev-ssh-id" value="/home/ixtab/.ssh/id_kindle"/>
+
+    <target name="dev" depends="dist">
+        <exec command="scp -i ${dev-ssh-id} dist/src/install/jbpatch.jar root@kindle:/opt/amazon/ebook/lib/jbpatch.jar"/>
+        <exec command="scp -i ${dev-ssh-id} ${product.filename}.azw2 root@kindle:/mnt/us/documents/"/>
+        <exec command="scp -i ${dev-ssh-id} -r dist/opt/jbpatch root@kindle:/mnt/us/opt/"/>
+    	
+    </target>
+
+    <target name="dev+restart" depends="dev">
+        <exec command="ssh -i ${dev-ssh-id} root@kindle '/sbin/restart framework &amp;'"/>
+    </target>
+
 </project>

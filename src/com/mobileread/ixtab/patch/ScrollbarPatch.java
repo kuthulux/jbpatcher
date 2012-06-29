@@ -3,6 +3,7 @@ package com.mobileread.ixtab.patch;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.lang.ref.WeakReference;
+import java.util.TreeMap;
 import java.util.WeakHashMap;
 
 import javax.swing.JScrollBar;
@@ -38,20 +39,30 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 		}
 	}
 
-	public String getPatchName() {
-		return "Usable scrollbars";
-	}
-
-	protected int getPatchVersion() {
+	public int getVersion() {
 		return 20120605;
 	}
-
+	
 	public PatchMetadata getMetadata() {
 		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);
 		pd.withClass(new PatchableClass(THEME_CLASS).withChecksums(THEME_MD5_BEFORE, THEME_MD5_AFTER));
 		pd.withClass(new PatchableClass(PAGINGCONTAINER_CLASS).withChecksums(PAGINGCONTAINER_MD5_BEFORE, PAGINGCONTAINER_MD5_AFTER));
 		return new PatchMetadata(this).withDevice(pd);
 	}
+
+	public TreeMap getDefaultResourceMap(String id) {
+		if (RESOURCE_ID_ENGLISH.equals(id)) {
+			TreeMap map = new TreeMap();
+			map.put(RESOURCE_JBPATCH_PATCHNAME, "Make scrollbars usable");
+			return map;
+		} else if ("de".equals(id)) {
+			TreeMap map = new TreeMap();
+			map.put(RESOURCE_JBPATCH_PATCHNAME, "Scrollbars benutzbar machen");
+			return map;
+		}
+		return null;
+	}
+
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
 		if (md5.equals(THEME_MD5_BEFORE)) {

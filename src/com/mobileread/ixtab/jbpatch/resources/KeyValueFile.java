@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatch.conf;
+package com.mobileread.ixtab.jbpatch.resources;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -205,7 +205,7 @@ public class KeyValueFile implements KeyValueResource {
 		return true;
 	}
 
-	private String escape(String in) {
+	static String escape(String in) {
 		StringTokenizer tokens = new StringTokenizer(in, "\n");
 		int count = tokens.countTokens();
 		if (count == 1) {

@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatch.conf;
+package com.mobileread.ixtab.jbpatch.resources;
 
 public interface KeyValueResource {
 	public String getValue(String key);

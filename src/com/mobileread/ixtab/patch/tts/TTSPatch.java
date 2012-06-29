@@ -3,6 +3,7 @@ package com.mobileread.ixtab.patch.tts;
 import java.net.URL;
 import java.security.AllPermission;
 import java.security.Permission;
+import java.util.TreeMap;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -19,6 +20,9 @@ import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 public class TTSPatch extends Patch {
 
 	public static final int PATCH_VERSION = 20120605;
+
+	private static final String KEY_MALE = "male";
+	private static final String KEY_FEMALE = "female";
 
 	public static final String MD5_EN = "c92781d51b2ad1951e2c6d5279afe6d5";
 	public static final String MD5_DE = "cd9041a3105c19c2de0f61dd012872d3";
@@ -40,11 +44,72 @@ public class TTSPatch extends Patch {
 	private static final String[] ORIGINAL_PT = new String[] { "Femino",
 			"Masculino" };
 
-	public String getPatchName() {
-		return "Enable Text-to-Speech";
+	public TreeMap getDefaultResourceMap(String id) {
+		if ("en".equals(id)) {
+			return getEnglishResources();
+		} else if ("de".equals(id)) {
+			return getGermanResources();
+		} else if ("es".equals(id)) {
+			return getSpanishResources();
+		} else if ("fr".equals(id)) {
+			return getFrenchResources();
+		} else if ("it".equals(id)) {
+			return getItalianResources();
+		} else if ("pt".equals(id)) {
+			return getPortugueseResources();
+		}
+		return null;
 	}
 
-	protected int getPatchVersion() {
+	private TreeMap getEnglishResources() {
+		TreeMap m = new TreeMap();
+		m.put(RESOURCE_JBPATCH_PATCHNAME, "Enable Text-to-Speech");
+		m.put(KEY_FEMALE, ORIGINAL_EN[0]);
+		m.put(KEY_MALE, ORIGINAL_EN[0]);
+		return m;
+	}
+
+	private TreeMap getGermanResources() {
+		TreeMap m = new TreeMap();
+		m.put(RESOURCE_JBPATCH_PATCHNAME, "Text-to-Speech einschalten");
+		m.put(KEY_FEMALE, "Weiblich (englisch)");
+		m.put(KEY_MALE, "Männlich (englisch)");
+		return m;
+	}
+
+	private TreeMap getSpanishResources() {
+		TreeMap m = new TreeMap();
+		m.put(RESOURCE_JBPATCH_PATCHNAME, "Activar Texto a voz");
+		m.put(KEY_FEMALE, "Femenina (inglés)");
+		m.put(KEY_MALE, "Masculina (inglés)");
+		return m;
+	}
+
+	private TreeMap getFrenchResources() {
+		TreeMap m = new TreeMap();
+		m.put(RESOURCE_JBPATCH_PATCHNAME, "Activer la synth\350se vocale");
+		m.put(KEY_FEMALE, "Femme (anglais)");
+		m.put(KEY_MALE, "Homme (anglais)");
+		return m;
+	}
+
+	private TreeMap getItalianResources() {
+		TreeMap m = new TreeMap();
+		m.put(RESOURCE_JBPATCH_PATCHNAME, "Attiva Da Testo a Voce");
+		m.put(KEY_FEMALE, "Femminile (inglese)");
+		m.put(KEY_MALE, "Maschile (inglese)");
+		return m;
+	}
+
+	private TreeMap getPortugueseResources() {
+		TreeMap m = new TreeMap();
+		m.put(RESOURCE_JBPATCH_PATCHNAME, "Ativar texto-voz");
+		m.put(KEY_FEMALE, "Femino (inglês)");
+		m.put(KEY_MALE, "Masculino (inglês)");
+		return m;
+	}
+
+	public int getVersion() {
 		return PATCH_VERSION;
 	}
 
@@ -76,10 +141,6 @@ public class TTSPatch extends Patch {
 		return new Permission[] { new AllPermission() };
 	}
 
-	public int getResourceRequirements() {
-		return RESOURCE_REQUIREMENT_LOCALIZATION;
-	}
-
 	protected URL getResourcesUrl() {
 		return getClass().getResource("/ttspatch.txt");
 	}
@@ -103,8 +164,8 @@ public class TTSPatch extends Patch {
 	}
 
 	private String patchDescription(BCClass clazz, String[] original) {
-		String[] replacement = new String[] { localize("female"),
-				localize("male") };
+		String[] replacement = new String[] { localize(KEY_FEMALE),
+				localize(KEY_MALE) };
 		Entry[] entries = clazz.getPool().getEntries();
 		for (int e = 0; e < entries.length; ++e) {
 			if (entries[e] instanceof UTF8Entry) {

@@ -1,5 +1,7 @@
 package com.mobileread.ixtab.patch;
 
+import java.util.TreeMap;
+
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
@@ -15,13 +17,24 @@ public class AllRotationsPatch extends Patch {
 	private static final String MD5_BEFORE = "ee50633a567ab87e2521df075d5fd9db";
 	private static final String MD5_AFTER = "c72c7094a534cefc440b792363024b7f";
 
-	public String getPatchName() {
-		return "Enable all rotations";
-	}
 
-	protected int getPatchVersion() {
+	public int getVersion() {
 		return 20120605;
 	}
+
+	public TreeMap getDefaultResourceMap(String resourceType) {
+		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
+			TreeMap map = new TreeMap();
+			map.put(RESOURCE_JBPATCH_PATCHNAME, "Enable all rotations");
+			return map;
+		} else if ("de".equals(resourceType)) {
+				TreeMap map = new TreeMap();
+				map.put(RESOURCE_JBPATCH_PATCHNAME, "Alle Bildschirmrotationen aktivieren");
+				return map;
+		}
+		return null;
+	}
+
 
 	public PatchMetadata getMetadata() {
 		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_BEFORE, MD5_AFTER);

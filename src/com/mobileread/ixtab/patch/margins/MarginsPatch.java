@@ -1,6 +1,7 @@
 package com.mobileread.ixtab.patch.margins;
 
 import java.net.URL;
+import java.util.TreeMap;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -36,13 +37,20 @@ public class MarginsPatch extends Patch {
 		instance = this;
 	}
 
-	public String getPatchName() {
-		return "Modify Margins";
-	}
-
-	protected int getPatchVersion() {
+	public int getVersion() {
 		return 20120605;
 	}
+	
+	public TreeMap getDefaultResourceMap(String resourceType) {
+		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
+			TreeMap map = new TreeMap();
+			map.put(RESOURCE_JBPATCH_PATCHNAME, "Modify Reader Margins");
+			return map;
+		}
+		return null;
+	}
+
+
 
 	public PatchMetadata getMetadata() {
 		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);

@@ -1,6 +1,7 @@
 package com.mobileread.ixtab.jbpatch.builtin;
 
 import java.text.MessageFormat;
+import java.util.TreeMap;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -20,11 +21,7 @@ public class DeviceInfoPatch extends Patch {
 	private static final String DIALOG_CLASS = "com.amazon.kindle.settings.dialog.DeviceInfoDialog";
 
 
-	public String getPatchName() {
-		return "JBPatch Version Info";
-	}
-
-	protected int getPatchVersion() {
+	public int getVersion() {
 		return 20120605;
 	}
 
@@ -62,6 +59,12 @@ public class DeviceInfoPatch extends Patch {
 			arguments = copy;
 		}
 		return MessageFormat.format(pattern, arguments);
+	}
+
+
+	public TreeMap getDefaultResourceMap(String resourceId) {
+		// because this is a very special case, we can indeed afford to return null here.
+		return null;
 	}
 
 

@@ -5,6 +5,7 @@ import java.net.URL;
 import java.security.AllPermission;
 import java.security.Permission;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -43,13 +44,20 @@ public class PasswordPatch extends Patch {
 		instance = this;
 	}
 
-	public String getPatchName() {
-		return "Password protection";
-	}
-
-	protected int getPatchVersion() {
+	public int getVersion() {
 		return 20120605;
 	}
+	
+	public TreeMap getDefaultResourceMap(String resourceType) {
+		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
+			TreeMap map = new TreeMap();
+			map.put(RESOURCE_JBPATCH_PATCHNAME, "Password-protect Items");
+			return map;
+		}
+		return null;
+	}
+
+
 
 	public PatchMetadata getMetadata() {
 		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);

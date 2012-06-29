@@ -3,7 +3,10 @@ package com.mobileread.ixtab.jbpatch;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mobileread.ixtab.jbpatch.resources.ResourceMapProvider;
+
 public final class PatchMetadata {
+	
 
 	public final Patch patch;
 	public final List supportedDevices = new ArrayList();
@@ -11,7 +14,7 @@ public final class PatchMetadata {
 	public PatchMetadata(Patch patch) {
 		this.patch = patch;
 	}
-		
+	
 	/* for chaining */
 	public PatchMetadata withDevice(PatchableDevice dev) 
 	{
@@ -61,4 +64,5 @@ public final class PatchMetadata {
 			this.afterPatch = afterPatch;
 		}
 	}
+
 }

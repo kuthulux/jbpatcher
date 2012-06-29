@@ -1,5 +1,7 @@
 package com.mobileread.ixtab.patch;
 
+import java.util.TreeMap;
+
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
@@ -17,12 +19,17 @@ public class LegalIllegalPatch extends Patch {
 	private static final String MD5_BEFORE = "34d10aa93fe2252675a986e88a54ebb8";
 	private static final String MD5_AFTER = "d2a85c3a36d54b190714761a39912e6b";
 
-	public String getPatchName() {
-		return "Modify Legal Information";
+	public int getVersion() {
+		return 20120605;
 	}
 
-	protected int getPatchVersion() {
-		return 20120605;
+	public TreeMap getDefaultResourceMap(String resourceType) {
+		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
+			TreeMap map = new TreeMap();
+			map.put(RESOURCE_JBPATCH_PATCHNAME, "Modify Legal Information");
+			return map;
+		}
+		return null;
 	}
 
 	public PatchMetadata getMetadata() {
@@ -68,4 +75,5 @@ public class LegalIllegalPatch extends Patch {
         c.calculateMaxStack();
 		return null;
 	}
+
 }

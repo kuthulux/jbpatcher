@@ -4,9 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.security.Permission;
+import java.util.TreeMap;
 
-import com.mobileread.ixtab.jbpatch.conf.KeyValueResource;
-import com.mobileread.ixtab.jbpatch.conf.PatchResource;
+import com.mobileread.ixtab.jbpatch.resources.JBPatchResource;
+import com.mobileread.ixtab.jbpatch.resources.KeyValueResource;
+import com.mobileread.ixtab.jbpatch.resources.ResourceMapProvider;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -25,13 +27,8 @@ import serp.bytecode.Project;
  * 
  * @author ixtab
  */
-public abstract class Patch implements Comparable {
+public abstract class Patch implements Comparable, ResourceMapProvider {
 
-	public static final int RESOURCE_REQUIREMENT_NONE = 0;
-	public static final int RESOURCE_REQUIREMENT_LOCALIZATION = 1;
-	public static final int RESOURCE_REQUIREMENT_CONFIGURATION_STATIC = 2;
-	public static final int RESOURCE_REQUIREMENT_CONFIGURATION_DYNAMIC = 4;
-	
 	/*
 	 * ***********************************************************************
 	 * This is what you need to implement, and a few methods which may come in
@@ -39,16 +36,22 @@ public abstract class Patch implements Comparable {
 	 * ***********************************************************************
 	 */
 
-	public int getResourceRequirements() {
-		return RESOURCE_REQUIREMENT_NONE;
-	}
-	
+	public static final String RESOURCE_JBPATCH_PATCHNAME = "jbpatch.name";
+
 	/**
-	 * Returns an array of descriptors informing about which versions of which
-	 * classes this patch can handle. For a patch to be considered valid, this
-	 * must return a non-empty array.
+	 * Returns the version of this patch. This MUST be an integer representing
+	 * the date on which the patch was released: for instance, the value
+	 * 20120902 stands for September 2, 2012.
+	 * 
+	 * This method of versioning has the advantage of being unambiguous. The
+	 * disadvantage is that (in theory) it is impossible to release two versions
+	 * on the same calendar day, and that a distinction between minor and major
+	 * updates may be more difficult. Still, it is the most sensible versioning
+	 * scheme that I have encountered so far, and so you're stuck with it. :p
+	 * 
+	 * @return the patch version, according to the standard format.
 	 */
-//	protected abstract Descriptor[] getDescriptors();
+	public abstract int getVersion();
 
 	/**
 	 * Actually applies the patch to the given input. The class definition can
@@ -71,53 +74,6 @@ public abstract class Patch implements Comparable {
 	public abstract String perform(String md5, BCClass clazz) throws Throwable;
 
 	/**
-	 * If the patch is parameterizable and/or localizable, it should return here
-	 * the URL where the parameters can be found. The recommended procedure is
-	 * to provide a URL which is INSIDE the same jar as the patch itself, in
-	 * order to keep patches "self-contained". You could also use references to
-	 * files (but note that future versions of jbpatch might be installed in a
-	 * different directory), or even online URLs. I strongly recommend the first
-	 * variant.
-	 * 
-	 * @return a URL pointing to the resources, if the patch is parameterizable,
-	 *         or <tt>null</tt> otherwise
-	 */
-	protected URL getResourcesUrl() {
-		return null;
-	}
-	
-	private KeyValueResource localizationResource = null;
-	
-	private void initResources() {
-		int req = getResourceRequirements();
-		if ((req & RESOURCE_REQUIREMENT_LOCALIZATION) == RESOURCE_REQUIREMENT_LOCALIZATION) {
-			localizationResource = PatchResource.getResource(this, PatchResource.TYPE_LOCALIZATION);
-		}
-	}
-
-	/**
-	 * Returns a localized parameterization item. This will simply return the
-	 * parameter given if you do not override the getResourcesUrl() method.
-	 * Otherwise, it will return the value associated with the given key,
-	 * according to the lookup procedure explained in DEVELOPERS.txt. In short,
-	 * lookup is attempted from "most specific" to "most general" locale,
-	 * defaulting to english if no other value is found. If no value is found
-	 * even for english, then the key is returned literally.
-	 * 
-	 * @param key
-	 *            the name of the parameter to look up
-	 * @return the localized value for the given key, or the key itself if no
-	 *         value is found
-	 */
-	public final String localize(String key) {
-		if (localizationResource != null) {
-			return localizationResource.getValue(key);
-		} else {
-			return key;
-		}
-	}
-
-	/**
 	 * Returns all additional permissions that the patch requires in order to
 	 * function properly. Override this method if your patch needs additional
 	 * permissions. Be as specific as you can: if you only need to read/write to
@@ -129,12 +85,35 @@ public abstract class Patch implements Comparable {
 		return null;
 	}
 
-//	Descriptor[] descriptors() {
-//		if (descriptors == null) {
-//			descriptors = getDescriptors();
-//		}
-//		return descriptors;
-//	}
+	public final String localize(String key) {
+		if (localizationResource != null) {
+			return localizationResource.getValue(key);
+		} else {
+			return key;
+		}
+	}
+
+	/**
+	 * If the patch is parameterizable and/or localizable, it should return here
+	 * the URL where the parameters can be found. The recommended procedure is
+	 * to provide a URL which is INSIDE the same jar as the patch itself, in
+	 * order to keep patches "self-contained". You could also use references to
+	 * files (but note that future versions of jbpatch might be installed in a
+	 * different directory), or even online URLs. I strongly recommend the first
+	 * variant.
+	 * 
+	 * @deprecated
+	 * 
+	 * @return a URL pointing to the resources, if the patch is parameterizable,
+	 *         or <tt>null</tt> otherwise
+	 */
+	protected URL getResourcesUrl() {
+		return null;
+	}
+
+	public final int getResourceRequirements() {
+		throw new UnsupportedOperationException();
+	}
 
 	public final String id() {
 		return id;
@@ -156,12 +135,10 @@ public abstract class Patch implements Comparable {
 			}
 		}
 	}
-	
+
 	protected String md5(BCClass clazz) {
 		return MD5.getMd5String(clazz.toByteArray());
 	}
-
-
 
 	/*
 	 * *********************************************************************
@@ -170,13 +147,20 @@ public abstract class Patch implements Comparable {
 	 * *********************************************************************
 	 */
 
+	private KeyValueResource localizationResource = null;
+
+	private void initResources() {
+		localizationResource = JBPatchResource.getResource(this,
+				JBPatchResource.TYPE_LOCALIZATION);
+	}
+
 	public final byte[] patch(String className, byte[] input, final String md5) {
 		try {
 			BCClass clazz = loadBCClass(input);
 			// log("D: about to invoke "+id+" for "+className);
 			String error = perform(md5, clazz);
 			if (error == null) {
-				log("I: " + id+ " applied to "+ className + " (" + md5 + ")");
+				log("I: " + id + " applied to " + className + " (" + md5 + ")");
 				Patches.reportActive();
 				return clazz.toByteArray();
 			}
@@ -205,10 +189,8 @@ public abstract class Patch implements Comparable {
 		return this;
 	}
 
-	protected abstract int getPatchVersion();
-
 	private String description = null;
-	
+
 	public final String description() {
 		if (description == null) {
 			description = getDescription();
@@ -219,26 +201,24 @@ public abstract class Patch implements Comparable {
 	protected final String getDescription() {
 		return null;
 	}
-	
-	public abstract String getPatchName();
-	
+
+	public final String getTitle() {
+		return localizationResource.getValue(RESOURCE_JBPATCH_PATCHNAME);
+	}
+
 	public abstract PatchMetadata getMetadata();
 
 	private PatchMetadata metadata = null;
-	
+
 	public final PatchMetadata metadata() {
 		if (metadata == null) {
 			metadata = getMetadata();
 		}
 		return metadata;
 	}
-	
-	public final Descriptor[] getDescriptors() {
-		return null;
-	}
 
 	public int compareTo(Object arg0) {
-		Patch other = (Patch)arg0;
+		Patch other = (Patch) arg0;
 		return id().compareTo(other.id());
 	}
 

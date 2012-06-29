@@ -70,8 +70,8 @@ public final class PatchContainer {
 			throw new IllegalArgumentException("Main class \""+patchClassName+"\" in patch \""+potentialId+" \" must not be in default package");
 		}
 		String pkgName = patchClassName.substring(0, lastDotIndex);
-		if (!(pkgName + PatcherConfiguration.PATCH_EXTENSION_JARRED).equals(potentialId)) {
-			Log.INSTANCE.println("W: "+potentialId+" deployed with mismatching file name, ignoring: Expected "+(pkgName+PatcherConfiguration.PATCH_EXTENSION_JARRED)+", but filename is "+ potentialId);
+		if (!(pkgName + PatchRepository.EXTENSION_PATCH_JARRED).equals(potentialId)) {
+			Log.INSTANCE.println("W: "+potentialId+" deployed with mismatching file name, ignoring: Expected "+(pkgName+PatchRepository.EXTENSION_PATCH_JARRED)+", but filename is "+ potentialId);
 			return false;
 		}
 		return true;

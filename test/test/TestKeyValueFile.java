@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import com.mobileread.ixtab.jbpatch.conf.KeyValueFile;
+import com.mobileread.ixtab.jbpatch.resources.KeyValueFile;
 
 import junit.framework.TestCase;
 

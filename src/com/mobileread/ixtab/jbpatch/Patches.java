@@ -104,12 +104,12 @@ public class Patches {
 			try {
 				Patch p = null;
 				String shortId = null;
-				if (id.endsWith(PatcherConfiguration.PATCH_EXTENSION_STANDALONE)) {
-					shortId = id.substring(0, id.length() - PatcherConfiguration.PATCH_EXTENSION_STANDALONE.length());
+				if (id.endsWith(PatchRepository.EXTENSION_PATCH_STANDALONE)) {
+					shortId = id.substring(0, id.length() - PatchRepository.EXTENSION_PATCH_STANDALONE.length());
 					p = instantiate(new BufferedInputStream(new FileInputStream(
 							file)), cl, id);
-				} else if (id.endsWith(PatcherConfiguration.PATCH_EXTENSION_JARRED)) {
-					shortId = id.substring(0, id.length() - PatcherConfiguration.PATCH_EXTENSION_JARRED.length());
+				} else if (id.endsWith(PatchRepository.EXTENSION_PATCH_JARRED)) {
+					shortId = id.substring(0, id.length() - PatchRepository.EXTENSION_PATCH_JARRED.length());
 					p = PatchContainer.instantiatePatch(file, cl, id);
 				} else {
 					throw new IllegalStateException();
@@ -164,8 +164,8 @@ public class Patches {
 			log("E: "+name+" is not a valid patch.");
 			return null;
 		}
-		if (!containerFileName.equals(c.getName() + PatcherConfiguration.PATCH_EXTENSION_STANDALONE )) {
-			log("W: "+c.getName()+" deployed with mismatching file name, ignoring: Expected "+c.getName()+ PatcherConfiguration.PATCH_EXTENSION_STANDALONE + ", but filename is "+containerFileName);
+		if (!containerFileName.equals(c.getName() + PatchRepository.EXTENSION_PATCH_STANDALONE)) {
+			log("W: "+c.getName()+" deployed with mismatching file name, ignoring: Expected "+c.getName()+ PatchRepository.EXTENSION_PATCH_STANDALONE + ", but filename is "+containerFileName);
 			return null;
 		}
 		return (Patch) c.newInstance();
@@ -226,18 +226,11 @@ public class Patches {
 			Map.Entry entry = (Entry) it.next();
 			File file = (File) entry.getKey();
 			Boolean active = (Boolean) entry.getValue();
-			log("FIXME: about to register "+file+" with status "+active);
 			Patch patch = add(file, active.booleanValue());
 			if (patch != null) {
 				repo.addAvailable(patch, active);
 			}
 		}
-//		List fileList = new PatcherConfiguration().getActiveFiles();
-//		Iterator files = fileList.iterator();
-//		while (files.hasNext()) {
-//			File file = (File) files.next();
-//			add(file);
-//		}
 	}
 
 	static void reportActive() {

@@ -7,7 +7,7 @@ import java.io.PrintStream;
 public final class Log {
 	
 	private Log() {}
-	private static final String LOGFILE = "/tmp/jbpatch.log";
+	public static final String LOGFILE = "/tmp/jbpatch.log";
 	
 	public static final PrintStream INSTANCE = instantiate();
 

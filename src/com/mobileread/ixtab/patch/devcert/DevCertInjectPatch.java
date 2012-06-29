@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.security.Permission;
+import java.util.TreeMap;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -30,12 +31,17 @@ public class DevCertInjectPatch extends Patch {
 	private static final String MD5_BEFORE = "ec7e6cba592cdfdb1bdaf3fd7ae6f613";
 	private static final String MD5_AFTER = "b1ea6c018cbddb9fde405e3947e612f5";
 
-	public String getPatchName() {
-		return "Inject Developer certificates";
+	public int getVersion() {
+		return 20120605;
 	}
 
-	protected int getPatchVersion() {
-		return 20120605;
+	public TreeMap getDefaultResourceMap(String resourceType) {
+		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
+			TreeMap map = new TreeMap();
+			map.put(RESOURCE_JBPATCH_PATCHNAME, "Install mobileread Developer Certificates");
+			return map;
+		}
+		return null;
 	}
 
 	public PatchMetadata getMetadata() {

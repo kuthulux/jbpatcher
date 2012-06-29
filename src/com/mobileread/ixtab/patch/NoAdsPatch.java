@@ -3,6 +3,7 @@ package com.mobileread.ixtab.patch;
 import java.io.File;
 import java.io.FilePermission;
 import java.security.Permission;
+import java.util.TreeMap;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -24,13 +25,20 @@ public class NoAdsPatch extends Patch {
 	public static final String MD5_ADMANAGERIMPL_BEFORE = "c1c94a1e2924c89baac9ad0811589d07";
 	private static final String MD5_ADMANAGERIMPL_AFTER = "ef65c12bd004ebfebb59a64595f0753e";
 
-	public String getPatchName() {
-		return "Enable all rotations";
-	}
-
-	protected int getPatchVersion() {
+	public int getVersion() {
 		return 20120605;
 	}
+	
+	public TreeMap getDefaultResourceMap(String resourceType) {
+		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
+			TreeMap map = new TreeMap();
+			map.put(RESOURCE_JBPATCH_PATCHNAME, "Disable Special Offers");
+			return map;
+		}
+		return null;
+	}
+
+
 
 	public PatchMetadata getMetadata() {
 		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_ADMANAGERIMPL_BEFORE, MD5_ADMANAGERIMPL_AFTER);
