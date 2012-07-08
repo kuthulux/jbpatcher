@@ -24,15 +24,13 @@ public class KeyValueFile implements KeyValueResource {
 	private String[] keys;
 	private String[] values;
 	private final File primaryFile;
-	private final File secondaryFile;
 	private final int flags;
 	
 	private long lastTimestamp = 0;
 	
 	
-	public KeyValueFile(int flags, File primary, File secondary) {
+	public KeyValueFile(int flags, File primary) {
 		this.primaryFile = primary;
-		this.secondaryFile = secondary;
 		this.flags = flags;
 		reload();
 	}
@@ -173,7 +171,7 @@ public class KeyValueFile implements KeyValueResource {
 	
 
 	public boolean commitChanges() {
-		return write(secondaryFile) && write(primaryFile);
+		return write(primaryFile);
 	}
 
 	private boolean write(File file) {

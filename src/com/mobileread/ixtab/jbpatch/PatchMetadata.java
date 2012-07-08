@@ -3,8 +3,6 @@ package com.mobileread.ixtab.jbpatch;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mobileread.ixtab.jbpatch.resources.ResourceMapProvider;
-
 public final class PatchMetadata {
 	
 

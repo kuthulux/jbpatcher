@@ -40,9 +40,9 @@ public class LocalizationResource implements KeyValueResource {
 		int count =0;
 		String baseFileName = provider.id();
 		for (int i=0; i < max.length; ++i) {
-			File file = JBPatchResource.useFile(baseFileName, localeCodes[i], provider);
+			File file = JBPatchResource.loadOrCreateFile(baseFileName, localeCodes[i], provider);
 			if (file != null) {
-				KeyValueFile loaded = new KeyValueFile(KeyValueFile.FLAG_NONE, file, null);
+				KeyValueFile loaded = new KeyValueFile(KeyValueFile.FLAG_NONE, file);
 				max[count++] = loaded;
 			}
 		}

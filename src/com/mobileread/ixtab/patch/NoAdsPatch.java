@@ -3,7 +3,7 @@ package com.mobileread.ixtab.patch;
 import java.io.File;
 import java.io.FilePermission;
 import java.security.Permission;
-import java.util.TreeMap;
+import java.util.Map;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -26,16 +26,13 @@ public class NoAdsPatch extends Patch {
 	private static final String MD5_ADMANAGERIMPL_AFTER = "ef65c12bd004ebfebb59a64595f0753e";
 
 	public int getVersion() {
-		return 20120605;
+		return 20120708;
 	}
 	
-	public TreeMap getDefaultResourceMap(String resourceType) {
-		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
-			TreeMap map = new TreeMap();
-			map.put(RESOURCE_JBPATCH_PATCHNAME, "Disable Special Offers");
-			return map;
+	protected void initLocalization(String locale, Map map) {
+		if (RESOURCE_ID_ENGLISH.equals(locale)) {
+			map.put(I18N_JBPATCH_NAME, "Disable Special Offers");
 		}
-		return null;
 	}
 
 

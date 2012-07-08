@@ -27,7 +27,7 @@ public class TestKeyValueFile extends TestCase {
 	}
 	
 	public void testReadOnly() throws Exception {
-		KeyValueFile kvf = new KeyValueFile(KeyValueFile.FLAG_NONE, primary, null);
+		KeyValueFile kvf = new KeyValueFile(KeyValueFile.FLAG_NONE, primary);
 		assertEquals("A", kvf.getValue("a"));
 		assertEquals("B", kvf.getValue("b"));
 		assertEquals("C\nlb1\nlb2", kvf.getValue("c"));
@@ -44,7 +44,7 @@ public class TestKeyValueFile extends TestCase {
 	}
 	
 	public void testDynamicReadOnly() throws Exception {
-		KeyValueFile kvf = new KeyValueFile(KeyValueFile.FLAG_DYNAMIC, primary, null);
+		KeyValueFile kvf = new KeyValueFile(KeyValueFile.FLAG_DYNAMIC, primary);
 		assertEquals("A", kvf.getValue("a"));
 		assertEquals("B", kvf.getValue("b"));
 		assertEquals("C\nlb1\nlb2", kvf.getValue("c"));
@@ -62,7 +62,7 @@ public class TestKeyValueFile extends TestCase {
 	}
 	
 	public void testReadWrite() throws Exception {
-		KeyValueFile kvf = new KeyValueFile(KeyValueFile.FLAG_WRITABLE, primary, null);
+		KeyValueFile kvf = new KeyValueFile(KeyValueFile.FLAG_WRITABLE, primary);
 		assertEquals("A", kvf.getValue("a"));
 		assertEquals("B", kvf.getValue("b"));
 		assertEquals("C\nlb1\nlb2", kvf.getValue("c"));

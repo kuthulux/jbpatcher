@@ -1,5 +1,6 @@
 bin/
 *.jar
+*.azw2
 dist/*.bin
 dist/*.zip
 dist/src/install/*.jar

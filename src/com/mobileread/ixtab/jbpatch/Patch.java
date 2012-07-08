@@ -2,41 +2,68 @@ package com.mobileread.ixtab.jbpatch;
 
 import java.io.ByteArrayInputStream;
 import java.io.PrintStream;
-import java.net.URL;
 import java.security.Permission;
+import java.util.Map;
 import java.util.TreeMap;
-
-import com.mobileread.ixtab.jbpatch.resources.JBPatchResource;
-import com.mobileread.ixtab.jbpatch.resources.KeyValueResource;
-import com.mobileread.ixtab.jbpatch.resources.ResourceMapProvider;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 import serp.bytecode.Instruction;
 import serp.bytecode.Project;
 
+import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
+import com.mobileread.ixtab.jbpatch.resources.JBPatchResource;
+import com.mobileread.ixtab.jbpatch.resources.KeyValueResource;
+import com.mobileread.ixtab.jbpatch.resources.ResourceMapProvider;
+
 /**
  * A <tt>Patch</tt> is a class that can modify one or more versions of one or
  * more class definitions, before the class definition is actually loaded by the
  * JVM.
  * 
- * <b>IMPORTANT</b>: because of the way the system is designed, a patch must
- * consist of a single file. The effect of this is that inner classes (whether
- * named or anonymous) are not allowed inside patches, because they would result
- * in additional files after compilation.
+ * <b>IMPORTANT</b>: If a patch includes ANY inner classes (named or anonymous),
+ * you <b>MUST</b> create a jar file from it. That is because the system is
+ * expecting each patch to be a single file (either a .class, or a .jar). If you
+ * create a jar, you must include a valid manifest, specifying the "main class"
+ * (the actual patch).
  * 
  * @author ixtab
  */
 public abstract class Patch implements Comparable, ResourceMapProvider {
 
-	/*
-	 * ***********************************************************************
-	 * This is what you need to implement, and a few methods which may come in
-	 * handy.
-	 * ***********************************************************************
+	/**
+	 * Patch name. You <b>MUST</b> provide a localization entry for this key.
 	 */
+	public static final String I18N_JBPATCH_NAME = "jbpatch.name";
 
-	public static final String RESOURCE_JBPATCH_PATCHNAME = "jbpatch.name";
+	/**
+	 * Short patch description. You <b>MUST</b> provide a localization entry for
+	 * this key.
+	 */
+	public static final String I18N_JBPATCH_DESCRIPTION = "jbpatch.description";
+
+	/**
+	 * Initializes the localization for this patch. You should populate the map
+	 * with the default translations you require. Note: You <b>MUST</b> at least
+	 * set the I18N_* keys defined above, for the english locale ("en").
+	 * 
+	 * Everything else is up to you, you can define as many or as few key/value
+	 * pairs as you like, and you can provide defaults for as many or as few
+	 * languages as you want.
+	 * 
+	 * Note that any and all of the values you set here may be overridden by the
+	 * user. This is intended, as it allows for easy localization for additional
+	 * languages.
+	 * 
+	 * @param locale
+	 *            the locale String for the currently considered language. It
+	 *            follows the standard {@link java.util.Locale} conventions.
+	 * @param map
+	 *            the map that should be populated. Of course, every locale will
+	 *            have its own map, so there are no collisions between
+	 *            languages.
+	 */
+	protected abstract void initLocalization(String locale, Map map);
 
 	/**
 	 * Returns the version of this patch. This MUST be an integer representing
@@ -54,24 +81,13 @@ public abstract class Patch implements Comparable, ResourceMapProvider {
 	public abstract int getVersion();
 
 	/**
-	 * Actually applies the patch to the given input. The class definition can
-	 * be altered in whichever way you see fit.
+	 * Returns the metadata about this patch, such as which classes it supports
+	 * on which devices. It is vitally important that the returned information
+	 * is correct, otherwise the patch may simply not be applied.
 	 * 
-	 * @param md5
-	 *            the MD5 sum of the original binary class content. This is
-	 *            guaranteed to be among the supported MD5 values of either
-	 *            descriptor this patch makes available.
-	 * @param clazz
-	 *            the class corresponding to the given MD5 sum.
-	 * @return <b><tt>null</tt></b> if the input class has been
-	 *         <b>successfully</b> modified, and the patch should be applied.
-	 *         Any other string (error message) if the patch should not be
-	 *         applied, for instance because something failed unexpectedly. In
-	 *         the latter case, the message will be logged, and any changes to
-	 *         the class definition are discarded, i.e. the result is the same
-	 *         as if this method had never been invoked.
+	 * @return patch metadata.
 	 */
-	public abstract String perform(String md5, BCClass clazz) throws Throwable;
+	public abstract PatchMetadata getMetadata();
 
 	/**
 	 * Returns all additional permissions that the patch requires in order to
@@ -85,6 +101,64 @@ public abstract class Patch implements Comparable, ResourceMapProvider {
 		return null;
 	}
 
+	/**
+	 * If this patch is configurable, return a ConfigurableSettings object here,
+	 * containing all configurable settings.
+	 * 
+	 * @return <tt>null</tt>, if this patch does not contain configurable
+	 *         settings, or a ConfigurableSettings object otherwise.
+	 */
+	protected ConfigurableSettings initConfigurableSettings() {
+		return null;
+	}
+
+	/**
+	 * Actually applies the patch to the given input. The class definition can
+	 * be altered in whichever way you see fit.
+	 * 
+	 * @param md5
+	 *            the MD5 sum of the original binary class content. This is
+	 *            guaranteed to be among the supported MD5 values, as reported
+	 *            by the patch's metadata.
+	 * @param clazz
+	 *            the class corresponding to the given MD5 sum.
+	 * @return <b><tt>null</tt></b> if the input class has been
+	 *         <b>successfully</b> modified, and the patch should be applied.
+	 *         Any other string (error message) if the patch should not be
+	 *         applied, for instance because something failed unexpectedly. In
+	 *         the latter case, the message will be logged, and any changes to
+	 *         the class definition are discarded, i.e. the result is the same
+	 *         as if this method had never been invoked.
+	 */
+	public abstract String perform(String md5, BCClass clazz) throws Throwable;
+
+	/*
+	 * *********************************************************************
+	 * Below are some methods and fields which you cannot override, but which
+	 * you may find useful.
+	 * *********************************************************************
+	 */
+
+	/**
+	 * Returns the currently configured value for the given key.
+	 * 
+	 * @param key
+	 *            the key to retrieve the value for
+	 * @return the value associated with the key
+	 */
+	protected final String getConfigured(String key) {
+		return configurableSettings.getValue(key);
+	}
+
+	/**
+	 * Returns the localized string for the given key
+	 * 
+	 * @param key
+	 *            the key to retrieve a localized string for
+	 * 
+	 * @return the localized value for the given key, or the key itself if no
+	 *         localization was found
+	 */
 	public final String localize(String key) {
 		if (localizationResource != null) {
 			return localizationResource.getValue(key);
@@ -94,38 +168,27 @@ public abstract class Patch implements Comparable, ResourceMapProvider {
 	}
 
 	/**
-	 * If the patch is parameterizable and/or localizable, it should return here
-	 * the URL where the parameters can be found. The recommended procedure is
-	 * to provide a URL which is INSIDE the same jar as the patch itself, in
-	 * order to keep patches "self-contained". You could also use references to
-	 * files (but note that future versions of jbpatch might be installed in a
-	 * different directory), or even online URLs. I strongly recommend the first
-	 * variant.
-	 * 
-	 * @deprecated
-	 * 
-	 * @return a URL pointing to the resources, if the patch is parameterizable,
-	 *         or <tt>null</tt> otherwise
+	 * The jbpatch logger (logs go to /tmp/jbpatch.log on the Kindle)
 	 */
-	protected URL getResourcesUrl() {
-		return null;
-	}
-
-	public final int getResourceRequirements() {
-		throw new UnsupportedOperationException();
-	}
-
-	public final String id() {
-		return id;
-	}
-
 	protected static final PrintStream logger = Log.INSTANCE;
 
+	/**
+	 * Convenience method to log a single string
+	 * 
+	 * @param message
+	 *            the string to log
+	 */
 	protected static final void log(String message) {
 		logger.println(message);
 	}
 
-	// may be useful for debugging
+	/**
+	 * Convenience method to dump a Serp Code object to the log. Useful while
+	 * developing; do not use in production code, as you will clutter the logs.
+	 * 
+	 * @param code
+	 *            the code fragment to dump
+	 */
 	public static void dump(Code code) {
 		if (code != null) {
 			Instruction[] inss = code.getInstructions();
@@ -136,8 +199,27 @@ public abstract class Patch implements Comparable, ResourceMapProvider {
 		}
 	}
 
-	protected String md5(BCClass clazz) {
+	/**
+	 * Determines the current MD5 sum of a BCClass object. Useful for
+	 * determining the "after patch" values for the metadata.
+	 * 
+	 * @param clazz
+	 *            the class to calculate the MD5 sum for
+	 * @return the MD5 sum for the given class.
+	 */
+	protected final String md5(BCClass clazz) {
 		return MD5.getMd5String(clazz.toByteArray());
+	}
+
+	/**
+	 * Returns the id of the patch. This is either the fully qualified class
+	 * name (for standalone patches), or the fully qualified package name (for
+	 * jarred patches).
+	 * 
+	 * @return id the patch id.
+	 */
+	public final String id() {
+		return id;
 	}
 
 	/*
@@ -148,10 +230,30 @@ public abstract class Patch implements Comparable, ResourceMapProvider {
 	 */
 
 	private KeyValueResource localizationResource = null;
+	private ConfigurableSettings configurableSettings = null;
 
 	private void initResources() {
 		localizationResource = JBPatchResource.getResource(this,
 				JBPatchResource.TYPE_LOCALIZATION);
+		JBPatchResource.getResource(this, JBPatchResource.TYPE_CONFIGURATION);
+	}
+
+	public final TreeMap getDefaultResourceMap(String id) {
+		if (id == RESOURCE_ID_CONFIGURATION) {
+			configurableSettings = initConfigurableSettings();
+			return configurableSettings;
+		} else {
+			TreeMap map = new TreeMap();
+			initLocalization(id, map);
+			if (!map.isEmpty()) {
+				return map;
+			}
+		}
+		return null;
+	}
+
+	public final ConfigurableSettings getConfigurableSettings() {
+		return configurableSettings;
 	}
 
 	public final byte[] patch(String className, byte[] input, final String md5) {
@@ -189,24 +291,13 @@ public abstract class Patch implements Comparable, ResourceMapProvider {
 		return this;
 	}
 
-	private String description = null;
-
-	public final String description() {
-		if (description == null) {
-			description = getDescription();
-		}
-		return description;
+	public final String getName() {
+		return localizationResource.getValue(I18N_JBPATCH_NAME);
 	}
 
-	protected final String getDescription() {
-		return null;
+	public final String getDescription() {
+		return localizationResource.getValue(I18N_JBPATCH_DESCRIPTION);
 	}
-
-	public final String getTitle() {
-		return localizationResource.getValue(RESOURCE_JBPATCH_PATCHNAME);
-	}
-
-	public abstract PatchMetadata getMetadata();
 
 	private PatchMetadata metadata = null;
 

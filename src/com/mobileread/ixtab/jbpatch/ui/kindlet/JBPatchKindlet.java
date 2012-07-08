@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatch.kindlet;
+package com.mobileread.ixtab.jbpatch.ui.kindlet;
 
 import ixtab.jailbreak.Jailbreak;
 import ixtab.jailbreak.SuicidalKindlet;
@@ -47,37 +47,39 @@ public class JBPatchKindlet extends SuicidalKindlet {
 				} catch (Exception e) {};
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						if (jailbreak.isAvailable()) {
-							if (((JBPatchJailbreak)jailbreak).requestPermissions()) {
-								try {
-									Class.forName("com.mobileread.ixtab.jbpatch.PatchRepository");
-									context.getRootContainer().removeAll();
-									JBPatchUI ui = new JBPatchUI(context.getRootContainer());
-									ui.init();
-								} catch (ClassNotFoundException e) {
-									String title = "JBPatch not installed";
-									setCentralMessage(title);
-									String error = "You do not seem to have a working installation of JBPatch. Please install JBPatch before using this program.";
-									KOptionPane.showMessageDialog(context.getRootContainer(), error, title);
-								}
-							} else {
-								String title = "Kindlet Jailbreak Failed";
-								setCentralMessage(title);
-								String error = "The Kindlet Jailbreak failed to obtain all required permissions. Please report this error.";
-								KOptionPane.showMessageDialog(context.getRootContainer(), error, title);
-							}
-						} else {
-							String title = "Kindlet Jailbreak Required";
-							String message = "This application requires the Kindlet Jailbreak to be installed. This is an additional jailbreak that must be installed on top of the Device Jailbreak, in order to allow Kindlets to get the required permissions. Please install the Kindlet Jailbreak before using this application.";
-							setCentralMessage(title);
-							KOptionPane.showMessageDialog(context.getRootContainer(), message, title);
-						}
+						initUiAfterSplash();
 					}
 				});
 			}
 		}.start();
 	}
 
+	private void initUiAfterSplash() {
+		if (jailbreak.isAvailable()) {
+			if (((JBPatchJailbreak)jailbreak).requestPermissions()) {
+				try {
+					Class.forName("com.mobileread.ixtab.jbpatch.PatchRepository");
+					context.getRootContainer().removeAll();
+					new JBPatchUI(context.getRootContainer()).init();
+				} catch (ClassNotFoundException e) {
+					String title = "JBPatch not installed";
+					setCentralMessage(title);
+					String error = "You do not seem to have a working installation of JBPatch. Please install JBPatch before using this program.";
+					KOptionPane.showMessageDialog(context.getRootContainer(), error, title);
+				}
+			} else {
+				String title = "Kindlet Jailbreak Failed";
+				setCentralMessage(title);
+				String error = "The Kindlet Jailbreak failed to obtain all required permissions. Please report this error.";
+				KOptionPane.showMessageDialog(context.getRootContainer(), error, title);
+			}
+		} else {
+			String title = "Kindlet Jailbreak Required";
+			String message = "This application requires the Kindlet Jailbreak to be installed. This is an additional jailbreak that must be installed on top of the Device Jailbreak, in order to allow Kindlets to get the required permissions. Please install the Kindlet Jailbreak before using this application.";
+			setCentralMessage(title);
+			KOptionPane.showMessageDialog(context.getRootContainer(), message, title);
+		}
+	}
 
 	private void setCentralMessage(String centered) {
 		centerLabel.setText(centered);

@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatch.kindlet;
+package com.mobileread.ixtab.jbpatch.ui.kindlet;
 
 import java.awt.Color;
 
@@ -16,7 +16,11 @@ public class Borders {
 			Color.BLACK, 1);
 	public static final Border BLACK1GRAY4 = BorderFactory
 			.createCompoundBorder(BLACK1, GRAY4);
+	public static final Border BLACK1WHITE10 = BorderFactory
+			.createCompoundBorder(BLACK1, WHITE10);
 	public static final Border WHITE3BLACK1GRAY4 = BorderFactory
 			.createCompoundBorder(WHITE3, BLACK1GRAY4);
+	public static final Border WHITE3BLACK1WHITE10 = BorderFactory
+			.createCompoundBorder(WHITE3, BLACK1WHITE10);
 
 }

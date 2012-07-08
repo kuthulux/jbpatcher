@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatch.kindlet;
+package com.mobileread.ixtab.jbpatch.ui.kindlet;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 
 import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.jbpatch.PatchRepository;
 
 class OverviewEntry extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -33,7 +34,7 @@ class OverviewEntry extends JPanel {
 			Object source = e.getSource();
 			if (source instanceof OverviewEntry) {
 				Patch p = ((OverviewEntry) source).patch;
-				DetailsPanel.INSTANCE.displayDetails(p);
+				ConfigurationPanel.INSTANCE.displayDetails(p);
 			}
 		}
 		
@@ -45,7 +46,11 @@ class OverviewEntry extends JPanel {
 			PatchCheckBox source = (PatchCheckBox) e.getSource();
 			Patch p = source.patch;
 			boolean enable = e.getStateChange() == ItemEvent.SELECTED;
-			Log.INSTANCE.println((enable ? "Enabled":"Disabled") +" patch: "+p.getTitle());
+			if (PatchRepository.getInstance().setPatchState(p, enable)) {
+				Log.INSTANCE.println((enable ? "Enabled":"Disabled") +" patch: "+p.getName());
+			} else {
+				Log.INSTANCE.println("FAILED TO " + (enable ? "ENABLE":"DISABLE") +" PATCH: "+p.getName());
+			}
 			updateTitleDisplay(source.title, enable);
 		}
 	};
@@ -70,7 +75,7 @@ class OverviewEntry extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.setBorder(Borders.WHITE3BLACK1GRAY4);
 		
-		this.title = new JLabel(patch.getTitle());
+		this.title = new JLabel(patch.getName());
 		updateTitleDisplay(title, enabled);
 		
 		checkbox = createCheckbox(enabled);

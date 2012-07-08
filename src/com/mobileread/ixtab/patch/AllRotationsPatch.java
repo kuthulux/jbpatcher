@@ -1,6 +1,6 @@
 package com.mobileread.ixtab.patch;
 
-import java.util.TreeMap;
+import java.util.Map;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -17,28 +17,22 @@ public class AllRotationsPatch extends Patch {
 	private static final String MD5_BEFORE = "ee50633a567ab87e2521df075d5fd9db";
 	private static final String MD5_AFTER = "c72c7094a534cefc440b792363024b7f";
 
-
 	public int getVersion() {
-		return 20120605;
+		return 20120708;
 	}
 
-	public TreeMap getDefaultResourceMap(String resourceType) {
-		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
-			TreeMap map = new TreeMap();
-			map.put(RESOURCE_JBPATCH_PATCHNAME, "Enable all rotations");
-			return map;
-		} else if ("de".equals(resourceType)) {
-				TreeMap map = new TreeMap();
-				map.put(RESOURCE_JBPATCH_PATCHNAME, "Alle Bildschirmrotationen aktivieren");
-				return map;
+	protected void initLocalization(String locale, Map map) {
+		if (RESOURCE_ID_ENGLISH.equals(locale)) {
+			map.put(I18N_JBPATCH_NAME, "Enable all rotations");
+			map.put(I18N_JBPATCH_DESCRIPTION, "This patch allows all screen rotations to be used for the Java-based parts of the Kindle Touch UI. Note that it will not affect the browser and other WAF applications.");
 		}
-		return null;
 	}
-
 
 	public PatchMetadata getMetadata() {
-		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_BEFORE, MD5_AFTER);
-		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049).withClass(pc);
+		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_BEFORE,
+				MD5_AFTER);
+		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049)
+				.withClass(pc);
 		return new PatchMetadata(this).withDevice(pd);
 	}
 

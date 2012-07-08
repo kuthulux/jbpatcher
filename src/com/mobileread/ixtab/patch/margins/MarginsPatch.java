@@ -1,7 +1,7 @@
 package com.mobileread.ixtab.patch.margins;
 
 import java.net.URL;
-import java.util.TreeMap;
+import java.util.Map;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -41,13 +41,10 @@ public class MarginsPatch extends Patch {
 		return 20120605;
 	}
 	
-	public TreeMap getDefaultResourceMap(String resourceType) {
-		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
-			TreeMap map = new TreeMap();
-			map.put(RESOURCE_JBPATCH_PATCHNAME, "Modify Reader Margins");
-			return map;
+	protected void initLocalization(String locale, Map map) {
+		if (RESOURCE_ID_ENGLISH.equals(locale)) {
+			map.put(I18N_JBPATCH_NAME, "Modify Reader Margins");
 		}
-		return null;
 	}
 
 

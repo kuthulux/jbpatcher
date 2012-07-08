@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 
 import com.mobileread.ixtab.jbpatch.KindleDirectories;
 import com.mobileread.ixtab.jbpatch.Log;
+import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
 
 public class JBPatchResource {
 	private static final String FILE_EXTENSION = ".txt";
@@ -25,29 +26,46 @@ public class JBPatchResource {
 		switch (resourceType) {
 		case TYPE_LOCALIZATION:
 			return new LocalizationResource(provider);
+		case TYPE_CONFIGURATION:
+			File file = JBPatchResource.loadOrCreateFile(provider.id(), null, provider);
+			ConfigurableSettings resource = provider.getConfigurableSettings();
+			if (resource != null && file != null) {
+				resource.setBackend(new KeyValueFile(KeyValueFile.FLAG_WRITABLE, file));
+			}
+			return resource;
 		}
 		throw new IllegalArgumentException("Unsupported resource type "
 				+ resourceType);
 	}
 
-	static File useFile(String baseName, String qualifier, ResourceMapProvider provider) {
+	static File loadOrCreateFile(String baseName, String qualifier, ResourceMapProvider provider) {
 		String name = KindleDirectories.LOCAL_DIRECTORY + "/" + baseName;
 		if (qualifier != null) {
 			name += FILE_DELIMITER + qualifier;
 		}
 		name += FILE_EXTENSION;
+		
+		Map defaultEntries = null;
+		
+		/* configuration always needed */
+		if (qualifier == null) {
+			defaultEntries = provider.getDefaultResourceMap(qualifier);
+		}
+		
 		File file = new File(name);
 		if (file.exists()) {
 			if (file.isFile() && file.canRead()) {
 				return file;
 			} else {
-				Log.INSTANCE.println("E: "+ file +" is not a file, or unreadable: refusing to try to overwrite it");
+				Log.INSTANCE.println("E: "+ file +" is not a file, or unreadable: refusing to tamper with it");
 				return null;
 			}
 		}
 		
-		Map entries = provider.getDefaultResourceMap(qualifier);
-		if (entries != null && initializeFileFromMap(file, entries)) {
+		if (defaultEntries == null ) {
+			defaultEntries = provider.getDefaultResourceMap(qualifier);
+		}
+		if (defaultEntries != null && initializeFileFromMap(file, defaultEntries)) {
 			return file;
 		}
 		return null;
@@ -65,7 +83,7 @@ public class JBPatchResource {
 				Map.Entry entry = (Entry) entries.next();
 				out.print((String) entry.getKey());
 				out.print("=");
-				out.print(KeyValueFile.escape((String) entry.getValue()));
+				out.print(KeyValueFile.escape(entry.getValue().toString()));
 				out.print("\r\n");
 			}
 			out.flush();

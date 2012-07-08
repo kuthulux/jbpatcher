@@ -1,11 +1,10 @@
 package com.mobileread.ixtab.patch.passwd;
 
 import java.awt.event.ActionEvent;
-import java.net.URL;
 import java.security.AllPermission;
 import java.security.Permission;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -45,34 +44,47 @@ public class PasswordPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120605;
+		return 20120708;
 	}
-	
-	public TreeMap getDefaultResourceMap(String resourceType) {
-		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
-			TreeMap map = new TreeMap();
-			map.put(RESOURCE_JBPATCH_PATCHNAME, "Password-protect Items");
-			return map;
+
+	protected void initLocalization(String locale, Map map) {
+		if (RESOURCE_ID_ENGLISH.equals(locale)) {
+			map.put(I18N_JBPATCH_NAME, "Password-protect Items");
+			map.put(I18N_JBPATCH_DESCRIPTION, "This patch can be used to add a simple password protection for individual items, such as books or applications.");
+			map.put("ok","OK");
+			map.put("cancel","Cancel");
+			map.put("error.title","Error");
+			map.put("error.message","The password database could not be updated. This should not have happened, so please report this error.");
+			map.put("password.enter","Enter Password");
+			map.put("password.set","Set Password");
+			map.put("password.verify","Confirm Password");
+			map.put("item.protected","This item is protected. Please enter the password to gain access.");
+			map.put("item.protecting","Please enter the password to use for protecting this item.");
+			map.put("item.verify","Please confirm the password for protecting the item.");
+			map.put("menu.protect","Protect with a password");
+			map.put("menu.unprotect","Remove password protection");
+			map.put("protected.title","Item protected");
+			map.put("protected.message","Password protection enabled. Subsequent attempts to open this item will require the password.");
+			map.put("unprotected.title","Item unprotected");
+			map.put("unprotected.message","Password protection was disabled for this item.");
+
 		}
-		return null;
 	}
-
-
 
 	public PatchMetadata getMetadata() {
 		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);
-		pd.withClass(new PatchableClass(CLASS_DETAILVIEW).withChecksums(MD5_DETAILVIEW_510_BEFORE, MD5_DETAILVIEW_510_AFTER));
-		pd.withClass(new PatchableClass(CLASS_OPENDETAILSACTION).withChecksums(MD5_OPENDETAILSACTION_510_BEFORE, MD5_OPENDETAILSACTION_510_AFTER));
-		pd.withClass(new PatchableClass(CLASS_OPENITEMACTION).withChecksums(MD5_OPENITEMACTION_510_BEFORE, MD5_OPENITEMACTION_510_AFTER));
+		pd.withClass(new PatchableClass(CLASS_DETAILVIEW).withChecksums(
+				MD5_DETAILVIEW_510_BEFORE, MD5_DETAILVIEW_510_AFTER));
+		pd.withClass(new PatchableClass(CLASS_OPENDETAILSACTION).withChecksums(
+				MD5_OPENDETAILSACTION_510_BEFORE,
+				MD5_OPENDETAILSACTION_510_AFTER));
+		pd.withClass(new PatchableClass(CLASS_OPENITEMACTION).withChecksums(
+				MD5_OPENITEMACTION_510_BEFORE, MD5_OPENITEMACTION_510_AFTER));
 		return new PatchMetadata(this).withDevice(pd);
 	}
 
 	public Permission[] getRequiredPermissions() {
 		return new Permission[] { new AllPermission() };
-	}
-
-	protected URL getResourcesUrl() {
-		return this.getClass().getResource("/ixtab-patch-passwd.txt");
 	}
 
 	static String getResource(String key) {

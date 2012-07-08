@@ -1,6 +1,6 @@
 package com.mobileread.ixtab.patch;
 
-import java.util.TreeMap;
+import java.util.Map;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -20,16 +20,14 @@ public class LegalIllegalPatch extends Patch {
 	private static final String MD5_AFTER = "d2a85c3a36d54b190714761a39912e6b";
 
 	public int getVersion() {
-		return 20120605;
+		return 20120708;
 	}
 
-	public TreeMap getDefaultResourceMap(String resourceType) {
-		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
-			TreeMap map = new TreeMap();
-			map.put(RESOURCE_JBPATCH_PATCHNAME, "Modify Legal Information");
-			return map;
+	protected void initLocalization(String locale, Map map) {
+		if (RESOURCE_ID_ENGLISH.equals(locale)) {
+			map.put(I18N_JBPATCH_NAME, "Modify Legal Information");
+			map.put(I18N_JBPATCH_DESCRIPTION, "This is a useless, proof-of-concept patch which modifies the behavior of the Legal Information");
 		}
-		return null;
 	}
 
 	public PatchMetadata getMetadata() {

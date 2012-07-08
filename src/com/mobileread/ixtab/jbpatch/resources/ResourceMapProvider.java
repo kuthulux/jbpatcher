@@ -2,6 +2,8 @@ package com.mobileread.ixtab.jbpatch.resources;
 
 import java.util.TreeMap;
 
+import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
+
 public interface ResourceMapProvider {
 	public String RESOURCE_ID_CONFIGURATION = null;
 	public String RESOURCE_ID_ENGLISH = "en";
@@ -33,4 +35,6 @@ public interface ResourceMapProvider {
 	 * @return the globally unique ID of this resource provider.
 	 */
 	public String id();
+
+	public ConfigurableSettings getConfigurableSettings();
 }

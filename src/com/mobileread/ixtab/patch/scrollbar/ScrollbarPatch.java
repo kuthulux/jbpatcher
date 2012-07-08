@@ -1,9 +1,9 @@
-package com.mobileread.ixtab.patch;
+package com.mobileread.ixtab.patch.scrollbar;
 
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.lang.ref.WeakReference;
-import java.util.TreeMap;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.swing.JScrollBar;
@@ -17,10 +17,24 @@ import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
+import com.mobileread.ixtab.jbpatch.conf.ConfigurableSetting;
+import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
+import com.mobileread.ixtab.jbpatch.conf.ui.IntegerSettingPanel;
+import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
+import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
 
 public class ScrollbarPatch extends Patch implements AdjustmentListener {
 
-	private static final int SCROLLBAR_WIDTH = 66;
+	private static final String CONF_SCROLLBAR_WIDTH_KEY = "scrollbar.width";
+	private static final String CONF_SCROLLBAR_WIDTH_DEFAULT = "66";
+	private static final String CONF_SCROLLBAR_WIDTH_I18N_NAME = "scrollbar.width.name";
+	private static final String CONF_SCROLLBAR_WIDTH_I18N_DESC = "scrollbar.width.description";
+	private static final String CONF_SCROLLBAR_WIDTH_I18N_HINT = "scrollbar.width.hint";
+	
+	private static final int CONF_MIN_WIDTH = 5;
+	private static final int CONF_MAX_WIDTH = 150;
+
+
 	public static ScrollbarPatch INSTANCE;
 
 	private static final String THEME_CLASS = "com.amazon.agui.swing.plaf.kindle.KindleTheme";
@@ -40,63 +54,78 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 	}
 
 	public int getVersion() {
-		return 20120605;
+		return 20120708;
 	}
-	
+
 	public PatchMetadata getMetadata() {
 		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);
-		pd.withClass(new PatchableClass(THEME_CLASS).withChecksums(THEME_MD5_BEFORE, THEME_MD5_AFTER));
-		pd.withClass(new PatchableClass(PAGINGCONTAINER_CLASS).withChecksums(PAGINGCONTAINER_MD5_BEFORE, PAGINGCONTAINER_MD5_AFTER));
+		pd.withClass(new PatchableClass(THEME_CLASS).withChecksums(
+				THEME_MD5_BEFORE, THEME_MD5_AFTER));
+		pd.withClass(new PatchableClass(PAGINGCONTAINER_CLASS).withChecksums(
+				PAGINGCONTAINER_MD5_BEFORE, PAGINGCONTAINER_MD5_AFTER));
 		return new PatchMetadata(this).withDevice(pd);
 	}
 
-	public TreeMap getDefaultResourceMap(String id) {
-		if (RESOURCE_ID_ENGLISH.equals(id)) {
-			TreeMap map = new TreeMap();
-			map.put(RESOURCE_JBPATCH_PATCHNAME, "Make scrollbars usable");
-			return map;
-		} else if ("de".equals(id)) {
-			TreeMap map = new TreeMap();
-			map.put(RESOURCE_JBPATCH_PATCHNAME, "Scrollbars benutzbar machen");
-			return map;
+	protected void initLocalization(String locale, Map map) {
+		if (locale.equals(RESOURCE_ID_ENGLISH)) {
+			map.put(I18N_JBPATCH_NAME, "Make scrollbars usable");
+			map.put(I18N_JBPATCH_DESCRIPTION,
+					"The default scrollbars are too tiny to be usable with a finger. In addition, menus in portrait mode may be too long to fit on the screen. While a scrollbar is displayed, it is not functional. This patch fixes both of these issues.");
+			map.put(CONF_SCROLLBAR_WIDTH_I18N_NAME, "Scrollbar size");
+			map.put(CONF_SCROLLBAR_WIDTH_I18N_DESC, "The size of the scrollbars, in pixels.");
+			map.put(CONF_SCROLLBAR_WIDTH_I18N_HINT, "Sensible values are between 5 and 150.");
+		} else if ("de".equals(locale)) {
+			map.put(I18N_JBPATCH_NAME, "Scrollbars benutzbar machen");
 		}
-		return null;
 	}
 
+	protected ConfigurableSettings initConfigurableSettings() {
+		ConfigurableSettings map = new ConfigurableSettings();
+		map.add(new IntegerConfigurableSetting(localize(CONF_SCROLLBAR_WIDTH_I18N_NAME), localize(CONF_SCROLLBAR_WIDTH_I18N_DESC), localize(CONF_SCROLLBAR_WIDTH_I18N_HINT), CONF_SCROLLBAR_WIDTH_KEY,
+				CONF_SCROLLBAR_WIDTH_DEFAULT));
+		return map;
+	}
+	
+	protected class IntegerConfigurableSetting extends ConfigurableSetting {
+
+		public IntegerConfigurableSetting(String name, String description, String hint,
+				String key, String defaultValue) {
+			super(name, description, hint, key, defaultValue);
+		}
+
+		public SettingPanel getPanel(SettingChangeListener listener) {
+			return new IntegerSettingPanel(listener);
+		}
+
+		public boolean isValid(String value) {
+			if (value == null) return false;
+			try {
+				int i = Integer.parseInt(value);
+				return i >= CONF_MIN_WIDTH && i <= CONF_MAX_WIDTH;
+			} catch (Throwable t) {
+				return false;
+			}
+		}
+	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
 		if (md5.equals(THEME_MD5_BEFORE)) {
-			patchTheme167(clazz);
-			patchTheme212(clazz);
+			patchTheme(clazz, "getDefaultResources167");
+			patchTheme(clazz, "getDefaultResources212");
 		} else {
 			patchContainer(clazz);
 		}
 		return null;
 	}
 
-	private void patchTheme167(BCClass clazz) throws Throwable {
-		Code c = clazz.getDeclaredMethods("getDefaultResources167")[0]
-				.getCode(false);
+	private void patchTheme(BCClass clazz, String methodName) throws Throwable {
+		Code c = clazz.getDeclaredMethods(methodName)[0].getCode(false);
 		c.after(72);
 		c.remove();
 		c.anew().setType(Integer.class);
 		c.dup();
-		c.constant().setValue(SCROLLBAR_WIDTH);
-		c.invokespecial().setMethod(
-				Integer.class.getConstructor(new Class[] { int.class }));
-		c.calculateMaxLocals();
-		c.calculateMaxStack();
-		// dump(c);
-	}
-
-	private void patchTheme212(BCClass clazz) throws Throwable {
-		Code c = clazz.getDeclaredMethods("getDefaultResources212")[0]
-				.getCode(false);
-		c.after(72);
-		c.remove();
-		c.anew().setType(Integer.class);
-		c.dup();
-		c.constant().setValue(SCROLLBAR_WIDTH);
+		c.constant().setValue(
+				Integer.parseInt(getConfigured(CONF_SCROLLBAR_WIDTH_KEY)));
 		c.invokespecial().setMethod(
 				Integer.class.getConstructor(new Class[] { int.class }));
 		c.calculateMaxLocals();

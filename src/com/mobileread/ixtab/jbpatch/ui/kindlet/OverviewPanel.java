@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatch.kindlet;
+package com.mobileread.ixtab.jbpatch.ui.kindlet;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;

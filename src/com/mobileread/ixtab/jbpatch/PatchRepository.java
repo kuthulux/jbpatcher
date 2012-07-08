@@ -33,10 +33,7 @@ public class PatchRepository {
 	private PatchRepository() {
 		File primary = new File(KindleDirectories.LOCAL_DIRECTORY + "/"
 				+ CONFIGFILE_NAME);
-		File secondary = new File(KindleDirectories.USERSTORE_DIRECTORY + "/"
-				+ CONFIGFILE_NAME);
-		backend = new KeyValueFile(KeyValueFile.FLAG_WRITABLE, primary,
-				secondary);
+		backend = new KeyValueFile(KeyValueFile.FLAG_WRITABLE, primary);
 	}
 
 	Map initialize() {
@@ -178,8 +175,12 @@ public class PatchRepository {
 
 	}
 
-	public Map getAvailablePatches() {
+	public synchronized Map getAvailablePatches() {
 		return patchStateMap;
 	};
 
+	public boolean setPatchState(Patch patch, boolean enabled) {
+		patchStateMap.put(patch, Boolean.valueOf(enabled));
+		return backend.setValue(patch.id(), enabled ? VALUE_ENABLED: VALUE_DISABLED, true);
+	}
 }

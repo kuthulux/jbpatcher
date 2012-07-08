@@ -3,7 +3,7 @@ package com.mobileread.ixtab.patch.tts;
 import java.net.URL;
 import java.security.AllPermission;
 import java.security.Permission;
-import java.util.TreeMap;
+import java.util.Map;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -19,7 +19,7 @@ import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class TTSPatch extends Patch {
 
-	public static final int PATCH_VERSION = 20120605;
+	public static final int PATCH_VERSION = 20120708;
 
 	private static final String KEY_MALE = "male";
 	private static final String KEY_FEMALE = "female";
@@ -44,69 +44,34 @@ public class TTSPatch extends Patch {
 	private static final String[] ORIGINAL_PT = new String[] { "Femino",
 			"Masculino" };
 
-	public TreeMap getDefaultResourceMap(String id) {
+	protected void initLocalization(String id, Map m) {
 		if ("en".equals(id)) {
-			return getEnglishResources();
+			m.put(I18N_JBPATCH_NAME, "Enable Text-to-Speech");
+			m.put(I18N_JBPATCH_DESCRIPTION, "Unconditionally enable Text-to-Speech, regardless of language and DRM");
+			m.put(KEY_FEMALE, ORIGINAL_EN[0]);
+			m.put(KEY_MALE, ORIGINAL_EN[0]);
 		} else if ("de".equals(id)) {
-			return getGermanResources();
+			m.put(I18N_JBPATCH_NAME, "Text-to-Speech einschalten");
+			m.put(I18N_JBPATCH_DESCRIPTION, "Text-to-Speech immer einschalten, unabhängig von der Sprache und DRM");
+			m.put(KEY_FEMALE, "Weiblich (englisch)");
+			m.put(KEY_MALE, "Männlich (englisch)");
 		} else if ("es".equals(id)) {
-			return getSpanishResources();
+			m.put(I18N_JBPATCH_NAME, "Activar Texto a voz");
+			m.put(KEY_FEMALE, "Femenina (inglés)");
+			m.put(KEY_MALE, "Masculina (inglés)");
 		} else if ("fr".equals(id)) {
-			return getFrenchResources();
+			m.put(I18N_JBPATCH_NAME, "Activer la synth\350se vocale");
+			m.put(KEY_FEMALE, "Femme (anglais)");
+			m.put(KEY_MALE, "Homme (anglais)");
 		} else if ("it".equals(id)) {
-			return getItalianResources();
+			m.put(I18N_JBPATCH_NAME, "Attiva Da Testo a Voce");
+			m.put(KEY_FEMALE, "Femminile (inglese)");
+			m.put(KEY_MALE, "Maschile (inglese)");
 		} else if ("pt".equals(id)) {
-			return getPortugueseResources();
+			m.put(I18N_JBPATCH_NAME, "Ativar texto-voz");
+			m.put(KEY_FEMALE, "Femino (inglês)");
+			m.put(KEY_MALE, "Masculino (inglês)");
 		}
-		return null;
-	}
-
-	private TreeMap getEnglishResources() {
-		TreeMap m = new TreeMap();
-		m.put(RESOURCE_JBPATCH_PATCHNAME, "Enable Text-to-Speech");
-		m.put(KEY_FEMALE, ORIGINAL_EN[0]);
-		m.put(KEY_MALE, ORIGINAL_EN[0]);
-		return m;
-	}
-
-	private TreeMap getGermanResources() {
-		TreeMap m = new TreeMap();
-		m.put(RESOURCE_JBPATCH_PATCHNAME, "Text-to-Speech einschalten");
-		m.put(KEY_FEMALE, "Weiblich (englisch)");
-		m.put(KEY_MALE, "Männlich (englisch)");
-		return m;
-	}
-
-	private TreeMap getSpanishResources() {
-		TreeMap m = new TreeMap();
-		m.put(RESOURCE_JBPATCH_PATCHNAME, "Activar Texto a voz");
-		m.put(KEY_FEMALE, "Femenina (inglés)");
-		m.put(KEY_MALE, "Masculina (inglés)");
-		return m;
-	}
-
-	private TreeMap getFrenchResources() {
-		TreeMap m = new TreeMap();
-		m.put(RESOURCE_JBPATCH_PATCHNAME, "Activer la synth\350se vocale");
-		m.put(KEY_FEMALE, "Femme (anglais)");
-		m.put(KEY_MALE, "Homme (anglais)");
-		return m;
-	}
-
-	private TreeMap getItalianResources() {
-		TreeMap m = new TreeMap();
-		m.put(RESOURCE_JBPATCH_PATCHNAME, "Attiva Da Testo a Voce");
-		m.put(KEY_FEMALE, "Femminile (inglese)");
-		m.put(KEY_MALE, "Maschile (inglese)");
-		return m;
-	}
-
-	private TreeMap getPortugueseResources() {
-		TreeMap m = new TreeMap();
-		m.put(RESOURCE_JBPATCH_PATCHNAME, "Ativar texto-voz");
-		m.put(KEY_FEMALE, "Femino (inglês)");
-		m.put(KEY_MALE, "Masculino (inglês)");
-		return m;
 	}
 
 	public int getVersion() {

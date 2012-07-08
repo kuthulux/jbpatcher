@@ -6,9 +6,8 @@ import java.io.FilePermission;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.security.Permission;
-import java.util.TreeMap;
+import java.util.Map;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -24,6 +23,10 @@ import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class DevCertInjectPatch extends Patch {
 
+	private static final String KEY_INSTALL_SUCCEEDED = "install.succeeded";
+	private static final String KEY_INSTALL_FAILED = "install.failed";
+	private static final String KEY_ARCHIVE_INVALID = "archive.invalid";
+	
 	private static final String KEYSTORE_DIRECTORY = "/var/local/java/keystore/";
 	private static final String KEYSTORE_FILE = "developer.keystore";
 
@@ -32,16 +35,17 @@ public class DevCertInjectPatch extends Patch {
 	private static final String MD5_AFTER = "b1ea6c018cbddb9fde405e3947e612f5";
 
 	public int getVersion() {
-		return 20120605;
+		return 20120708;
 	}
 
-	public TreeMap getDefaultResourceMap(String resourceType) {
-		if (RESOURCE_ID_ENGLISH.equals(resourceType)) {
-			TreeMap map = new TreeMap();
-			map.put(RESOURCE_JBPATCH_PATCHNAME, "Install mobileread Developer Certificates");
-			return map;
+	protected void initLocalization(String locale, Map map) {
+		if (RESOURCE_ID_ENGLISH.equals(locale)) {
+			map.put(I18N_JBPATCH_NAME, "Install mobileread Developer Certificates");
+			map.put(I18N_JBPATCH_DESCRIPTION, "Kindlets must be signed with a developer certificate. This patch will automatically install a set of known certificates used by mobileread developers, if required.");
+			map.put(KEY_ARCHIVE_INVALID,"The patch to automatically install the MobileRead developer certificates is invalid. Please re-download the patch.");
+			map.put(KEY_INSTALL_FAILED,"The MobileRead developer certificates could not be properly installed.");
+			map.put(KEY_INSTALL_SUCCEEDED,"The MobileRead developer certificates have been successfully installed. Please close this message and start the application again. If the application was signed with one of the included certificates, it will work.");
 		}
-		return null;
 	}
 
 	public PatchMetadata getMetadata() {
@@ -54,10 +58,6 @@ public class DevCertInjectPatch extends Patch {
 
 	public DevCertInjectPatch() {
 		INSTANCE = this;
-	}
-
-	protected URL getResourcesUrl() {
-		return this.getClass().getResource("/ixtab-patch-devcert.txt");
 	}
 
 	String getResource(String key) {
@@ -137,7 +137,7 @@ public class DevCertInjectPatch extends Patch {
 			InputStream source = DevCertInjectPatch.class
 					.getResourceAsStream(KEYSTORE_FILE);
 			if (source == null) {
-				return buildException(true, KEYSTORE_FILE + " missing in bundle", "archive.invalid");
+				return buildException(true, KEYSTORE_FILE + " missing in bundle", KEY_ARCHIVE_INVALID);
 			}
 			OutputStream target = null;
 			try {
@@ -145,7 +145,7 @@ public class DevCertInjectPatch extends Patch {
 				copy(source, target);
 			} catch (IOException io) {
 				io.printStackTrace(logger);
-				return buildException(true, "Unexpected I/O exception", "install.failed");
+				return buildException(true, "Unexpected I/O exception", KEY_INSTALL_FAILED);
 			} finally {
 				closeCarefully(source);
 				closeCarefully(target);
@@ -153,7 +153,7 @@ public class DevCertInjectPatch extends Patch {
 			// reload keystore
 			com.amazon.kindle.kindlet.internal.portability.g.d().b().K();
 			log("I: ("+ DevCertInjectPatch.class.getName() + ") Developer certificates installed");
-			return buildException(false, "Developer certificates installed", "install.succeeded");
+			return buildException(false, "Developer certificates installed", KEY_INSTALL_SUCCEEDED);
 		}
 		return null;
 	}
