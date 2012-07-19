@@ -9,11 +9,13 @@ public interface LocalizationKeys {
 	public static final String _OVERVIEW_VERSION = "overview.version";
 	
 	public static final String _SYSTEM_LOG_TITLE = "system.log.title";
-	public static final String _SYSTEM_ACTIONS_REVERSESYNC = "system.actions.reversesync";
+	public static final String _SYSTEM_ACTIONS_SYNC = "system.actions.sync";
 	public static final String _SYSTEM_ACTIONS_RESTART = "system.actions.restart";
 	public static final String _SYSTEM_ACTIONS_LOGREFRESH = "system.actions.logrefresh";
 	public static final String _SYSTEM_ACTIONS_CLEANUP = "system.actions.cleanup";
 	public static final String _SYSTEM_ACTIONS_TITLE = "system.actions.title";
+	public static final String _SYSTEM_ACTION_SUCCESS = "system.action.success";
+	public static final String _SYSTEM_ACTION_FAILED = "system.action.fail";
 	public static final String _SYSTEM_ABOUT_VERSION = "system.about.version";
 	public static final String _SYSTEM_CONFIRM_CONTINUE = "system.confirm.continue";
 	public static final String _SYSTEM_CONFIRM_DANGEROUS = "system.confirm.dangerous";

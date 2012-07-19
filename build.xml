@@ -30,8 +30,8 @@
 	</target>
 
 	<target name="build-azw2">
-		<delete file="${product.filename}.azw2" />
-		<jar destfile="${product.filename}.azw2">
+		<delete file="dist/src/install/${product.filename}.azw2" />
+		<jar destfile="dist/src/install/${product.filename}.azw2">
 			<manifest>
 				<attribute name="Implementation-Title" value="${product.name}"/>
 				<attribute name="Implementation-Version" value="${product.version}"/>
@@ -56,9 +56,9 @@
 				<include name="**/*.class"/>
 			</zipfileset>
 		</jar>
-		<signjar jar="${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="dk${sign.aliases}"/>
-		<signjar jar="${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="di${sign.aliases}"/>
-		<signjar jar="${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="dn${sign.aliases}"/>
+		<signjar jar="dist/src/install/${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="dk${sign.aliases}"/>
+		<signjar jar="dist/src/install/${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="di${sign.aliases}"/>
+		<signjar jar="dist/src/install/${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="dn${sign.aliases}"/>
 
 	</target>
 
@@ -67,11 +67,9 @@
 	<target name="dist" depends="build">
 		<move file="jbpatch.jar" todir="dist/src/install" overwrite="true" failonerror="true"/>
 
-		<!-- patches referenced from distribution CONFIG.TXT -->
 		<copy file="bin/com/mobileread/ixtab/patch/AllRotationsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.AllRotationsPatch.class"/>
 		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.LegalIllegalPatch.class"/>
-		<!-- temporarily disabled, FIXME! -->
-		<!-- <copy file="bin/com/mobileread/ixtab/patch/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.NoAdsPatch.class"/> -->
+		<copy file="bin/com/mobileread/ixtab/patch/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.NoAdsPatch.class"/>
 
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.devcert.jar">
 			<manifest>
@@ -86,8 +84,6 @@
 			</fileset>
 		</jar>
 
-		<!-- temporarily disabled, FIXME! -->
-		<!--
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.margins.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.margins.MarginsPatch"/>
@@ -99,7 +95,6 @@
 				<include name="ixtab-patch-margins.txt"/>
 			</fileset>
 		</jar>
-		-->
 
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.passwd.jar">
 			<manifest>
@@ -144,6 +139,19 @@
         	</fileset>
 		</jar>
 		-->
+		
+		<!-- pack (only) the patches to be distributed -->
+		<delete file="dist/src/install/patches.zip" />
+		<zip destfile="dist/src/install/patches.zip">
+			<fileset dir="dist/opt/jbpatch">
+				<include name="com.mobileread.ixtab.patch.AllRotationsPatch.class"/>
+				<include name="com.mobileread.ixtab.patch.devcert.jar"/>
+				<include name="com.mobileread.ixtab.patch.margins.jar"/>
+				<include name="com.mobileread.ixtab.patch.passwd.jar"/>
+				<include name="com.mobileread.ixtab.patch.scrollbar.jar"/>
+				<include name="com.mobileread.ixtab.patch.tts.jar"/>
+			</fileset>
+		</zip>
 	</target>
 
 	<!-- This is a private (and moving) target which will probably only work on ixtab's computer.
@@ -154,7 +162,7 @@
 
 	<target name="dev" depends="dist">
 		<exec command="scp -i ${dev-ssh-id} dist/src/install/jbpatch.jar root@kindle:/opt/amazon/ebook/lib/jbpatch.jar"/>
-		<exec command="scp -i ${dev-ssh-id} ${product.filename}.azw2 root@kindle:/mnt/us/documents/"/>
+		<exec command="scp -i ${dev-ssh-id} dist/src/install/${product.filename}.azw2 root@kindle:/mnt/us/documents/"/>
 		<exec command="scp -i ${dev-ssh-id} -r dist/opt/jbpatch root@kindle:/mnt/us/opt/"/>
 
 	</target>

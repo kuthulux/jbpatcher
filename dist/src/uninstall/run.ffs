@@ -21,5 +21,7 @@ rm /opt/amazon/ebook/lib/jbpatch.jar || exit 1
 lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 75
 
 rm -rf /var/local/jbpatch
+rm -rf /mnt/us/opt/jbpatch
+rm -f /mnt/us/documents/jbpatch.azw2
 
 lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 100

@@ -238,7 +238,7 @@ public abstract class Patch implements Comparable, ResourceMapProvider {
 		JBPatchResource.getResource(this, JBPatchResource.TYPE_CONFIGURATION);
 	}
 
-	public final TreeMap getDefaultResourceMap(String id) {
+	public final Map getDefaultResourceMap(String id) {
 		if (id == RESOURCE_ID_CONFIGURATION) {
 			configurableSettings = initConfigurableSettings();
 			return configurableSettings;

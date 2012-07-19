@@ -3,19 +3,33 @@ lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 0
 mntroot rw || exit 1
 
 cp jbpatch.jar /opt/amazon/ebook/lib/ || exit 1
+lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 25
+
+cp jbpatch.azw2 /mnt/us/documents/
 lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 50
 
 MD5=`md5sum /opt/amazon/ebook/bin/init.xargs|awk '{print $1}'`
 
 if [ "$MD5" = "62f63a926425eda66714b178999aeea6" ]; then
 	# original (5.1.0)
-	lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 75
 	sed -i '10 i -istart jbpatch.jar' /opt/amazon/ebook/bin/init.xargs || exit 1
 elif [ "$MD5" = "5c7e4b6b7e328076c0d5d1479bf5e1ec" ]; then
 	# already patched (5.1.0)
-	echo "doing nothing";
+	echo "not changing init.xargs";
 else
 	exit 1;
 fi
+
+lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 75
+
+# remove potential leftovers from previous versions
+rm -rf /var/local/jbpatch/*
+rm -rf /mnt/us/opt/jbpatch
+
+# re-create directory from scratch
+mkdir -p /mnt/us/opt/jbpatch || exit 1
+# ..and copy patches there.
+unzip patches.zip -d /mnt/us/opt/jbpatch/
+cp -r /mnt/us/opt/jbpatch /var/local/
 
 lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 100

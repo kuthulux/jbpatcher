@@ -19,7 +19,7 @@ import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class TTSPatch extends Patch {
 
-	public static final int PATCH_VERSION = 20120708;
+	public static final int PATCH_VERSION = 20120717;
 
 	private static final String KEY_MALE = "male";
 	private static final String KEY_FEMALE = "female";
@@ -47,12 +47,12 @@ public class TTSPatch extends Patch {
 	protected void initLocalization(String id, Map m) {
 		if ("en".equals(id)) {
 			m.put(I18N_JBPATCH_NAME, "Enable Text-to-Speech");
-			m.put(I18N_JBPATCH_DESCRIPTION, "Unconditionally enable Text-to-Speech, regardless of language and DRM");
+			m.put(I18N_JBPATCH_DESCRIPTION, "Unconditionally enable Text-to-Speech, regardless of language and DRM.");
 			m.put(KEY_FEMALE, ORIGINAL_EN[0]);
-			m.put(KEY_MALE, ORIGINAL_EN[0]);
+			m.put(KEY_MALE, ORIGINAL_EN[1]);
 		} else if ("de".equals(id)) {
 			m.put(I18N_JBPATCH_NAME, "Text-to-Speech einschalten");
-			m.put(I18N_JBPATCH_DESCRIPTION, "Text-to-Speech immer einschalten, unabhängig von der Sprache und DRM");
+			m.put(I18N_JBPATCH_DESCRIPTION, "Text-to-Speech immer einschalten, unabhängig von der Sprache und DRM.");
 			m.put(KEY_FEMALE, "Weiblich (englisch)");
 			m.put(KEY_MALE, "Männlich (englisch)");
 		} else if ("es".equals(id)) {

@@ -70,12 +70,10 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 		if (locale.equals(RESOURCE_ID_ENGLISH)) {
 			map.put(I18N_JBPATCH_NAME, "Make scrollbars usable");
 			map.put(I18N_JBPATCH_DESCRIPTION,
-					"The default scrollbars are too tiny to be usable with a finger. In addition, menus in portrait mode may be too long to fit on the screen. While a scrollbar is displayed, it is not functional. This patch fixes both of these issues.");
+					"The default scrollbars are too tiny to be usable with a finger. In addition, menus in landscape mode may be too long to fit on the screen. While a scrollbar is displayed, it is not functional. This patch fixes both of these issues.");
 			map.put(CONF_SCROLLBAR_WIDTH_I18N_NAME, "Scrollbar size");
 			map.put(CONF_SCROLLBAR_WIDTH_I18N_DESC, "The size of the scrollbars, in pixels.");
 			map.put(CONF_SCROLLBAR_WIDTH_I18N_HINT, "Sensible values are between 5 and 150.");
-		} else if ("de".equals(locale)) {
-			map.put(I18N_JBPATCH_NAME, "Scrollbars benutzbar machen");
 		}
 	}
 

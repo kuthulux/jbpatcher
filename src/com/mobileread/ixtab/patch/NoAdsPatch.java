@@ -32,6 +32,7 @@ public class NoAdsPatch extends Patch {
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {
 			map.put(I18N_JBPATCH_NAME, "Disable Special Offers");
+			map.put(I18N_JBPATCH_DESCRIPTION, "On devices with Special Offers, this patch restores the original screen savers, and removes the banner at the bottom of the home screen.");
 		}
 	}
 

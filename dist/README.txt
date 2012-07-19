@@ -1,7 +1,7 @@
-jbpatch, version 1.3.1
+JBPatch, version 2.0.0
 ======================
 
-jbpatch is an extremely powerful tool that allows to change almost
+JBPatch is an extremely powerful tool that allows to change almost
 all aspects of your Kindle's behavior (at least the parts that have been
 implemented in Java).
 
@@ -14,31 +14,44 @@ allowing class definitions to be modified BEFORE they are loaded. Every
 patch can be distributed as a single, standalone file, and can (in
 principle) change as few or as many aspects of the system as required.
 
-Patches reside in the opt/jbpatch directory on the Kindle, and are
-controlled through the CONFIG.TXT file in the same directory.
+Patches, as well as their configuration, and localizations,
+reside in the opt/jbpatch directory on the Kindle.
 
-The most up-to-date information about this software is available at:
+More user documentation, new patches, and additional localizations
+is available at the Wiki page:
+http://wiki.mobileread.com/wiki/JBPatch
+BTW: You are more than welcome to contribute to that page!
+
+The most up-to-date discussion about this software can be found at:
 http://www.mobileread.com/forums/showthread.php?t=175512
 
 PREREQUISITES
 ------------
 In order to be able to install this, your device has to have the
-jailbreak installed.
+jailbreak installed. If you want to use the User Interface, you will
+also need the Kindlet jailbreak.
+
+JAILBREAK
+---------
+See http://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#Jailbreak
 
 INSTALLATION
 ------------
 1. Plug your Kindle to your computer
 2. Copy update_jbpatch-*.install.bin directly onto the Kindle device
    (i.e., not into any sub-directory)
-3. Copy the entire directory named "opt" directly to your device.
-   This directory (more specifically, the "jbpatch" subdirectory)
-   contains and controls the patches that are actually active on
-   your device. Consult opt/jbpatch/CONFIG.TXT for more information
-   about how patches are applied.
-4. Restart your Kindle using Menu > Settings, Menu > Update.
-5. If you do not see all the expected results directly after the
+3. Restart your Kindle using Menu > Settings, Menu > Update.
+4. If you do not see all the expected results directly after the
    installation, reboot your Kindle once more.
 
+
+KINDLET JAILBREAK
+-----------------
+The user interface of JBPatch requires permissions not normally available to
+Kindle applications. If you try to access the UI part, but only get an error
+that the Kindlet Jailbreak is missing, then please install the Kindlet
+Jailbreak from http://ge.tt/4wapSaK/v/02 to allow access to these restricted
+permissions.
 
 VERIFYING THAT THE INSTALLATION WORKED
 --------------------------------------
@@ -53,7 +66,7 @@ Note:
 - it is also normal that the "active" count is smaller than the "available"
   count. Patches only become active when they are actually needed.
 
-You can also check /tmp/jbpatch.log on the device.
+You can also check /tmp/jbpatch.log on the device, or display the log in the UI.
 
 UNINSTALLING
 ------------
@@ -65,13 +78,9 @@ this, so you can delete them.
 ADDING NEW PATCHES
 ------------------
 Copy the respective patch files to opt/jbpatch/ on the USB drive,
-and modify CONFIG.TXT accordingly. Chances are that you will need to
-restart the device, because patches can only interfere with the system
-when a class is initially loaded.
-
-Note: if you updated the configuration file, please wait at least
-5 seconds before restarting the device. This is needed to make sure
-that your changes are actually applied.
+wait at least 5 seconds, and then restart the device. For a faster
+alternative, you can use the "Restart Framework" button on the System
+tab of the JBPatch UI to restart the framework without rebooting the device.
 
 
 TROUBLESHOOTING
@@ -84,10 +93,13 @@ http://www.mobileread.com/forums/showthread.php?t=175512
 
 DEVELOPING NEW PATCHES
 ----------------------
-Please see the file DEVELOPERS.txt
+Please take a look at the Wiki page.
 
 
 ACKNOWLEDGEMENTS
 ----------------
 This software would not have been possible without the truely excellent
 Serp framework: http://serp.sourceforge.net/
+
+I would also like to thank everybody at mobileread who helped with the
+localization, and who provided valuable feedback. You know who you are.

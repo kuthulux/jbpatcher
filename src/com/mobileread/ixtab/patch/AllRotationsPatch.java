@@ -23,7 +23,7 @@ public class AllRotationsPatch extends Patch {
 
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {
-			map.put(I18N_JBPATCH_NAME, "Enable all rotations");
+			map.put(I18N_JBPATCH_NAME, "Enable All Screen Rotations");
 			map.put(I18N_JBPATCH_DESCRIPTION, "This patch allows all screen rotations to be used for the Java-based parts of the Kindle Touch UI. Note that it will not affect the browser and other WAF applications.");
 		}
 	}

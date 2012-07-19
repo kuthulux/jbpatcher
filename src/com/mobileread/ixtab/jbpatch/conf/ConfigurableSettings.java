@@ -1,6 +1,6 @@
 package com.mobileread.ixtab.jbpatch.conf;
 
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 
 import com.mobileread.ixtab.jbpatch.resources.KeyValueFile;
 import com.mobileread.ixtab.jbpatch.resources.KeyValueResource;
@@ -8,7 +8,7 @@ import com.mobileread.ixtab.jbpatch.resources.KeyValueResource;
 /*
  * I know this could have been organized better, it's a little awkward right now.
  */
-public class ConfigurableSettings extends TreeMap implements KeyValueResource {
+public class ConfigurableSettings extends LinkedHashMap implements KeyValueResource {
 	private static final long serialVersionUID = 1L;
 
 	private KeyValueFile backend;

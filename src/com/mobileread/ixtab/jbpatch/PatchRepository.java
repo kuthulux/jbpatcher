@@ -15,7 +15,7 @@ public class PatchRepository {
 	public static final String EXTENSION_PATCH_JARRED = ".jar";
 	private static final String EXTENSION_TXT = ".txt";
 	
-	private static final String CONFIGFILE_NAME = "CONFIG2.txt";
+	private static final String CONFIGFILE_NAME = "CONFIG.txt";
 	private static final char[] SPECIAL_CHARS_OK = new char[] { '.', '_' };
 
 	private static final String VALUE_ENABLED = "enabled";
@@ -93,7 +93,7 @@ public class PatchRepository {
 		if (!dir.exists() || !dir.isDirectory()) {
 			return new File[0];
 		}
-		return dir.listFiles(new FilenamesFilter(false));
+		return dir.listFiles(new FilenamesFilter(false, false));
 	}
 
 	private void log(String msg) {
@@ -154,13 +154,18 @@ public class PatchRepository {
 	public static class FilenamesFilter implements FilenameFilter {
 
 		private final boolean allowAuxiliaryFiles;
+		private final boolean allowMainConfigurationFile;
 
-		public FilenamesFilter(boolean allowAuxiliaryFiles) {
+		public FilenamesFilter(boolean allowAuxiliaryFiles, boolean allowMainConfigurationFile) {
 			super();
 			this.allowAuxiliaryFiles = allowAuxiliaryFiles;
+			this.allowMainConfigurationFile = allowMainConfigurationFile;
 		}
 
 		public boolean accept(File dir, String name) {
+			if (name.equals(CONFIGFILE_NAME)) {
+				return allowMainConfigurationFile;
+			}
 			if (allowAuxiliaryFiles && name.endsWith(EXTENSION_TXT)) {
 				return true;
 			}

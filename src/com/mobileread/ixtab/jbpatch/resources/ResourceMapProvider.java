@@ -1,6 +1,6 @@
 package com.mobileread.ixtab.jbpatch.resources;
 
-import java.util.TreeMap;
+import java.util.Map;
 
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
 
@@ -24,7 +24,7 @@ public interface ResourceMapProvider {
 	 *         if there are no predefined defaults for the requested resource
 	 *         type.
 	 */
-	public TreeMap getDefaultResourceMap(String id);
+	public Map getDefaultResourceMap(String id);
 
 	/**
 	 * Returns the globally unique ID of this resource provider. It is

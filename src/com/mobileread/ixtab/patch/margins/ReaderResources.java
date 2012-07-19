@@ -7,17 +7,17 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 import com.mobileread.ixtab.jbpatch.Log;
+import com.sun.org.apache.bcel.internal.generic.LoadClass;
 
-public class ReaderResources extends ResourceBundle {
+public class ReaderResources extends ResourceBundle implements MarginsPatchKeys {
 
 	private static final String MARGIN_LIST_KEY = "font.wordsperline.margin.list";
-	private static final int MARGIN_LIST_LENGTH = 3;
 
 	private static final String[] SUPPORTED_KEYS = new String[] {
-			"reader.content.topMarginOffset",
-			"reader.progressbar.footer.height", "reader.content.leftMargin",
-			"reader.content.rightMargin", "reader.content.topMargin",
-			"reader.content.bottomMargin", };
+			KEY_READER_CONTENT_TOP_MARGIN_OFFSET,
+			KEY_READER_PROGRESSBAR_FOOTER_HEIGHT, KEY_READER_CONTENT_LEFT_MARGIN,
+			KEY_READER_CONTENT_RIGHT_MARGIN, KEY_READER_CONTENT_TOP_MARGIN,
+			KEY_READER_CONTENT_BOTTOM_MARGIN, };
 
 	private static final String delegateName = "com.amazon.ebook.booklet.reader.resources.ReaderResources";
 	private static ResourceBundle delegate;
@@ -29,6 +29,7 @@ public class ReaderResources extends ResourceBundle {
 	}
 
 	protected Object handleGetObject(String key) {
+
 		ResourceBundle original = delegate();
 		Object value = overridden.get(key);
 		if (value != null) {
@@ -73,26 +74,21 @@ public class ReaderResources extends ResourceBundle {
 	}
 
 	private void populateMarginList() {
-		String defined = loadFromConfiguration(MARGIN_LIST_KEY);
-		if (defined != null) {
-			try {
-				int[] margins = new int[MARGIN_LIST_LENGTH];
-				StringTokenizer tokens = new StringTokenizer(defined.trim());
-				int count = 0;
-				while (tokens.hasMoreElements()) {
-					margins[count++] = parseAsPositiveInteger(tokens
-							.nextToken());
-				}
-				if (count != margins.length) {
-					throw new IllegalArgumentException();
-				}
-				overridden.put(MARGIN_LIST_KEY, margins);
-			} catch (Throwable t) {
-				Log.INSTANCE.println("W: User settings for \""
-						+ MARGIN_LIST_KEY
-						+ "\" have been ignored because they are invalid.");
-			}
+		try {
+			int[] combined = new int[3];
+			combined[0] = loadPositiveIntegerKey(KEY_FONT_WORDSPERLINE_MARGIN_LIST_FEWEST);
+			combined[1] = loadPositiveIntegerKey(KEY_FONT_WORDSPERLINE_MARGIN_LIST_FEWER);
+			combined[2] = loadPositiveIntegerKey(KEY_FONT_WORDSPERLINE_MARGIN_LIST_DEFAULT);
+			overridden.put(MARGIN_LIST_KEY, combined);
+		} catch (Throwable t) {
+			Log.INSTANCE.println("W: User settings for \""
+					+ MARGIN_LIST_KEY
+					+ "\" have been ignored because they are invalid.");
 		}
+	}
+
+	private int loadPositiveIntegerKey(String key) throws Throwable {
+		return parseAsPositiveInteger(loadFromConfiguration(key));
 	}
 
 	private String loadFromConfiguration(String key) {
@@ -106,5 +102,4 @@ public class ReaderResources extends ResourceBundle {
 		}
 		return value;
 	}
-
 }

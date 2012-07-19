@@ -17,13 +17,18 @@ public class KindleDirectories {
 
 	private static final int SYNC_INTERVAL_MS = 5000;
 	private static final int SYNC_WAIT_AFTER_START_MS = 1000;
-	
+
+	private static File sourceDir;
+	private static File targetDir;
+
+	private static SynchLock synchLock = new SynchLock();
+
 	public static void init() {
-		File var = new File(LOCAL_DIRECTORY);
-		if (!var.exists())
-			var.mkdir();
-		File us = new File(USERSTORE_DIRECTORY);
-		new SynchThread(us, var).start();
+		targetDir = new File(LOCAL_DIRECTORY);
+		if (!targetDir.exists())
+			targetDir.mkdir();
+		sourceDir = new File(USERSTORE_DIRECTORY);
+		new SynchThread().start();
 		try {
 			// give synch thread a chance to run before we try to read files
 			Thread.sleep(SYNC_WAIT_AFTER_START_MS);
@@ -31,21 +36,90 @@ public class KindleDirectories {
 		}
 	}
 
+	private static void copy(File source, File target) throws IOException {
+
+		FileInputStream from = null;
+		FileOutputStream to = null;
+		try {
+			byte[] buffer = new byte[4096];
+			from = new FileInputStream(source);
+			to = new FileOutputStream(target);
+			for (int read = from.read(buffer); read != -1; read = from
+					.read(buffer)) {
+				to.write(buffer, 0, read);
+			}
+		} finally {
+			if (from != null) {
+				from.close();
+			}
+			if (to != null) {
+				to.close();
+			}
+		}
+
+	}
+
+	public static boolean reverseSync() {
+		synchronized (synchLock) {
+			int count = 0;
+			try {
+				File[] fromFiles = targetDir.listFiles();
+				for (int i = 0; i < fromFiles.length; ++i) {
+					File from = fromFiles[i];
+					if (from.isFile() && from.canRead()) {
+						File to = new File(sourceDir + File.separator
+								+ from.getName());
+						copy(from, to);
+						++count;
+					}
+				}
+			} catch (Throwable t) {
+				Log.INSTANCE
+						.println("Error during reverse sync, exception follows.");
+				t.printStackTrace(Log.INSTANCE);
+				return false;
+			}
+			if (count != 0) {
+				Log.INSTANCE.println("Reverse sync complete, copied " + count
+						+ " files.");
+			}
+			return true;
+		}
+	}
+
+	public static boolean cleanup() {
+		synchronized (synchLock) {
+			if (!synchLock.synchronizeAllFiles) {
+				synchLock.synchronizeAllFiles = true;
+				try {
+					synchLock.wait(SYNC_INTERVAL_MS * 3);
+				} catch (InterruptedException e) {
+					return false;
+				}
+				// the synchronization must have been performed until now,
+				// resetting the "synchronizeAllSettings" flag on the way.
+				return synchLock.synchronizeAllFiles == false;
+			} else {
+				// indicates some previous error.
+				return false;
+			}
+		}
+	}
+
 	private static class SynchThread extends Thread {
 
-		private final File sourceDir;
-		private final File targetDir;
 		private final ShutdownStatus shutdown = new ShutdownStatus();
 		private final Map knownFiles = new HashMap();
-		private final FilenameFilter fileFilter = new PatchRepository.FilenamesFilter(true);
-		
+		private final FilenameFilter normalFileFilter = new PatchRepository.FilenamesFilter(
+				true, false);
+		private final FilenameFilter fullFileFilter = new PatchRepository.FilenamesFilter(
+				true, true);
+
 		private boolean targetWasOkLastTime = true;
-		
-		public SynchThread(File sourceDir, File targetDir) {
-			super("JBPatchSynchronizerThread");
+
+		public SynchThread() {
+			super("JBPatchDirectoriesSynchronizerThread");
 			this.setDaemon(true);
-			this.sourceDir = sourceDir;
-			this.targetDir = targetDir;
 		}
 
 		public void run() {
@@ -71,23 +145,32 @@ public class KindleDirectories {
 		}
 
 		private void synchronize() {
-			
-			File[] targetFiles = listTargetFiles();
-			if (targetFiles == null)
-				return;
-			
-			File[] sourceFiles = sourceDir.listFiles(fileFilter);
-			if (sourceFiles == null)
-				return;
-			
-			// FIXME
-			//removeObsoleteFilesInTarget(sourceFiles, targetFiles);
-			for (int i = 0; i < sourceFiles.length; ++i) {
-				File f = sourceFiles[i];
-				if (!f.isFile() || !f.canRead()) {
-					continue;
+
+			synchronized (synchLock) {
+				File[] targetFiles = listTargetFiles();
+				if (targetFiles == null)
+					return;
+
+				File[] sourceFiles = sourceDir
+						.listFiles(synchLock.synchronizeAllFiles ? fullFileFilter
+								: normalFileFilter);
+				if (sourceFiles == null)
+					return;
+
+				if (synchLock.synchronizeAllFiles) {
+					removeObsoleteFilesInTarget(sourceFiles, targetFiles);
 				}
-				synchronize(f);
+				for (int i = 0; i < sourceFiles.length; ++i) {
+					File f = sourceFiles[i];
+					if (!f.isFile() || !f.canRead()) {
+						continue;
+					}
+					synchronize(f);
+				}
+				if (synchLock.synchronizeAllFiles) {
+					synchLock.synchronizeAllFiles = false;
+					synchLock.notifyAll();
+				}
 			}
 		}
 
@@ -111,21 +194,22 @@ public class KindleDirectories {
 			}
 			return targetWasOkLastTime ? targetDir.listFiles() : null;
 		}
-		
+
 		private void removeObsoleteFilesInTarget(File[] sourceFiles,
 				File[] targetFiles) {
 			Set sourceNames = new HashSet();
-			for (int i=0; i < sourceFiles.length; ++i) {
+			for (int i = 0; i < sourceFiles.length; ++i) {
 				sourceNames.add(sourceFiles[i].getName());
 			}
-			for (int i=0; i< targetFiles.length; ++i) {
+			for (int i = 0; i < targetFiles.length; ++i) {
 				File f = targetFiles[i];
 				if (!sourceNames.contains(f.getName())) {
 					knownFiles.remove(f.getName());
 					if (f.delete()) {
-						log("I: "+new Date()+": deleted obsolete file "+f);
+						log("I: " + new Date() + ": deleted obsolete file " + f);
 					} else {
-						log("E: "+new Date()+": unable to delete obsolete file "+f);
+						log("E: " + new Date()
+								+ ": unable to delete obsolete file " + f);
 					}
 				}
 			}
@@ -141,11 +225,11 @@ public class KindleDirectories {
 				copy = true;
 			} else {
 				if (source.lastModified() != info.sourceTimestamp) {
-					//log("I: " + source + " was modified");
+					// log("I: " + source + " was modified");
 					copy = true;
 				} else if (!target.exists()
 						|| target.lastModified() != info.targetTimestamp) {
-					//log("I: " + target + " is out of sync with " + source);
+					// log("I: " + target + " is out of sync with " + source);
 					copy = true;
 				}
 			}
@@ -176,31 +260,10 @@ public class KindleDirectories {
 				knownFiles.put(source.getName(), info);
 				log("I: " + new Date() + ": synchronized " + source.getName());
 			} catch (Throwable t) {
-				log("E: " + new Date() + ": error while copying " + source+" :");
+				log("E: " + new Date() + ": error while copying " + source
+						+ " :");
 				t.printStackTrace(Log.INSTANCE);
 			}
-		}
-
-		private void copy(File source, File target) throws IOException {
-
-			FileInputStream from = null;
-			FileOutputStream to = null;
-			try {
-				byte[] buffer = new byte[4096];
-				from = new FileInputStream(source);
-				to = new FileOutputStream(target);
-				for (int read = from.read(buffer); read != -1; read = from.read(buffer)) {
-					to.write(buffer, 0, read);
-				}
-			} finally {
-				if (from != null) {
-					from.close();
-				}
-				if (to != null) {
-					to.close();
-				}
-			}
-
 		}
 
 		private boolean filesAreEqual(File source, File target) {
@@ -227,7 +290,6 @@ public class KindleDirectories {
 				return null;
 			}
 		}
-
 
 		private void log(String msg) {
 			Log.INSTANCE.println(msg);
@@ -265,5 +327,9 @@ public class KindleDirectories {
 				sync.shutdown.notifyAll();
 			}
 		}
+	}
+
+	private static class SynchLock {
+		private volatile boolean synchronizeAllFiles = false;
 	}
 }

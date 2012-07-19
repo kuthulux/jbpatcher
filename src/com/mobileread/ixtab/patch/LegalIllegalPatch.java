@@ -26,7 +26,7 @@ public class LegalIllegalPatch extends Patch {
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {
 			map.put(I18N_JBPATCH_NAME, "Modify Legal Information");
-			map.put(I18N_JBPATCH_DESCRIPTION, "This is a useless, proof-of-concept patch which modifies the behavior of the Legal Information");
+			map.put(I18N_JBPATCH_DESCRIPTION, "This is a useless, proof-of-concept patch which modifies the behavior of the Legal Information display.");
 		}
 	}
 

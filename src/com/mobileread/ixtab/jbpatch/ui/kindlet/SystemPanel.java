@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 
 import com.amazon.kindle.kindlet.ui.KOptionPane;
 import com.mobileread.ixtab.jbpatch.JBPatchMetadata;
+import com.mobileread.ixtab.jbpatch.KindleDirectories;
 import com.mobileread.ixtab.jbpatch.Log;
 
 public class SystemPanel extends JPanel implements LocalizationKeys {
@@ -139,7 +140,7 @@ public class SystemPanel extends JPanel implements LocalizationKeys {
 		inner.setLayout(new GridLayout(2, 2, 10, 10));
 		inner.add(createLogRefreshButton());
 		inner.add(createRestartButton());
-		inner.add(createReverseSyncButton());
+		inner.add(createSyncButton());
 		inner.add(createCleanupButton());
 		panel.add(inner, BorderLayout.CENTER);
 		// panel.add(new JLabel("   " +
@@ -147,13 +148,6 @@ public class SystemPanel extends JPanel implements LocalizationKeys {
 		// +JBPatchMetadata.VERSION));
 
 		return panel;
-	}
-
-	private Component createCleanupButton() {
-		JButton button = new JButton(
-				JBPatchUI.localize(_SYSTEM_ACTIONS_CLEANUP));
-		button.setEnabled(false);
-		return button;
 	}
 
 	private Component createLogRefreshButton() {
@@ -175,7 +169,7 @@ public class SystemPanel extends JPanel implements LocalizationKeys {
 
 			public void actionPerformed(ActionEvent e) {
 				if(confirm(_SYSTEM_ACTIONS_RESTART, _SYSTEM_CONFIRM_CONTINUE)) {
-					restartFramework();
+					performRestart();
 				}
 			}
 
@@ -183,7 +177,36 @@ public class SystemPanel extends JPanel implements LocalizationKeys {
 		return button;
 	}
 	
-	private void restartFramework() {
+	private JButton createSyncButton() {
+		final JButton button = new JButton(
+				JBPatchUI.localize(_SYSTEM_ACTIONS_SYNC));
+		button.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				if (confirm(_SYSTEM_ACTIONS_SYNC, _SYSTEM_CONFIRM_DANGEROUS)) {
+					performSync(button);
+				}
+			}
+		});
+		return button;
+	}
+
+	private Component createCleanupButton() {
+		final JButton button = new JButton(
+				JBPatchUI.localize(_SYSTEM_ACTIONS_CLEANUP));
+		button.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				if (confirm(_SYSTEM_ACTIONS_CLEANUP, _SYSTEM_CONFIRM_DANGEROUS)) {
+					performCleanup(button);
+				}
+			}
+
+		});
+		return button;
+	}
+
+	private void performRestart() {
 		try {
 			Runtime.getRuntime().exec("/usr/bin/killall cvm");
 		} catch (IOException e) {
@@ -192,17 +215,50 @@ public class SystemPanel extends JPanel implements LocalizationKeys {
 		}
 	}
 
-	private JButton createReverseSyncButton() {
-		JButton button = new JButton(
-				JBPatchUI.localize(_SYSTEM_ACTIONS_REVERSESYNC));
+	private void performSync(final JButton button) {
+		Thread async = new Thread() {
+			public void run() {
+				final boolean ok = KindleDirectories.reverseSync();
+				SwingUtilities.invokeLater(new Runnable() {
+
+					public void run() {
+						button.setEnabled(true);
+						SystemPanel.this.notify(_SYSTEM_ACTIONS_SYNC, ok);
+					}
+					
+				});
+			}
+		};
 		button.setEnabled(false);
-		return button;
+		async.start();
 	}
 
+	private void performCleanup(final JButton button) {
+		Thread async = new Thread() {
+			public void run() {
+				final boolean ok = KindleDirectories.cleanup();
+				SwingUtilities.invokeLater(new Runnable() {
+
+					public void run() {
+						button.setEnabled(true);
+						SystemPanel.this.notify(_SYSTEM_ACTIONS_CLEANUP, ok);
+					}
+					
+				});
+			}
+		};
+		button.setEnabled(false);
+		async.start();
+	}
+	
 	private boolean confirm(String titleKey,
 			String textKey) {
 		return KOptionPane.OK_OPTION == KOptionPane.showConfirmDialog(this, JBPatchUI.localize(textKey), JBPatchUI.localize(titleKey), KOptionPane.CANCEL_OK_OPTION);
 	}
 	
+	private void notify(String titleKey, boolean ok) {
+		String msg = JBPatchUI.localize(ok ? _SYSTEM_ACTION_SUCCESS: _SYSTEM_ACTION_FAILED);
+		KOptionPane.showMessageDialog(this, msg, JBPatchUI.localize(titleKey));
+	}
 
 }

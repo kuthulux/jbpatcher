@@ -283,7 +283,7 @@ public class ConfigurationState implements LocalizationKeys {
 		
 		private final JLabel validityHintIconLabel = createIconLabel(ICON_CHECKMARK);
 		
-		private final JLabel hintLabel = new JLabel("hint");
+		private final JMultiLineLabel hintLabel = new JMultiLineLabel("hint");
 		private final JLabel activeLabel = new JLabel("active");
 		private final JLabel previousLabel = new JLabel("previous");
 		private final JLabel defaultLabel = new JLabel("default");

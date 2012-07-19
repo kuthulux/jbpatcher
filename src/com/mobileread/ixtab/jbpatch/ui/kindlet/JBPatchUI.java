@@ -2,6 +2,7 @@ package com.mobileread.ixtab.jbpatch.ui.kindlet;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.util.Map;
 import java.util.TreeMap;
 
 import javax.swing.JTabbedPane;
@@ -24,11 +25,13 @@ public class JBPatchUI implements ResourceMapProvider, LocalizationKeys {
 		m.put(_OVERVIEW_VERSION, "Version");
 		m.put(_OVERVIEW_NOPATCHES, "No patches found.");
 		m.put(_SYSTEM_LOG_TITLE, "JBPatch log file");
-		m.put(_SYSTEM_ACTIONS_REVERSESYNC, "Reverse Sync");
+		m.put(_SYSTEM_ACTIONS_SYNC, "Sync");
 		m.put(_SYSTEM_ACTIONS_RESTART, "Restart framework");
 		m.put(_SYSTEM_ACTIONS_LOGREFRESH, "Refresh log");
 		m.put(_SYSTEM_ACTIONS_CLEANUP, "Cleanup");
 		m.put(_SYSTEM_ACTIONS_TITLE, "Actions");
+		m.put(_SYSTEM_ACTION_SUCCESS, "Action completed successfully.");
+		m.put(_SYSTEM_ACTION_FAILED, "Action failed, please check the log file.");
 		m.put(_SYSTEM_ABOUT_VERSION, "JBPatch Version");
 		m.put(_SYSTEM_CONFIRM_CONTINUE, "Are you sure?");
 		m.put(_SYSTEM_CONFIRM_DANGEROUS, "This is a potentially dangerous action. Please make sure that you have read the documentation! Continue anyway?");
@@ -52,29 +55,6 @@ public class JBPatchUI implements ResourceMapProvider, LocalizationKeys {
 		return m;
 	}
 
-	private TreeMap getDefaultGermanResourceMap() {
-		TreeMap m = new TreeMap();
-		m.put(_TAB_OVERVIEW, "Übersicht");
-		m.put(_TAB_CONFIGURE, "Patch");
-		m.put(_TAB_SYSTEM, "System");
-		m.put(_OVERVIEW_VERSION, "Version");
-		m.put(_OVERVIEW_NOPATCHES, "Keine Patches gefunden.");
-		m.put(_SYSTEM_LOG_TITLE, "JBPatch-Logdatei");
-		m.put(_SYSTEM_ACTIONS_REVERSESYNC, "Umgekehrte Sync.");
-		m.put(_SYSTEM_ACTIONS_RESTART, "Neustart");
-		m.put(_SYSTEM_ACTIONS_LOGREFRESH, "Log neu einlesen");
-		m.put(_SYSTEM_ACTIONS_CLEANUP, "Aufräumen");
-		m.put(_SYSTEM_ACTIONS_TITLE, "Aktionen");
-		m.put(_SYSTEM_ABOUT_VERSION, "JBPatch Version");
-		
-		m.put(_CONFIG_SETTING_CURRENT, "Aktuell:");
-		m.put(_CONFIG_SETTING_DEFAULT, "Standard:");
-
-		return m;
-	}
-
-
-
 	private static KeyValueResource l10n = null;
 	
 	public String id() {
@@ -93,11 +73,9 @@ public class JBPatchUI implements ResourceMapProvider, LocalizationKeys {
 		return l10n == null ? key : l10n.getValue(key);
 	}
 
-	public TreeMap getDefaultResourceMap(String resourceId) {
+	public Map getDefaultResourceMap(String resourceId) {
 		if (ResourceMapProvider.RESOURCE_ID_ENGLISH.equals(resourceId)) {
 			return getDefaultEnglishResourceMap();
-		} else if ("de".equals(resourceId)) {
-			return getDefaultGermanResourceMap();
 		}
 		return null;
 	}
