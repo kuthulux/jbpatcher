@@ -4,6 +4,8 @@ bin/
 dist/*.bin
 dist/*.zip
 dist/src/install/*.jar
+dist/src/install/*.zip
+dist/src/install/*.azw2
 dist/opt/jbpatch/*.jbpatch
 dist/opt/jbpatch/*.zip
 dist/opt/jbpatch/*.class
