@@ -1,8 +1,5 @@
 package com.mobileread.ixtab.patch.tts;
 
-import java.net.URL;
-import java.security.AllPermission;
-import java.security.Permission;
 import java.util.Map;
 
 import serp.bytecode.BCClass;
@@ -19,7 +16,7 @@ import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class TTSPatch extends Patch {
 
-	public static final int PATCH_VERSION = 20120717;
+	public static final int PATCH_VERSION = 20120721;
 
 	private static final String KEY_MALE = "male";
 	private static final String KEY_FEMALE = "female";
@@ -98,16 +95,8 @@ public class TTSPatch extends Patch {
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_pt")
 				.withChecksums(MD5_PT, "FIXME"));
+		pd.withClass(new PatchableClass("com.amazon.ebook.booklet.reader.plugin.tts.TTSProvider$TTSAction").withChecksums(MD5_TTSACTION, "FIXME"));
 		return new PatchMetadata(this).withDevice(pd);
-	}
-
-	// FIXME
-	public Permission[] getRequiredPermissions() {
-		return new Permission[] { new AllPermission() };
-	}
-
-	protected URL getResourcesUrl() {
-		return getClass().getResource("/ttspatch.txt");
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
