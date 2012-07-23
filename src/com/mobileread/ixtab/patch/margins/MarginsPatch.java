@@ -6,11 +6,9 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 
-import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
-import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSetting;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
 import com.mobileread.ixtab.jbpatch.conf.ui.IntegerSettingPanel;
@@ -44,7 +42,7 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 	}
 
 	public int getVersion() {
-		return 20120717;
+		return 20120723;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -101,7 +99,12 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 	}
 
 	public PatchMetadata getMetadata() {
-		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);
+		PatchMetadata meta = new PatchMetadata(this);
+		fillMetaData(meta);
+		return meta;
+	}
+
+	private void fillMetaData(PatchMetadata pd) {
 		pd.withClass(new PatchableClass(CLASS_PROGRESSBARIMPL_510)
 				.withChecksums(MD5_PROGRESSBARIMPL_510_BEFORE,
 						MD5_PROGRESSBARIMPL_510_AFTER));
@@ -112,7 +115,6 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 						MD5_READERSTATEDATA_510_AFTER));
 		pd.withClass(new PatchableClass(CLASS_READERUIIMPL_510).withChecksums(
 				MD5_READERUIIMPL_510_BEFORE, MD5_READERUIIMPL_510_AFTER));
-		return new PatchMetadata(this).withDevice(pd);
 	}
 
 	String getResource(String key) {

@@ -22,14 +22,10 @@ fi
 
 lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 75
 
-# remove potential leftovers from previous versions
-rm -rf /var/local/jbpatch/*
-rm -rf /mnt/us/opt/jbpatch
+mkdir -p /var/local/jbpatch || exit 1
+unzip -o patches.zip -d /var/local/jbpatch/
 
-# re-create directory from scratch
 mkdir -p /mnt/us/opt/jbpatch || exit 1
-# ..and copy patches there.
-unzip patches.zip -d /mnt/us/opt/jbpatch/
-cp -r /mnt/us/opt/jbpatch /var/local/
+unzip -o patches.zip -d /mnt/us/opt/jbpatch/
 
 lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 100

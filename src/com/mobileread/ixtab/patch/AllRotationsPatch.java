@@ -5,11 +5,9 @@ import java.util.Map;
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
-import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
-import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class AllRotationsPatch extends Patch {
 
@@ -18,7 +16,7 @@ public class AllRotationsPatch extends Patch {
 	private static final String MD5_AFTER = "c72c7094a534cefc440b792363024b7f";
 
 	public int getVersion() {
-		return 20120708;
+		return 20120723;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -31,9 +29,7 @@ public class AllRotationsPatch extends Patch {
 	public PatchMetadata getMetadata() {
 		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_BEFORE,
 				MD5_AFTER);
-		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049)
-				.withClass(pc);
-		return new PatchMetadata(this).withDevice(pd);
+		return new PatchMetadata(this).withClass(pc);
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {

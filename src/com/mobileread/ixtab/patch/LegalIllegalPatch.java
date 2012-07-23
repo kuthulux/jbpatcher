@@ -7,11 +7,9 @@ import serp.bytecode.Code;
 
 import com.amazon.agui.swing.ConfirmationDialog;
 import com.amazon.kindle.settings.SettingsBooklet;
-import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
-import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class LegalIllegalPatch extends Patch {
 
@@ -20,7 +18,7 @@ public class LegalIllegalPatch extends Patch {
 	private static final String MD5_AFTER = "d2a85c3a36d54b190714761a39912e6b";
 
 	public int getVersion() {
-		return 20120708;
+		return 20120723;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -32,8 +30,7 @@ public class LegalIllegalPatch extends Patch {
 
 	public PatchMetadata getMetadata() {
 		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_BEFORE, MD5_AFTER);
-		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049).withClass(pc);
-		return new PatchMetadata(this).withDevice(pd);
+		return new PatchMetadata(this).withClass(pc);
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {

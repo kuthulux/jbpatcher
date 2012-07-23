@@ -18,7 +18,6 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Project;
 
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
-import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 import com.mobileread.ixtab.jbpatch.builtin.DeviceInfoPatch;
 
 public class Patches {
@@ -45,12 +44,12 @@ public class Patches {
 	}
 
 	private static boolean enable(Patch patch) {
-		PatchableDevice device = validateDevice(patch.metadata().supportedDevices);
-		if (device == null) {
-			log("E: "+patch.id()+ " does not support current device "+KindleDevice.THIS_DEVICE);
-			return false;
-		}
-		List classes = device.supportedClasses;
+//		PatchableDevice device = validateDevice(patch.metadata().supportedClasses);
+//		if (device == null) {
+//			log("E: "+patch.id()+ " does not support current device "+KindleDevice.THIS_DEVICE);
+//			return false;
+//		}
+		List classes = patch.metadata().supportedClasses;
 		
 		if (classes != null) {
 			for (int i= 0; i < classes.size(); ++i) {
@@ -66,18 +65,18 @@ public class Patches {
 		return false;
 	}
 
-	private static PatchableDevice validateDevice(List supportedDevices) {
-		if (supportedDevices == null) {
-			return null;
-		}
-		for (int i = 0; i < supportedDevices.size(); ++i) {
-			PatchableDevice supported = (PatchableDevice) supportedDevices.get(i);
-			if (KindleDevice.THIS_DEVICE.equals(supported.device)) {
-				return supported;
-			}
-		}
-		return null;
-	}
+//	private static PatchableDevice validateDevice(List supportedDevices) {
+//		if (supportedDevices == null) {
+//			return null;
+//		}
+//		for (int i = 0; i < supportedDevices.size(); ++i) {
+//			PatchableDevice supported = (PatchableDevice) supportedDevices.get(i);
+//			if (KindleDevice.THIS_DEVICE.equals(supported.device)) {
+//				return supported;
+//			}
+//		}
+//		return null;
+//	}
 
 	private static void registerForClass(PatchableClass pclass, Patch patch) {
 		String className = pclass.className;
@@ -200,12 +199,12 @@ public class Patches {
 		log("Initializing patches");
 		initialized = true;
 		KindleDevice kindle = KindleDevice.THIS_DEVICE;
-		if (kindle.getDescription() == null) {
-			log("FATAL ERROR: Firmware ID could not be determined.");
-			return;
-		}
-		log("   Kindle firmware version : " + kindle.getDescription());
 		log("   jbpatch version         : " + JBPatchMetadata.VERSION);
+		log("   Kindle firmware version : " + kindle.getSafeDescription());
+//		if (kindle.getDescription() == null) {
+//			log("FATAL ERROR: Firmware ID is not supported.");
+//			return;
+//		}
 		log("");
 		KindleDirectories.init();
 		addBuiltins();

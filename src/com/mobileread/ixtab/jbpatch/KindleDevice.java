@@ -15,6 +15,8 @@ public final class KindleDevice {
 	private static final String VERSION_FILENAME = "/etc/version.txt";
 	
 	private static final String MD5_KT_510_1557760049 = "4d14b7af911080e6a073121eb3262e54";
+	private static final String MD5_KT_511_1568190003 = "27828f5c87c8d7f345ddf157bdcac1df";
+	
 	
 	private static String getVersionMd5() {
 		/* The Amazon logic to determine the version seems to use the native
@@ -54,6 +56,7 @@ public final class KindleDevice {
 	private static Map buildFirmwareMap() {
 		Map map = new TreeMap();
 		map.put(MD5_KT_510_1557760049, "Kindle 5.1.0 (1557760049)");
+		map.put(MD5_KT_511_1568190003, "Kindle 5.1.1 (1568190003)");
 		return map;
 	}
 	
@@ -62,8 +65,9 @@ public final class KindleDevice {
 	public static KindleDevice THIS_DEVICE = new KindleDevice(getVersionMd5());
 
 	public static final KindleDevice KT_510_1557760049 = new KindleDevice(MD5_KT_510_1557760049);
+	public static final KindleDevice KT_511_1568190003 = new KindleDevice(MD5_KT_511_1568190003);
 	
-	private final String md5;
+	public final String md5;
 	private final String description;
 	
 	private KindleDevice(String md5) {

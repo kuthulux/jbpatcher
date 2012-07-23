@@ -8,15 +8,13 @@ import serp.bytecode.ConstantInstruction;
 import serp.bytecode.lowlevel.Entry;
 import serp.bytecode.lowlevel.UTF8Entry;
 
-import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
-import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class TTSPatch extends Patch {
 
-	public static final int PATCH_VERSION = 20120721;
+	public static final int PATCH_VERSION = 20120723;
 
 	private static final String KEY_MALE = "male";
 	private static final String KEY_FEMALE = "female";
@@ -76,7 +74,12 @@ public class TTSPatch extends Patch {
 	}
 
 	public PatchMetadata getMetadata() {
-		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);
+		PatchMetadata meta = new PatchMetadata(this);
+		fillMetadata(meta);
+		return meta;
+	}
+
+	private void fillMetadata(PatchMetadata pd) {
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources")
 				.withChecksums(MD5_EN, "FIXME"));
@@ -96,7 +99,6 @@ public class TTSPatch extends Patch {
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_pt")
 				.withChecksums(MD5_PT, "FIXME"));
 		pd.withClass(new PatchableClass("com.amazon.ebook.booklet.reader.plugin.tts.TTSProvider$TTSAction").withChecksums(MD5_TTSACTION, "FIXME"));
-		return new PatchMetadata(this).withDevice(pd);
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {

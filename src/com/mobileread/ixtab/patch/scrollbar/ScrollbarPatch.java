@@ -12,11 +12,9 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
 import com.amazon.agui.swing.PagingContainer;
-import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
-import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSetting;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
 import com.mobileread.ixtab.jbpatch.conf.ui.IntegerSettingPanel;
@@ -54,16 +52,21 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 	}
 
 	public int getVersion() {
-		return 20120708;
+		return 20120723;
 	}
 
 	public PatchMetadata getMetadata() {
-		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);
+		PatchMetadata meta = new PatchMetadata(this);
+		
+		fillMetadata(meta);
+		return meta;
+	}
+
+	private void fillMetadata(PatchMetadata pd) {
 		pd.withClass(new PatchableClass(THEME_CLASS).withChecksums(
 				THEME_MD5_BEFORE, THEME_MD5_AFTER));
 		pd.withClass(new PatchableClass(PAGINGCONTAINER_CLASS).withChecksums(
 				PAGINGCONTAINER_MD5_BEFORE, PAGINGCONTAINER_MD5_AFTER));
-		return new PatchMetadata(this).withDevice(pd);
 	}
 
 	protected void initLocalization(String locale, Map map) {

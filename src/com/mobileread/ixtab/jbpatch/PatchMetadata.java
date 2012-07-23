@@ -16,61 +16,61 @@ import java.util.List;
 public final class PatchMetadata {
 
 	public final Patch patch;
-	public final List supportedDevices = new ArrayList();
+	public final List supportedClasses = new ArrayList();
 
 	public PatchMetadata(Patch patch) {
 		this.patch = patch;
 	}
 
 	/**
-	 * Adds information about a supported {@link PatchableDevice} to this
+	 * Adds information about a supported {@link PatchableClass} to this
 	 * metadata.
 	 * 
-	 * @param dev
-	 *            a {@link PatchableDevice} supported by the patch owning this
+	 * @param clazz
+	 *            a {@link PatchableClass} supported by the patch owning this
 	 *            PatchMetadata object.
 	 * @return the current PatchMetadata object, so that invocations can be
 	 *         chained.
 	 */
-	public PatchMetadata withDevice(PatchableDevice dev) {
-		supportedDevices.add(dev);
+	public PatchMetadata withClass(PatchableClass clazz) {
+		supportedClasses.add(clazz);
 		return this;
 	}
 
-	/**
-	 * This class represents information about a particular device, and an
-	 * arbitrary number of classes, supported by the {@link Patch} that produced
-	 * the encompassing {@link PatchMetadata}.
-	 */
-	public static final class PatchableDevice {
-		public final KindleDevice device;
-		public final List supportedClasses = new ArrayList();
-
-		/**
-		 * Instantiates a new PatchableDevice, referring to the given
-		 * {@link KindleDevice}.
-		 * 
-		 * @param device
-		 *            a particular device supported by the instantiating patch.
-		 */
-		public PatchableDevice(KindleDevice device) {
-			this.device = device;
-		}
-
-		/**
-		 * Adds information about a supported {@link PatchableClass}.
-		 * 
-		 * @param clazz
-		 *            a {@link PatchableClass} supported by the owning patch.
-		 * @return the current PatchableDevice object, so that invocations can
-		 *         be chained.
-		 */
-		public PatchableDevice withClass(PatchableClass clazz) {
-			supportedClasses.add(clazz);
-			return this;
-		}
-
-	}
+//	/**
+//	 * This class represents information about a particular device, and an
+//	 * arbitrary number of classes, supported by the {@link Patch} that produced
+//	 * the encompassing {@link PatchMetadata}.
+//	 */
+//	public static final class PatchableDevice {
+//		public final KindleDevice device;
+//		public final List supportedClasses = new ArrayList();
+//
+//		/**
+//		 * Instantiates a new PatchableDevice, referring to the given
+//		 * {@link KindleDevice}.
+//		 * 
+//		 * @param device
+//		 *            a particular device supported by the instantiating patch.
+//		 */
+//		public PatchableDevice(KindleDevice device) {
+//			this.device = device;
+//		}
+//
+//		/**
+//		 * Adds information about a supported {@link PatchableClass}.
+//		 * 
+//		 * @param clazz
+//		 *            a {@link PatchableClass} supported by the owning patch.
+//		 * @return the current PatchableDevice object, so that invocations can
+//		 *         be chained.
+//		 */
+//		public PatchableDevice withClass(PatchableClass clazz) {
+//			supportedClasses.add(clazz);
+//			return this;
+//		}
+//
+//	}
 
 	/**
 	 * This class represents information about a particular class (name), with

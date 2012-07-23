@@ -7,11 +7,9 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
 import com.mobileread.ixtab.jbpatch.JBPatchMetadata;
-import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
-import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 import com.mobileread.ixtab.jbpatch.Patches;
 
 public class DeviceInfoPatch extends Patch {
@@ -27,9 +25,7 @@ public class DeviceInfoPatch extends Patch {
 	public PatchMetadata getMetadata() {
 		PatchableClass pc = new PatchableClass(DIALOG_CLASS).withChecksums(
 				MD5_KT510_IN, MD5_KT510_OUT);
-		PatchableDevice pd = new PatchableDevice(KindleDevice.THIS_DEVICE)
-				.withClass(pc);
-		return new PatchMetadata(this).withDevice(pd);
+		return new PatchMetadata(this).withClass(pc);
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {

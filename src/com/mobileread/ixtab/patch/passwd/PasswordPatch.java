@@ -15,11 +15,9 @@ import serp.bytecode.Instruction;
 
 import com.amazon.agui.swing.ConfirmationDialog;
 import com.amazon.kindle.content.catalog.CatalogEntry;
-import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
-import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class PasswordPatch extends Patch {
 
@@ -44,7 +42,7 @@ public class PasswordPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120708;
+		return 20120723;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -72,7 +70,12 @@ public class PasswordPatch extends Patch {
 	}
 
 	public PatchMetadata getMetadata() {
-		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049);
+		PatchMetadata meta = new PatchMetadata(this);
+		fillMetadata(meta);
+		return meta;
+	}
+
+	private void fillMetadata(PatchMetadata pd) {
 		pd.withClass(new PatchableClass(CLASS_DETAILVIEW).withChecksums(
 				MD5_DETAILVIEW_510_BEFORE, MD5_DETAILVIEW_510_AFTER));
 		pd.withClass(new PatchableClass(CLASS_OPENDETAILSACTION).withChecksums(
@@ -80,7 +83,6 @@ public class PasswordPatch extends Patch {
 				MD5_OPENDETAILSACTION_510_AFTER));
 		pd.withClass(new PatchableClass(CLASS_OPENITEMACTION).withChecksums(
 				MD5_OPENITEMACTION_510_BEFORE, MD5_OPENITEMACTION_510_AFTER));
-		return new PatchMetadata(this).withDevice(pd);
 	}
 
 	public Permission[] getRequiredPermissions() {

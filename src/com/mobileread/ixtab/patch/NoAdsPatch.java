@@ -9,12 +9,10 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 
-import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
-import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class NoAdsPatch extends Patch {
 
@@ -26,7 +24,7 @@ public class NoAdsPatch extends Patch {
 	private static final String MD5_ADMANAGERIMPL_AFTER = "ef65c12bd004ebfebb59a64595f0753e";
 
 	public int getVersion() {
-		return 20120708;
+		return 20120723;
 	}
 	
 	protected void initLocalization(String locale, Map map) {
@@ -40,8 +38,7 @@ public class NoAdsPatch extends Patch {
 
 	public PatchMetadata getMetadata() {
 		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_ADMANAGERIMPL_BEFORE, MD5_ADMANAGERIMPL_AFTER);
-		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049).withClass(pc);
-		return new PatchMetadata(this).withDevice(pd);
+		return new PatchMetadata(this).withClass(pc);
 	}
 
 	

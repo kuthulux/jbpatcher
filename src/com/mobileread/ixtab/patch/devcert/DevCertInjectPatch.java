@@ -15,11 +15,9 @@ import serp.bytecode.Instruction;
 import serp.bytecode.LocalVariable;
 
 import com.amazon.kindle.kindlet.internal.KindletExecutionException;
-import com.mobileread.ixtab.jbpatch.KindleDevice;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
-import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableDevice;
 
 public class DevCertInjectPatch extends Patch {
 
@@ -35,7 +33,7 @@ public class DevCertInjectPatch extends Patch {
 	private static final String MD5_AFTER = "b1ea6c018cbddb9fde405e3947e612f5";
 
 	public int getVersion() {
-		return 20120719;
+		return 20120723;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -50,8 +48,7 @@ public class DevCertInjectPatch extends Patch {
 
 	public PatchMetadata getMetadata() {
 		PatchableClass pc = new PatchableClass(CLASS).withChecksums(MD5_BEFORE, MD5_AFTER);
-		PatchableDevice pd = new PatchableDevice(KindleDevice.KT_510_1557760049).withClass(pc);
-		return new PatchMetadata(this).withDevice(pd);
+		return new PatchMetadata(this).withClass(pc);
 	}
 
 	static DevCertInjectPatch INSTANCE;
