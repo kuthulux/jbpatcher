@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Kindle Touch 5.1.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Kindle Touch 5.1.2"/>
 	<classpathentry kind="lib" path="lib/serp.jar"/>
 	<classpathentry kind="lib" path="lib/jailbreak.jar"/>
 	<classpathentry kind="output" path="bin"/>

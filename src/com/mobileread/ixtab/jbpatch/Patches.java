@@ -196,15 +196,8 @@ public class Patches {
 		if (initialized) {
 			return;
 		}
-		log("Initializing patches");
+		log("JBPatch version "+JBPatchMetadata.VERSION+": initializing patches");
 		initialized = true;
-		KindleDevice kindle = KindleDevice.THIS_DEVICE;
-		log("   jbpatch version         : " + JBPatchMetadata.VERSION);
-		log("   Kindle firmware version : " + kindle.getSafeDescription());
-//		if (kindle.getDescription() == null) {
-//			log("FATAL ERROR: Firmware ID is not supported.");
-//			return;
-//		}
 		log("");
 		KindleDirectories.init();
 		addBuiltins();

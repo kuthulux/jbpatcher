@@ -26,6 +26,9 @@ public class PasswordStore {
 	}
 	
 	public static Password get(String key) {
+		if (key == null) {
+			return null;
+		}
 		return (Password) instance.map.get(key);
 	}
 	

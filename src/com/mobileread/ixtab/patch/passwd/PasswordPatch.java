@@ -15,23 +15,30 @@ import serp.bytecode.Instruction;
 
 import com.amazon.agui.swing.ConfirmationDialog;
 import com.amazon.kindle.content.catalog.CatalogEntry;
+import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
 
 public class PasswordPatch extends Patch {
 
-	private static final String CLASS_DETAILVIEW = "com.amazon.kindle.swing.DetailView";
-	private static final String CLASS_OPENDETAILSACTION = "com.amazon.kindle.home.action.OpenDetailsAction";
 	private static final String CLASS_OPENITEMACTION = "com.amazon.kindle.home.action.OpenItemAction";
-
 	public static final String MD5_OPENITEMACTION_510_BEFORE = "4fb5c0bc58d97807f3c589452f0c26a6";
-	public static final String MD5_OPENDETAILSACTION_510_BEFORE = "689382577ea0cd5e8bb4c452c4f0fcb9";
-	public static final String MD5_DETAILVIEW_510_BEFORE = "43b9d37a3eabb49728ef2021ff3a9e31";
-
 	public static final String MD5_OPENITEMACTION_510_AFTER = "3e2085590a40ff1644dd0d10b3ef3e43";
+	
+	private static final String CLASS_GOTODIALOGACTION = "com.amazon.kindle.home.action.DetailsActions$GotoDialogAction";
+	public static final String MD5_GOTODIALOGACTION_510_BEFORE = "9e1e84844665f942455c6d08130ae820";
+	public static final String MD5_GOTODIALOGACTION_510_AFTER = "1d432a4b367a89f04f2ab37ec55aba4f";
+
+	private static final String CLASS_OPENDETAILSACTION = "com.amazon.kindle.home.action.OpenDetailsAction";
+	public static final String MD5_OPENDETAILSACTION_510_BEFORE = "689382577ea0cd5e8bb4c452c4f0fcb9";
 	public static final String MD5_OPENDETAILSACTION_510_AFTER = "a1e3a1e7b65058b4047de07d2b94e572";
+	
+	private static final String CLASS_DETAILVIEW = "com.amazon.kindle.swing.DetailView";
+	public static final String MD5_DETAILVIEW_510_BEFORE = "43b9d37a3eabb49728ef2021ff3a9e31";
 	public static final String MD5_DETAILVIEW_510_AFTER = "13975eac8c19e963fd3ccc57434bfee8";
+	
+
 
 	private static PasswordPatch instance;
 
@@ -42,7 +49,7 @@ public class PasswordPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120723;
+		return 20120724;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -81,6 +88,9 @@ public class PasswordPatch extends Patch {
 		pd.withClass(new PatchableClass(CLASS_OPENDETAILSACTION).withChecksums(
 				MD5_OPENDETAILSACTION_510_BEFORE,
 				MD5_OPENDETAILSACTION_510_AFTER));
+		pd.withClass(new PatchableClass(CLASS_GOTODIALOGACTION).withChecksums(
+				MD5_GOTODIALOGACTION_510_BEFORE,
+				MD5_GOTODIALOGACTION_510_AFTER));
 		pd.withClass(new PatchableClass(CLASS_OPENITEMACTION).withChecksums(
 				MD5_OPENITEMACTION_510_BEFORE, MD5_OPENITEMACTION_510_AFTER));
 	}
@@ -103,7 +113,15 @@ public class PasswordPatch extends Patch {
 		if (md5.equals(MD5_DETAILVIEW_510_BEFORE)) {
 			return patchDetailView510(clazz);
 		}
+		if (md5.equals(MD5_GOTODIALOGACTION_510_BEFORE)) {
+			return patchGotoAction510(clazz);
+		}
 		return "Unexpected error: unknown MD5 " + md5;
+	}
+
+	private void sanitize(Code c) {
+		c.calculateMaxLocals();
+		c.calculateMaxStack();
 	}
 
 	private String patchItemAction510(BCClass clazz)
@@ -124,6 +142,22 @@ public class PasswordPatch extends Patch {
 		return null;
 	}
 
+	private String patchGotoAction510(BCClass clazz) throws Throwable {
+		Code c = clazz.getDeclaredMethod("actionPerformed").getCode(false);
+		
+		c.afterLast();
+		Instruction ret = c.previous();
+		c.beforeFirst();
+
+		c.invokestatic().setMethod(
+				PasswordPatch.class.getMethod("onGotoAction",
+						new Class[] {}));
+		c.ifeq().setTarget(ret);
+		
+		sanitize(c);
+		return null;
+	}
+
 	private String patchDetailsAction510(BCClass clazz) throws Throwable {
 		Code c = clazz.getDeclaredMethod("actionPerformed").getCode(false);
 
@@ -136,11 +170,6 @@ public class PasswordPatch extends Patch {
 		sanitize(c);
 
 		return null;
-	}
-
-	private void sanitize(Code c) {
-		c.calculateMaxLocals();
-		c.calculateMaxStack();
 	}
 
 	private String patchDetailView510(BCClass clazz) throws Throwable {
@@ -160,8 +189,13 @@ public class PasswordPatch extends Patch {
 			return true;
 		}
 		CatalogEntry entry = (CatalogEntry) o;
+		String uuid = entry.getUUID().toString();
 
-		Password encrypted = PasswordStore.get(entry.getUUID().toString());
+		return verifyAccess(uuid);
+	}
+
+	private static boolean verifyAccess(String uuid) {
+		Password encrypted = PasswordStore.get(uuid);
 
 		if (encrypted == null) {
 			return true;
@@ -170,6 +204,10 @@ public class PasswordPatch extends Patch {
 		String clear = PasswordDialog.showDialog(PasswordDialog.MODE_OPEN,
 				encrypted);
 		return clear == null ? false : encrypted.matches(clear);
+	}
+	
+	public static boolean onGotoAction() {
+		return verifyAccess(instance.currentKey);
 	}
 
 	public static void onShowDetails(Object o) {

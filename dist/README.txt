@@ -1,4 +1,4 @@
-JBPatch, version 2.1.0
+JBPatch, version 2.1.1
 ======================
 
 JBPatch is an extremely powerful tool that allows to change almost
