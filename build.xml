@@ -71,8 +71,12 @@
 		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.LegalIllegalPatch.class"/>
 		<copy file="bin/com/mobileread/ixtab/patch/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.NoAdsPatch.class"/>
 
+<<<<<<< HEAD
 		<delete dir="dist/opt/jbpatch" />
 		<mkdir dir="dist/opt/jbpatch"/>
+=======
+		<delete file="dist/opt/jbpatch/com.mobileread.ixtab.patch.devcert.jar" />
+>>>>>>> db4d8efc423bfdcf3fe38bc6b7d902171726f4e2
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.devcert.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.devcert.DevCertInjectPatch"/>
@@ -83,6 +87,7 @@
 			</fileset>
 		</jar>
 
+		<delete file="dist/opt/jbpatch/com.mobileread.ixtab.patch.margins.jar" />
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.margins.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.margins.MarginsPatch"/>
@@ -92,6 +97,7 @@
 			</fileset>
 		</jar>
 
+		<delete file="dist/opt/jbpatch/com.mobileread.ixtab.patch.passwd.jar" />
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.passwd.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.passwd.PasswordPatch"/>
@@ -101,6 +107,7 @@
 			</fileset>
 		</jar>
 
+		<delete file="dist/opt/jbpatch/com.mobileread.ixtab.patch.tts.jar" />
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.tts.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.tts.TTSPatch"/>
@@ -110,6 +117,7 @@
 			</fileset>
 		</jar>
 
+		<delete file="dist/opt/jbpatch/com.mobileread.ixtab.patch.scrollbar.jar" />
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.scrollbar.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.scrollbar.ScrollbarPatch"/>
@@ -119,6 +127,10 @@
 			</fileset>
 		</jar>
 
+<<<<<<< HEAD
+=======
+		<delete file="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation.jar" />
+>>>>>>> db4d8efc423bfdcf3fe38bc6b7d902171726f4e2
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation.jar">
             <manifest>
             	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.hyphenation.HyphenationPatch"/>
@@ -127,6 +139,7 @@
             	<include name="com/mobileread/ixtab/patch/hyphenation/**/*.class"/>
         	</fileset>
 		</jar>
+<<<<<<< HEAD
 		
 		<mkdir dir="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation"/>
 		<copy todir="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation">
@@ -134,6 +147,8 @@
 				<include name="*.*"/>
 			</fileset>
 		</copy>
+=======
+>>>>>>> db4d8efc423bfdcf3fe38bc6b7d902171726f4e2
 		
 		<!-- pack (only) the patches to be distributed -->
 		<delete file="dist/src/install/patches.zip" />

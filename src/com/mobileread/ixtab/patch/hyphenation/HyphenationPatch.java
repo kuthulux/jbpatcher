@@ -192,7 +192,6 @@ public class HyphenationPatch extends Patch {
 				}
 			}
 		}
-		
 	}
 	
 	class Mode {
