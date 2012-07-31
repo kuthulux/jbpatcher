@@ -71,6 +71,8 @@
 		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.LegalIllegalPatch.class"/>
 		<copy file="bin/com/mobileread/ixtab/patch/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.NoAdsPatch.class"/>
 
+		<delete dir="dist/opt/jbpatch" />
+		<mkdir dir="dist/opt/jbpatch"/>
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.devcert.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.devcert.DevCertInjectPatch"/>
@@ -78,9 +80,6 @@
 			<fileset dir="bin">
 				<include name="com/mobileread/ixtab/patch/devcert/*.class"/>
 				<include name="com/mobileread/ixtab/patch/devcert/developer.keystore"/>
-			</fileset>
-			<fileset dir="bin/com/mobileread/ixtab/patch/devcert">
-				<include name="ixtab-patch-devcert.txt"/>
 			</fileset>
 		</jar>
 
@@ -91,9 +90,6 @@
 			<fileset dir="bin">
 				<include name="com/mobileread/ixtab/patch/margins/*.class"/>
 			</fileset>
-			<fileset dir="bin/com/mobileread/ixtab/patch/margins">
-				<include name="ixtab-patch-margins.txt"/>
-			</fileset>
 		</jar>
 
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.passwd.jar">
@@ -103,9 +99,6 @@
 			<fileset dir="bin">
 				<include name="com/mobileread/ixtab/patch/passwd/*.class"/>
 			</fileset>
-			<fileset dir="bin/com/mobileread/ixtab/patch/passwd">
-				<include name="ixtab-patch-passwd.txt"/>
-			</fileset>
 		</jar>
 
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.tts.jar">
@@ -114,9 +107,6 @@
 			</manifest>
 			<fileset dir="bin">
 				<include name="com/mobileread/ixtab/patch/tts/*.class"/>
-			</fileset>
-			<fileset dir="bin/com/mobileread/ixtab/patch/tts">
-				<include name="ttspatch.txt"/>
 			</fileset>
 		</jar>
 
@@ -129,16 +119,21 @@
 			</fileset>
 		</jar>
 
-		<!--
-		<jar destfile="dist/opt/jbpatch/ixtab_hyphenation-5.1.0.zip">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation.jar">
             <manifest>
             	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.hyphenation.HyphenationPatch"/>
 			</manifest>
             <fileset dir="bin">
-            	<include name="com/mobileread/ixtab/patch/hyphenation/*.class"/>
+            	<include name="com/mobileread/ixtab/patch/hyphenation/**/*.class"/>
         	</fileset>
 		</jar>
-		-->
+		
+		<mkdir dir="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation"/>
+		<copy todir="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation">
+			<fileset dir="src/com/mobileread/ixtab/patch/hyphenation/itextpdf/definitions">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
 		
 		<!-- pack (only) the patches to be distributed -->
 		<delete file="dist/src/install/patches.zip" />
@@ -146,6 +141,8 @@
 			<fileset dir="dist/opt/jbpatch">
 				<include name="com.mobileread.ixtab.patch.AllRotationsPatch.class"/>
 				<include name="com.mobileread.ixtab.patch.devcert.jar"/>
+				<include name="com.mobileread.ixtab.patch.hyphenation/*.*"/>
+				<include name="com.mobileread.ixtab.patch.hyphenation.jar"/>
 				<include name="com.mobileread.ixtab.patch.margins.jar"/>
 				<include name="com.mobileread.ixtab.patch.passwd.jar"/>
 				<include name="com.mobileread.ixtab.patch.scrollbar.jar"/>
@@ -163,7 +160,7 @@
 	<target name="dev" depends="dist">
 		<exec command="scp -i ${dev-ssh-id} dist/src/install/jbpatch.jar root@kindle:/opt/amazon/ebook/lib/jbpatch.jar"/>
 		<exec command="scp -i ${dev-ssh-id} dist/src/install/${product.filename}.azw2 root@kindle:/mnt/us/documents/"/>
-		<exec command="scp -i ${dev-ssh-id} -r dist/opt/jbpatch root@kindle:/mnt/us/opt/"/>
+		<exec command="scp -i ${dev-ssh-id} -r dist/opt/jbpatch root@kindle:/var/local/"/>
 
 	</target>
 

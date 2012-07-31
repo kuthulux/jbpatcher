@@ -1,0 +1,5 @@
+This directory contains source code and files derived from http://sourceforge.net/projects/itext/ .
+
+All of the files contained in this directory, and all of its subdirectories, are therefore licensed under the
+                           
+                           Affero GNU Public License.
