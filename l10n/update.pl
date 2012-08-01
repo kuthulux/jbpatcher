@@ -6,7 +6,9 @@
 # something has changed in the transifex repository. Pretty much
 # everything is hardcoded for now.
 # requires a work/ directory to exist, and a symlink called "last"
-# to the folder containint the latest uploaded files.
+# to the folder containing the latest uploaded files.
+# this is currently set to run via a cronjob, 3 minutes after every
+# full hour. It only uploads a new file when something has changed.
 #####################################################################
 
 
@@ -20,7 +22,7 @@ if (-s (".tx/config") <= 1) {
 	die(".tx/config looks like it's in bad shape, aborting");
 }
 
-system("rm work/*.txt jbpatch-locales-*.zip >/dev/null 2>&1");
+system("rm work/*.txt jbpatch-l10n-*.zip >/dev/null 2>&1");
 
 my $LAST = `ls -l last | awk '{print \$NF;}'`;
 chomp $LAST;
@@ -29,7 +31,7 @@ my $LAST_MD5 = `cd $LAST; md5sum *.txt|md5sum|awk '{print \$1}'`;
 chomp $LAST_MD5;
 print "last md5   : $LAST_MD5\n" if $DEBUG;
 
-my $DATE = `date +%F`;
+my $DATE = `date +%F-%R`;
 chomp $DATE;
 
 if (-d $DATE) {
@@ -65,10 +67,12 @@ foreach my $f (glob("work/*.txt")) {
 	&unescapeFile($f);
 }
 
-system("cd work; zip -9 ../jbpatch-locales-$DATE.zip *.txt >/dev/null 2>&1");
-system("gett -s 2Cfq0KL jbpatch-locales-$DATE.zip >/dev/null 2>&1");
+system("cd work; zip -9 ../jbpatch-l10n.zip *.txt >/dev/null 2>&1");
+system("gett -s 2Cfq0KL jbpatch-l10n.zip >/dev/null 2>&1");
 
-system("rm work/*.txt jbpatch-locales-$DATE.zip >/dev/null 2>&1");
+print "Updates uploaded.";# if $DEBUG;
+
+system("rm work/*.txt jbpatch-l10n.zip >/dev/null 2>&1");
 
 unless ($LAST eq $DATE) {
 	system("rm last && ln -s $DATE last && rm -r $LAST");
