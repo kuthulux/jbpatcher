@@ -7,3 +7,5 @@ dist/src/install/*.jar
 dist/src/install/*.zip
 dist/src/install/*.azw2
 dist/opt/jbpatch
+l10n/*.txt
+

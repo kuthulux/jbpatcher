@@ -166,7 +166,7 @@
 	<target name="dev" depends="dist">
 		<exec command="scp -i ${dev-ssh-id} dist/src/install/jbpatch.jar root@kindle:/opt/amazon/ebook/lib/jbpatch.jar"/>
 		<exec command="scp -i ${dev-ssh-id} dist/src/install/${product.filename}.azw2 root@kindle:/mnt/us/documents/"/>
-		<exec command="scp -i ${dev-ssh-id} -r dist/opt/jbpatch root@kindle:/var/local/"/>
+		<exec command="scp -i ${dev-ssh-id} -r dist/opt/jbpatch root@kindle:/mnt/us/opt/"/>
 
 	</target>
 

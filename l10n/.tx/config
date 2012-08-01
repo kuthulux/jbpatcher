@@ -1,0 +1,63 @@
+[main]
+host = https://www.transifex.com
+
+[jbpatch.ixtab-jbpatch-ui-kindlet-JBPatchUI]
+source_file = com.mobileread.ixtab.jbpatch.ui.kindlet.JBPatchUI-en.txt
+file_filter = com.mobileread.ixtab.jbpatch.ui.kindlet.JBPatchUI-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
+[jbpatch.ixtab-patch-AllRotationsPatch]
+source_file = com.mobileread.ixtab.patch.AllRotationsPatch-en.txt
+file_filter = com.mobileread.ixtab.patch.AllRotationsPatch-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
+[jbpatch.ixtab-patch-devcert]
+source_file = com.mobileread.ixtab.patch.devcert-en.txt
+file_filter = com.mobileread.ixtab.patch.devcert-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
+[jbpatch.ixtab-patch-hyphenation]
+source_file = com.mobileread.ixtab.patch.hyphenation-en.txt
+file_filter = com.mobileread.ixtab.patch.hyphenation-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
+[jbpatch.ixtab-patch-LegalIllegalPatch]
+source_file = com.mobileread.ixtab.patch.LegalIllegalPatch-en.txt
+file_filter = com.mobileread.ixtab.patch.LegalIllegalPatch-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
+[jbpatch.ixtab-patch-margins]
+source_file = com.mobileread.ixtab.patch.margins-en.txt
+file_filter = com.mobileread.ixtab.patch.margins-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
+[jbpatch.ixtab-patch-NoAdsPatch]
+source_file = com.mobileread.ixtab.patch.NoAdsPatch-en.txt
+file_filter = com.mobileread.ixtab.patch.NoAdsPatch-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
+[jbpatch.ixtab-patch-passwd]
+source_file = com.mobileread.ixtab.patch.passwd-en.txt
+file_filter = com.mobileread.ixtab.patch.passwd-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
+[jbpatch.ixtab-patch-scrollbar]
+source_file = com.mobileread.ixtab.patch.scrollbar-en.txt
+file_filter = com.mobileread.ixtab.patch.scrollbar-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
+[jbpatch.ixtab-patch-tts]
+source_file = com.mobileread.ixtab.patch.tts-en.txt
+file_filter = com.mobileread.ixtab.patch.tts-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
