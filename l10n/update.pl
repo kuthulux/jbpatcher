@@ -13,7 +13,12 @@
 use strict;
 use warnings;
 
-my $DEBUG = 1;
+my $DEBUG = 0;
+
+system("wget -q -O .tx/config https://bitbucket.org/ixtab/jbpatcher/raw/master/l10n/.tx/config");
+if (-s (".tx/config") <= 1) {
+	die(".tx/config looks like it's in bad shape, aborting");
+}
 
 system("rm work/*.txt jbpatch-locales-*.zip >/dev/null 2>&1");
 
@@ -63,7 +68,7 @@ foreach my $f (glob("work/*.txt")) {
 system("cd work; zip -9 ../jbpatch-locales-$DATE.zip *.txt >/dev/null 2>&1");
 system("gett -s 2Cfq0KL jbpatch-locales-$DATE.zip >/dev/null 2>&1");
 
-system("rm work/*.txt >/dev/null 2>&1");
+system("rm work/*.txt jbpatch-locales-$DATE.zip >/dev/null 2>&1");
 
 unless ($LAST eq $DATE) {
 	system("rm last && ln -s $DATE last && rm -r $LAST");
