@@ -6,14 +6,15 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 
+import com.amazon.kindle.kindlet.input.keyboard.OnscreenKeyboardUtil;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSetting;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
-import com.mobileread.ixtab.jbpatch.conf.ui.IntegerSettingPanel;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
+import com.mobileread.ixtab.jbpatch.conf.ui.TextSettingPanel;
 
 public class MarginsPatch extends Patch implements MarginsPatchKeys {
 
@@ -42,7 +43,7 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 	}
 
 	public int getVersion() {
-		return 20120723;
+		return 20120803;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -291,7 +292,7 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 		}
 
 		public final SettingPanel getPanel(SettingChangeListener listener) {
-			return new IntegerSettingPanel(listener);
+			return new TextSettingPanel(listener, OnscreenKeyboardUtil.KEYBOARD_MODE_NUMBERS_AND_SYMBOLS, true);
 		}
 
 		public final boolean isValid(String value) {

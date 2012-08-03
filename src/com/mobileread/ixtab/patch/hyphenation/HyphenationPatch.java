@@ -1,13 +1,8 @@
 package com.mobileread.ixtab.patch.hyphenation;
 
-import java.awt.BorderLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.security.AllPermission;
 import java.security.Permission;
 import java.util.Map;
-
-import javax.swing.JComboBox;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.BCMethod;
@@ -19,7 +14,9 @@ import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSetting;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
+import com.mobileread.ixtab.jbpatch.conf.ui.ComboBoxSettingPanel;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
+import com.mobileread.ixtab.jbpatch.conf.ui.SettingEntry;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
 
 public class HyphenationPatch extends Patch {
@@ -150,17 +147,27 @@ public class HyphenationPatch extends Patch {
 	}
 	
 	private class ModeSetting extends ConfigurableSetting {
+		private final SettingEntry[] entries;
 
 		public ModeSetting() {
 			super(localize(CONF_MODE_I18N_NAME), localize(CONF_MODE_I18N_DESC), localize(CONF_MODE_I18N_HINT), CONF_MODE_KEY, CONF_MODE_DEFAULT);
+			entries = new SettingEntry[3];
+			entries[0] = new SettingEntry(MODE_JUSTIFY_KEY, localize(CONF_MODE_JUSTIFY_LONG_I18N));
+			entries[1] = new SettingEntry(MODE_DUMB_KEY, localize(CONF_MODE_DUMB_LONG_I18N));
+			entries[2] = new SettingEntry(MODE_SMART_KEY, localize(CONF_MODE_SMART_LONG_I18N));
 		}
 
 		public SettingPanel getPanel(SettingChangeListener listener) {
-			return new ModeSettingPanel(listener);
+			return new ComboBoxSettingPanel(listener, entries);
 		}
 
 		public boolean isValid(String v) {
-			return MODE_JUSTIFY_KEY.equals(v) || MODE_DUMB_KEY.equals(v) || MODE_SMART_KEY.equals(v);
+			for (int i=0; i < entries.length; ++i) {
+				if (entries[i].key.equals(v)) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public String getLocalized(String value) {
@@ -174,78 +181,6 @@ public class HyphenationPatch extends Patch {
 				return localize(CONF_MODE_SMART_SHORT_I18N);
 			}
 			return value;
-		}
-		
-		
-		
-	}
-	
-	private class ModeSettingPanel extends SettingPanel {
-		private static final long serialVersionUID = 1L;
-
-		private final Mode[] modes = new Mode[3];
-		private final JComboBox combo = new JComboBox();
-		
-		public ModeSettingPanel(final SettingChangeListener listener) {
-			super(listener);
-			
-			modes[0] = new Mode(MODE_JUSTIFY_KEY, localize(CONF_MODE_JUSTIFY_LONG_I18N));
-			modes[1] = new Mode(MODE_DUMB_KEY, localize(CONF_MODE_DUMB_LONG_I18N));
-			modes[2] = new Mode(MODE_SMART_KEY, localize(CONF_MODE_SMART_LONG_I18N));
-			
-			setLayout(new BorderLayout());
-			add(combo);
-			for (int i=0; i < modes.length; ++i) {
-				combo.addItem(modes[i]);
-			}
-			combo.addItemListener(new ItemListener(){
-
-				public void itemStateChanged(ItemEvent e) {
-					if (e.getStateChange() == ItemEvent.SELECTED) {
-						listener.valueChanged(ModeSettingPanel.this, ((Mode)e.getItem()).key);
-					}
-				}});
-		}
-
-		public void setValue(String value) {
-			for (int i=0; i < modes.length; ++i) {
-				if (modes[i].key.equals(value)) {
-					combo.setSelectedItem(modes[i]);
-					break;
-				}
-			}
-		}
-	}
-	
-	class Mode {
-		public final String key;
-		public final String description;
-		
-		public Mode(String key, String descriptionKey) {
-			super();
-			this.key = key;
-			this.description = localize(descriptionKey);
-		}
-		
-		public String toString() {
-			return description;
-		}
-
-		// generated code
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Mode other = (Mode) obj;
-			if (key == null) {
-				if (other.key != null)
-					return false;
-			} else if (!key.equals(other.key))
-				return false;
-			return true;
 		}
 	}
 }

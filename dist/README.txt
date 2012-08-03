@@ -1,5 +1,5 @@
 JBPatch for Kindle Touch
-=======================
+========================
 
 JBPatch is an extremely powerful tool that allows to change almost
 all aspects of your Kindle's behavior (at least the parts that have been

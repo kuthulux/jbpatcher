@@ -29,7 +29,7 @@ public class TestCurrentGoal extends TestCase {
 		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/amazon/kindle/home/view/browse/BrowseContentCell.class"));
 //		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/mobipocket/common/log/j.class"));
 //		BCClass cls = p.loadClass(HomeBooklet.class);
-		String result = new CoverViewPatch().perform(CoverViewPatch.MD5_BROWSECONTENTCELL_BEFORE, cls);
+		String result = new CoverViewPatch().perform(CoverViewPatch.MD5_J_BEFORE, cls);
 		if (result != null) {
 			System.err.println("patch failed to perform, error is: "+result);
 			fail(result);

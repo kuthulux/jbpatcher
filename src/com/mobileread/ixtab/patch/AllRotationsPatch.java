@@ -16,12 +16,12 @@ public class AllRotationsPatch extends Patch {
 	private static final String MD5_AFTER = "c72c7094a534cefc440b792363024b7f";
 
 	public int getVersion() {
-		return 20120723;
+		return 20120803;
 	}
 
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {
-			map.put(I18N_JBPATCH_NAME, "Enable All Screen Rotations");
+			map.put(I18N_JBPATCH_NAME, "Enable all Screen Rotations");
 			map.put(I18N_JBPATCH_DESCRIPTION, "This patch allows all screen rotations to be used for the Java-based parts of the Kindle Touch UI. Note that it will not affect the browser and other WAF applications.");
 		}
 	}
@@ -33,9 +33,11 @@ public class AllRotationsPatch extends Patch {
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
-		patchSetDefaultApplicationLock(clazz);
-		patchSetApplicationLock(clazz);
-		return null;
+		if (md5.equals(MD5_BEFORE)) {
+			patchSetDefaultApplicationLock(clazz);
+			patchSetApplicationLock(clazz);
+		}
+		return "unsupported MD5: "+md5;
 	}
 
 	private void patchSetDefaultApplicationLock(BCClass clazz) {

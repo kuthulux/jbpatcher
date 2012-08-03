@@ -17,15 +17,17 @@ public class JBTextField extends JTextField implements KeyListener, DocumentList
 	 * Creates a new JBTextField with the given mode
 	 * @param listener
 	 * @param mode one of the constants defined in {@link OnscreenKeyboardUtil}.
+	 * @param disableAutoCompletion 
 	 */
-	public JBTextField(SettingChangeListener listener, String mode) {
+	public JBTextField(SettingChangeListener listener, String mode, boolean disableAutoCompletion) {
 		super();
-		// disable autocompletion
 		this.settingsListener = listener;
 		this.addKeyListener(this);
 		this.getDocument().addDocumentListener(this);
-		putClientProperty("kindle.keyboard.properties", new Integer(0 & -2));
 		OnscreenKeyboardUtil.configure(this, mode);
+		if (disableAutoCompletion) {
+			putClientProperty("kindle.keyboard.properties", new Integer(0 & -2));
+		}
 	}
 
 	public void keyTyped(KeyEvent e) {

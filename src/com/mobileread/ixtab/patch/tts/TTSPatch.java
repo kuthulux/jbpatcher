@@ -1,5 +1,6 @@
 package com.mobileread.ixtab.patch.tts;
 
+import java.util.Locale;
 import java.util.Map;
 
 import serp.bytecode.BCClass;
@@ -8,13 +9,17 @@ import serp.bytecode.ConstantInstruction;
 import serp.bytecode.lowlevel.Entry;
 import serp.bytecode.lowlevel.UTF8Entry;
 
+import com.amazon.kindle.kindlet.input.keyboard.OnscreenKeyboardUtil;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
+import com.mobileread.ixtab.jbpatch.conf.ConfigurableSetting;
+import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
+import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
+import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
+import com.mobileread.ixtab.jbpatch.conf.ui.TextSettingPanel;
 
 public class TTSPatch extends Patch {
-
-	public static final int PATCH_VERSION = 20120723;
 
 	private static final String KEY_MALE = "male";
 	private static final String KEY_FEMALE = "female";
@@ -38,39 +43,33 @@ public class TTSPatch extends Patch {
 			"Maschile" };
 	private static final String[] ORIGINAL_PT = new String[] { "Femino",
 			"Masculino" };
+	
+	private static final String UI_HINT_M = "male.hint";
+	private static final String UI_NAME_M = "male.name";
+	private static final String UI_DESC_M = "male.desc";
+
+	private static final String UI_HINT_F = "female.hint";
+	private static final String UI_NAME_F = "female.name";
+	private static final String UI_DESC_F = "female.desc";
+
+	public int getVersion() {
+		return 20120803;
+	}
 
 	protected void initLocalization(String id, Map m) {
 		if ("en".equals(id)) {
-			m.put(I18N_JBPATCH_NAME, "Enable Text-to-Speech");
-			m.put(I18N_JBPATCH_DESCRIPTION, "Unconditionally enable Text-to-Speech, regardless of language and DRM.");
+			m.put(I18N_JBPATCH_NAME, "Customize Text-to-Speech");
+			m.put(I18N_JBPATCH_DESCRIPTION, "This patch unconditionally enables Text-to-Speech (regardless of language or DRM), and allows to customize the description of the voices.");
 			m.put(KEY_FEMALE, ORIGINAL_EN[0]);
 			m.put(KEY_MALE, ORIGINAL_EN[1]);
-		} else if ("de".equals(id)) {
-			m.put(I18N_JBPATCH_NAME, "Text-to-Speech einschalten");
-			m.put(I18N_JBPATCH_DESCRIPTION, "Text-to-Speech immer einschalten, unabhängig von der Sprache und DRM.");
-			m.put(KEY_FEMALE, "Weiblich (englisch)");
-			m.put(KEY_MALE, "Männlich (englisch)");
-		} else if ("es".equals(id)) {
-			m.put(I18N_JBPATCH_NAME, "Activar Texto a voz");
-			m.put(KEY_FEMALE, "Femenina (inglés)");
-			m.put(KEY_MALE, "Masculina (inglés)");
-		} else if ("fr".equals(id)) {
-			m.put(I18N_JBPATCH_NAME, "Activer la synth\350se vocale");
-			m.put(KEY_FEMALE, "Femme (anglais)");
-			m.put(KEY_MALE, "Homme (anglais)");
-		} else if ("it".equals(id)) {
-			m.put(I18N_JBPATCH_NAME, "Attiva Da Testo a Voce");
-			m.put(KEY_FEMALE, "Femminile (inglese)");
-			m.put(KEY_MALE, "Maschile (inglese)");
-		} else if ("pt".equals(id)) {
-			m.put(I18N_JBPATCH_NAME, "Ativar texto-voz");
-			m.put(KEY_FEMALE, "Femino (inglês)");
-			m.put(KEY_MALE, "Masculino (inglês)");
+			
+			m.put(UI_NAME_F, "Female Speaker");
+			m.put(UI_DESC_F, "Description of the female voice.");
+			m.put(UI_HINT_F, "This is the text that is shown for the female voice in the Text-to-Speech Options.");
+			m.put(UI_NAME_M, "Male Speaker");
+			m.put(UI_DESC_M, "Description of the male voice.");
+			m.put(UI_HINT_M, "This is the text that is shown for the male voice in the Text-to-Speech Options.");
 		}
-	}
-
-	public int getVersion() {
-		return PATCH_VERSION;
 	}
 
 	public PatchMetadata getMetadata() {
@@ -82,23 +81,48 @@ public class TTSPatch extends Patch {
 	private void fillMetadata(PatchMetadata pd) {
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources")
-				.withChecksums(MD5_EN, "FIXME"));
+				.withChecksums(MD5_EN, "?"));
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_de")
-				.withChecksums(MD5_DE, "FIXME"));
+				.withChecksums(MD5_DE, "?"));
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_es")
-				.withChecksums(MD5_ES, "FIXME"));
+				.withChecksums(MD5_ES, "?"));
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_fr")
-				.withChecksums(MD5_FR, "FIXME"));
+				.withChecksums(MD5_FR, "?"));
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_it")
-				.withChecksums(MD5_IT, "FIXME"));
+				.withChecksums(MD5_IT, "?"));
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_pt")
-				.withChecksums(MD5_PT, "FIXME"));
-		pd.withClass(new PatchableClass("com.amazon.ebook.booklet.reader.plugin.tts.TTSProvider$TTSAction").withChecksums(MD5_TTSACTION, "FIXME"));
+				.withChecksums(MD5_PT, "?"));
+		pd.withClass(new PatchableClass("com.amazon.ebook.booklet.reader.plugin.tts.TTSProvider$TTSAction").withChecksums(MD5_TTSACTION, "?"));
+	}
+
+	
+	protected ConfigurableSettings initConfigurableSettings() {
+		ConfigurableSettings settings = new ConfigurableSettings();
+		String[] original = determineOriginalValues(Locale.getDefault());
+		settings.add(new DescriptionSetting(UI_NAME_F, UI_DESC_F, UI_HINT_F, KEY_FEMALE, original[0]));
+		settings.add(new DescriptionSetting(UI_NAME_M, UI_DESC_M, UI_HINT_M, KEY_MALE, original[1]));
+		return settings;
+	}
+
+	private String[] determineOriginalValues(Locale l) {
+		String s = l.toString();
+		if (s.startsWith("de")) {
+			return ORIGINAL_DE;
+		} else if (s.startsWith("es")) {
+			return ORIGINAL_ES;
+		} else if (s.startsWith("fr")) {
+			return ORIGINAL_FR;
+		} else if (s.startsWith("it")) {
+			return ORIGINAL_IT;
+		} else if (s.startsWith("pt")) {
+			return ORIGINAL_PT;
+		}
+		return ORIGINAL_EN;
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
@@ -120,8 +144,8 @@ public class TTSPatch extends Patch {
 	}
 
 	private String patchDescription(BCClass clazz, String[] original) {
-		String[] replacement = new String[] { localize(KEY_FEMALE),
-				localize(KEY_MALE) };
+		String[] replacement = new String[] { getConfigured(KEY_FEMALE),
+				getConfigured(KEY_MALE) };
 		Entry[] entries = clazz.getPool().getEntries();
 		for (int e = 0; e < entries.length; ++e) {
 			if (entries[e] instanceof UTF8Entry) {
@@ -148,4 +172,20 @@ public class TTSPatch extends Patch {
 		return null;
 	}
 
+	private class DescriptionSetting extends ConfigurableSetting {
+
+		public DescriptionSetting(String name, String description,
+				String hint, String key, String defaultValue) {
+			super(localize(name), localize(description), localize(hint), key, defaultValue);
+		}
+
+		public SettingPanel getPanel(SettingChangeListener listener) {
+			return new TextSettingPanel(listener, OnscreenKeyboardUtil.KEYBOARD_MODE_INIT_CAP_ONCE, true);
+		}
+
+		public boolean isValid(String value) {
+			return value.trim().length() >= 1;
+		}
+		
+	}
 }

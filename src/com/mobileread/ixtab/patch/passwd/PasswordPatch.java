@@ -48,13 +48,13 @@ public class PasswordPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120724;
+		return 20120803;
 	}
 
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {
-			map.put(I18N_JBPATCH_NAME, "Password-protect Items");
-			map.put(I18N_JBPATCH_DESCRIPTION, "This patch can be used to add a simple password protection for individual items, such as books or applications.");
+			map.put(I18N_JBPATCH_NAME, "Password-protect Content");
+			map.put(I18N_JBPATCH_DESCRIPTION, "This patch can be used to add a simple password protection for items such as books, collections, or applications.");
 			map.put("ok","OK");
 			map.put("cancel","Cancel");
 			map.put("error.title","Error");

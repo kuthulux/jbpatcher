@@ -12,14 +12,15 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
 import com.amazon.agui.swing.PagingContainer;
+import com.amazon.kindle.kindlet.input.keyboard.OnscreenKeyboardUtil;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSetting;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
-import com.mobileread.ixtab.jbpatch.conf.ui.IntegerSettingPanel;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
+import com.mobileread.ixtab.jbpatch.conf.ui.TextSettingPanel;
 
 public class ScrollbarPatch extends Patch implements AdjustmentListener {
 
@@ -52,7 +53,7 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 	}
 
 	public int getVersion() {
-		return 20120723;
+		return 20120803;
 	}
 
 	public PatchMetadata getMetadata() {
@@ -71,7 +72,7 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 
 	protected void initLocalization(String locale, Map map) {
 		if (locale.equals(RESOURCE_ID_ENGLISH)) {
-			map.put(I18N_JBPATCH_NAME, "Make scrollbars usable");
+			map.put(I18N_JBPATCH_NAME, "Make Scrollbars usable");
 			map.put(I18N_JBPATCH_DESCRIPTION,
 					"The default scrollbars are too tiny to be usable with a finger. In addition, menus in landscape mode may be too long to fit on the screen. While a scrollbar is displayed, it is not functional. This patch fixes both of these issues.");
 			map.put(CONF_SCROLLBAR_WIDTH_I18N_NAME, "Scrollbar size");
@@ -95,7 +96,7 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 		}
 
 		public SettingPanel getPanel(SettingChangeListener listener) {
-			return new IntegerSettingPanel(listener);
+			return new TextSettingPanel(listener, OnscreenKeyboardUtil.KEYBOARD_MODE_NUMBERS_AND_SYMBOLS, true);
 		}
 
 		public boolean isValid(String value) {
@@ -113,8 +114,10 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 		if (md5.equals(THEME_MD5_BEFORE)) {
 			patchTheme(clazz, "getDefaultResources167");
 			patchTheme(clazz, "getDefaultResources212");
-		} else {
+		} else if (md5.equals(PAGINGCONTAINER_MD5_BEFORE)){
 			patchContainer(clazz);
+		} else {
+			return "unsupported MD5: "+md5;
 		}
 		return null;
 	}
