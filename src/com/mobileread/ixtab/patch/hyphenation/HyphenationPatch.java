@@ -40,9 +40,13 @@ public class HyphenationPatch extends Patch {
 	private static final String CONF_MODE_I18N_DESC = "mode.description";
 	private static final String CONF_MODE_I18N_HINT = "mode.hint";
 
-	private static final String CONF_MODE_JUSTIFY_I18N = "mode.justify";
-	private static final String CONF_MODE_DUMB_I18N = "mode.dumb";
-	private static final String CONF_MODE_SMART_I18N = "mode.smart";
+	private static final String CONF_MODE_JUSTIFY_LONG_I18N = "mode.justify";
+	private static final String CONF_MODE_DUMB_LONG_I18N = "mode.dumb";
+	private static final String CONF_MODE_SMART_LONG_I18N = "mode.smart";
+	
+	private static final String CONF_MODE_JUSTIFY_SHORT_I18N = "mode.justify.short";
+	private static final String CONF_MODE_DUMB_SHORT_I18N = "mode.dumb.short";
+	private static final String CONF_MODE_SMART_SHORT_I18N = "mode.smart.short";
 	
 	static HyphenationPatch INSTANCE;
 	
@@ -51,7 +55,7 @@ public class HyphenationPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120801;
+		return 20120803;
 	}
 
 	public PatchMetadata getMetadata() {
@@ -72,9 +76,13 @@ public class HyphenationPatch extends Patch {
 			map.put(CONF_MODE_I18N_DESC, "Select how you want the reader behavior to be modified.");
 			map.put(CONF_MODE_I18N_HINT, "If you are having trouble with hyphenation, ensure that the book has the correct language set, and that hyphenation rules for that language are available. Please refer to the patch documentation on the Wiki page for further information.");
 			
-			map.put(CONF_MODE_JUSTIFY_I18N, "Justify: only justify text to block layout");
-			map.put(CONF_MODE_DUMB_I18N, "Dumb: justification and dumb hyphenation");
-			map.put(CONF_MODE_SMART_I18N, "Smart: justification and language-specific hyphenation");
+			map.put(CONF_MODE_JUSTIFY_LONG_I18N, "Justify: only justify text to block layout");
+			map.put(CONF_MODE_DUMB_LONG_I18N, "Dumb: justification and dumb hyphenation");
+			map.put(CONF_MODE_SMART_LONG_I18N, "Smart: justification and language-specific hyphenation");
+			
+			map.put(CONF_MODE_JUSTIFY_SHORT_I18N, MODE_JUSTIFY_KEY);
+			map.put(CONF_MODE_DUMB_SHORT_I18N, MODE_DUMB_KEY);
+			map.put(CONF_MODE_SMART_SHORT_I18N, MODE_SMART_KEY);
 		}
 	}
 
@@ -154,6 +162,21 @@ public class HyphenationPatch extends Patch {
 		public boolean isValid(String v) {
 			return MODE_JUSTIFY_KEY.equals(v) || MODE_DUMB_KEY.equals(v) || MODE_SMART_KEY.equals(v);
 		}
+
+		public String getLocalized(String value) {
+			if (value.equals(MODE_JUSTIFY_KEY)) {
+				return localize(CONF_MODE_JUSTIFY_SHORT_I18N);
+			}
+			if (value.equals(MODE_DUMB_KEY)) {
+				return localize(CONF_MODE_DUMB_SHORT_I18N);
+			}
+			if (value.equals(MODE_SMART_KEY)) {
+				return localize(CONF_MODE_SMART_SHORT_I18N);
+			}
+			return value;
+		}
+		
+		
 		
 	}
 	
@@ -166,9 +189,9 @@ public class HyphenationPatch extends Patch {
 		public ModeSettingPanel(final SettingChangeListener listener) {
 			super(listener);
 			
-			modes[0] = new Mode(MODE_JUSTIFY_KEY, localize(CONF_MODE_JUSTIFY_I18N));
-			modes[1] = new Mode(MODE_DUMB_KEY, localize(CONF_MODE_DUMB_I18N));
-			modes[2] = new Mode(MODE_SMART_KEY, localize(CONF_MODE_SMART_I18N));
+			modes[0] = new Mode(MODE_JUSTIFY_KEY, localize(CONF_MODE_JUSTIFY_LONG_I18N));
+			modes[1] = new Mode(MODE_DUMB_KEY, localize(CONF_MODE_DUMB_LONG_I18N));
+			modes[2] = new Mode(MODE_SMART_KEY, localize(CONF_MODE_SMART_LONG_I18N));
 			
 			setLayout(new BorderLayout());
 			add(combo);

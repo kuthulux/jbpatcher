@@ -82,4 +82,7 @@ public class PatchPolicy extends Policy {
 	public boolean implies(ProtectionDomain domain, Permission permission) {
 		return getPermissions(domain).implies(permission);
 	}
+
+	public void refresh() {
+	}
 }

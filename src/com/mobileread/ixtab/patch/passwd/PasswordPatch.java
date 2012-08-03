@@ -15,7 +15,6 @@ import serp.bytecode.Instruction;
 
 import com.amazon.agui.swing.ConfirmationDialog;
 import com.amazon.kindle.content.catalog.CatalogEntry;
-import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;

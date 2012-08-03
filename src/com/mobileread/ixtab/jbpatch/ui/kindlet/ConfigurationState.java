@@ -206,8 +206,12 @@ public class ConfigurationState implements LocalizationKeys {
 
 		private void updateLabel() {
 			if (currentValuelabel != null) {
-				currentValuelabel.setText(JBPatchUI.localize(_CONFIG_SETTING_CURRENT) + " "+getCurrentValue());
+				currentValuelabel.setText(JBPatchUI.localize(_CONFIG_SETTING_CURRENT) + " "+localize(getCurrentValue()));
 			}
+		}
+		
+		private String localize(String value) {
+			return setting.getLocalized(value);
 		}
 
 		private void updateSettingPanel() {
@@ -251,7 +255,7 @@ public class ConfigurationState implements LocalizationKeys {
 		JMultiLineLabel description = new JMultiLineLabel(setting.getDescription());
 		JLabel currentSetting = new JLabel();
 		setting.associateWith(currentSetting);
-		JLabel defaultSetting = new JLabel(JBPatchUI.localize(_CONFIG_SETTING_DEFAULT) + " "+setting.getDefaultValue());
+		JLabel defaultSetting = new JLabel(JBPatchUI.localize(_CONFIG_SETTING_DEFAULT) + " "+setting.localize(setting.getDefaultValue()));
 		defaultSetting.setForeground(Color.GRAY);
 		
 		JPanel settingsBox = new JPanel();
@@ -351,15 +355,15 @@ public class ConfigurationState implements LocalizationKeys {
 			this.delegate = delegate;
 			this.setting = setting;
 			updateValidityHints(setting.getCurrentValue(), setting.isValid(setting.getCurrentValue()));
-			previousLabel.setText(JBPatchUI.localize(_CONFIG_SETTING_PREVIOUS)+" "+setting.getCurrentValue());
-			defaultLabel.setText(JBPatchUI.localize(_CONFIG_SETTING_DEFAULT)+" "+setting.getDefaultValue());
+			previousLabel.setText(JBPatchUI.localize(_CONFIG_SETTING_PREVIOUS)+" "+setting.localize(setting.getCurrentValue()));
+			defaultLabel.setText(JBPatchUI.localize(_CONFIG_SETTING_DEFAULT)+" "+setting.localize(setting.getDefaultValue()));
 			hintLabel.setText(setting.getHint());
 			originalValue = setting.getCurrentValue();
 			reinitializeUI();
 		}
 
 		private void updateValidityHints(String value, boolean valid) {
-			activeLabel.setText(JBPatchUI.localize(_CONFIG_SETTING_CURRENT)+" "+value);
+			activeLabel.setText(JBPatchUI.localize(_CONFIG_SETTING_CURRENT)+" "+setting.localize(value));
 			activeLabel.setForeground(valid ? Color.BLACK : Color.GRAY);
 			validityHintIconLabel.setIcon(valid? ICON_CHECKMARK : ICON_CROSSMARK);
 		}

@@ -12,6 +12,7 @@ import serp.bytecode.Project;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.patch.NoAdsPatch;
 import com.mobileread.ixtab.patch.NoStoreMenuPatch;
+import com.mobileread.ixtab.patch.coverview.CoverViewPatch;
 import com.mobileread.ixtab.patch.hyphenation.HyphenationPatch;
 import com.mobileread.ixtab.patch.margins.MarginsPatch;
 import com.mobileread.ixtab.patch.passwd.PasswordPatch;
@@ -25,10 +26,10 @@ public class TestCurrentGoal extends TestCase {
 	public void testAndDump() throws Throwable {
 		Project p = new Project();
 		
-		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/mobipocket/common/library/reader/hyphenation/j.class"));
+		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/amazon/kindle/home/view/browse/BrowseContentCell.class"));
 //		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/mobipocket/common/log/j.class"));
 //		BCClass cls = p.loadClass(HomeBooklet.class);
-		String result = new HyphenationPatch().perform(HyphenationPatch.MD5_HYPHENATIONMANAGER_510, cls);
+		String result = new CoverViewPatch().perform(CoverViewPatch.MD5_BROWSECONTENTCELL_BEFORE, cls);
 		if (result != null) {
 			System.err.println("patch failed to perform, error is: "+result);
 			fail(result);
@@ -42,8 +43,8 @@ public class TestCurrentGoal extends TestCase {
 		}
 	}
 	
-	public void reflected() throws Exception {
-		// currently nothing.
+	public String reflected() throws Exception {
+		return super.toString();
 	}
 	
 	public void doThings(Object o) throws Exception {
@@ -51,7 +52,7 @@ public class TestCurrentGoal extends TestCase {
 	}
 	
 	public void testReflect() throws Throwable {
-		if (1 == 1 ) return;
+		//if (1 == 1 ) return;
 		BCClass cls = new Project().loadClass(TestCurrentGoal.class);
 		Code c = cls.getDeclaredMethod("reflected").getCode(false);
 		Patch.dump(c);

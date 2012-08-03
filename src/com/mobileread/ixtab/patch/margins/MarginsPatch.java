@@ -78,7 +78,7 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 			map.put(HINT_READER_CONTENT_TOP_MARGIN_OFFSET,
 					"The top margin is sometimes adjusted by this value (probably to account for the title bar). DO NOT CHANGE THIS SETTING UNLESS YOU KNOW WHAT YOU ARE DOING.");
 			map.put(HINT_READER_CONTENT_RIGHT_MARGIN,
-					"This value determines the left margin for PDF files.");
+					"This value determines the right margin for PDF files.");
 			map.put(HINT_READER_PROGRESSBAR_FOOTER_HEIGHT,
 					"This value determines the height of the footer (displaying the current location, percentage, etc.), and is included in the total bottom margin height. You can completely hide the footer by setting this value to 0.");
 

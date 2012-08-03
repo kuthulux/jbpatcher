@@ -4,10 +4,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 import com.mobileread.ixtab.jbpatch.Log;
-import com.sun.org.apache.bcel.internal.generic.LoadClass;
 
 public class ReaderResources extends ResourceBundle implements MarginsPatchKeys {
 

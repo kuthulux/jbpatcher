@@ -1,5 +1,5 @@
-JBPatch, version 2.1.1
-======================
+JBPatch for Kindle Touch
+=======================
 
 JBPatch is an extremely powerful tool that allows to change almost
 all aspects of your Kindle's behavior (at least the parts that have been
@@ -37,11 +37,8 @@ See http://wiki.mobileread.com/wiki/Kindle_Touch_Hacking#Jailbreak
 
 INSTALLATION
 ------------
-0. !!! If you are upgrading from version 1.3.1 or earlier, please remove
-   all files in the opt/jbpatch/ directory. If you are upgrading from
-   version 2.0.0, the bundled patches are automatically updated, but
-   you need to re-download any "non-bundled" patches. Sorry.
-   
+0. !!! If you are upgrading, make sure that you have read the notes at:
+   http://www.mobileread.com/forums/showpost.php?p=2044458
 1. Plug your Kindle to your computer
 2. Copy update_jbpatch-*.install.bin directly onto the Kindle device
    (i.e., not into any sub-directory)

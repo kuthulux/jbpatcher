@@ -40,4 +40,13 @@ public abstract class ConfigurableSetting {
 	}
 
 	public abstract boolean isValid(String value);
+
+	/**
+	 * Returns a localized version of a given value. The default implementation returns the value unchanged.
+	 * @param value - a value to localize
+	 * @return the localized value
+	 */
+	public String getLocalized(String value) {
+		return value;
+	}
 }
