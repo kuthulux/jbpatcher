@@ -13,6 +13,12 @@ file_filter = com.mobileread.ixtab.patch.AllRotationsPatch-<lang>.txt
 source_lang = en
 type = MOZILLAPROPERTIES
 
+[jbpatch.ixtab-patch-coverview]
+source_file = com.mobileread.ixtab.patch.coverview-en.txt
+file_filter = com.mobileread.ixtab.patch.coverview-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
 [jbpatch.ixtab-patch-devcert]
 source_file = com.mobileread.ixtab.patch.devcert-en.txt
 file_filter = com.mobileread.ixtab.patch.devcert-<lang>.txt
