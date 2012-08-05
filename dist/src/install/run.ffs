@@ -1,13 +1,33 @@
 #!/bin/sh
-lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 0
-mntroot rw || exit 1
+OTA=com.lab126.blanket.ota
 
-cp jbpatch.jar /opt/amazon/ebook/lib/ || exit 1
-lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 25
+progress()
+{
+	lipc-send-event $OTA otaSplashProgress -i $1
+	local x=48
+	local y=11
+	eips 0 $y "                                                ";
+	eips $((($x - $(expr length "$2")) / 2)) $y "$2"
+	sleep 3
+}
 
-cp jbpatch.azw2 /mnt/us/documents/
-lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 50
+fail()
+{
+	lipc-send-event $OTA otaSplashError -s "${1}"
+	sleep 10
+	exit 1;
+}
 
+progress 10 "Mounting r/w"
+mntroot rw || fail "Unable to mount r/w"
+
+progress 20 "Copying jbpatch.jar"
+cp jbpatch.jar /opt/amazon/ebook/lib/ || fail "Unable to copy jbpatch.jar"
+
+progress 30 "Copying jbpatch.azw2"
+cp jbpatch.azw2 /mnt/us/documents/ || fail "Unable to copy jbpatch.azw2"
+
+progress 40 "Updating init.xargs"
 MD5=`md5sum /opt/amazon/ebook/bin/init.xargs|awk '{print $1}'`
 
 if [ "$MD5" = "62f63a926425eda66714b178999aeea6" ]; then
@@ -17,15 +37,20 @@ elif [ "$MD5" = "5c7e4b6b7e328076c0d5d1479bf5e1ec" ]; then
 	# already patched (5.1.0)
 	echo "not changing init.xargs";
 else
-	exit 1;
+	fail "Unsupported init.xargs"
 fi
 
-lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 75
+progress 60 "Installing patches locally"
+mkdir -p /var/local/jbpatch || fail "Unable to create local jbpatch directory"
+# fix a mistake from version 2.1.2
+rm -rf /var/local/jbpatch/com.mobileread.ixtab.patch.hyphenation
 
-mkdir -p /var/local/jbpatch || exit 1
-unzip -o patches.zip -d /var/local/jbpatch/
+unzip -o patches.zip -d /var/local/jbpatch/ || fail "Unable to install patches to local directory"
 
-mkdir -p /mnt/us/opt/jbpatch || exit 1
-unzip -o patches.zip -d /mnt/us/opt/jbpatch/
+progress 80 "Installing patches to USB"
 
-lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 100
+mkdir -p /mnt/us/opt/jbpatch || fail "Unable to create USB jbpatch directory"
+unzip -o patches.zip -d /mnt/us/opt/jbpatch/ || fail "Unable to install patches to USB directory"
+unzip -o hyphenations.zip -d /mnt/us/opt/jbpatch/ || fail "Unable to install hyphenations to USB directory"
+
+progress 100 "Installation complete."

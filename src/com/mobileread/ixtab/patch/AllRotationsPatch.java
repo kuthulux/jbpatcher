@@ -16,7 +16,7 @@ public class AllRotationsPatch extends Patch {
 	private static final String MD5_AFTER = "c72c7094a534cefc440b792363024b7f";
 
 	public int getVersion() {
-		return 20120803;
+		return 20120804;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -36,6 +36,7 @@ public class AllRotationsPatch extends Patch {
 		if (md5.equals(MD5_BEFORE)) {
 			patchSetDefaultApplicationLock(clazz);
 			patchSetApplicationLock(clazz);
+			return null;
 		}
 		return "unsupported MD5: "+md5;
 	}

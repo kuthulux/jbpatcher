@@ -152,7 +152,6 @@
 				<include name="com.mobileread.ixtab.patch.AllRotationsPatch.class"/>
 				<include name="com.mobileread.ixtab.patch.coverview.jar"/>
 				<include name="com.mobileread.ixtab.patch.devcert.jar"/>
-				<include name="com.mobileread.ixtab.patch.hyphenation/*.*"/>
 				<include name="com.mobileread.ixtab.patch.hyphenation.jar"/>
 				<include name="com.mobileread.ixtab.patch.margins.jar"/>
 				<include name="com.mobileread.ixtab.patch.passwd.jar"/>
@@ -160,6 +159,14 @@
 				<include name="com.mobileread.ixtab.patch.tts.jar"/>
 			</fileset>
 		</zip>
+		
+		<delete file="dist/src/install/hyphenations.zip" />
+		<zip destfile="dist/src/install/hyphenations.zip">
+			<fileset dir="dist/opt/jbpatch">
+				<include name="com.mobileread.ixtab.patch.hyphenation/*.*"/>
+			</fileset>
+		</zip>
+		
 	</target>
 
 	<!-- This is a private (and moving) target which will probably only work on ixtab's computer.
