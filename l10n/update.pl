@@ -7,8 +7,6 @@
 # everything is hardcoded for now.
 # requires a work/ directory to exist, and a symlink called "last"
 # to the folder containing the latest uploaded files.
-# this is currently set to run via a cronjob, 3 minutes after every
-# full hour. It only uploads a new file when something has changed.
 #####################################################################
 
 
@@ -67,12 +65,20 @@ foreach my $f (glob("work/*.txt")) {
 	&unescapeFile($f);
 }
 
-system("cd work; zip -9 ../jbpatch-l10n.zip *.txt >/dev/null 2>&1");
-system("gett -s 2Cfq0KL jbpatch-l10n.zip >/dev/null 2>&1");
+my %codes;
+foreach my $f (glob "work/*.txt") {
+	if ($f =~ /\-(.+)\.txt$/) {
+		$codes{$1} = 1;
+	}
+}
+foreach my $c (sort keys %codes) {
+	system("cd work; zip -9 ../jbpatch-l10n-$c.zip *-$c.txt >/dev/null 2>&1");
+	system("gett -s 2Cfq0KL jbpatch-l10n-$c.zip >/dev/null 2>&1");
+}
 
-print "Updates uploaded.";# if $DEBUG;
+print "Updates uploaded.\n";# if $DEBUG;
 
-system("rm work/*.txt jbpatch-l10n.zip >/dev/null 2>&1");
+system("rm work/*.txt jbpatch-l10n-*.zip >/dev/null 2>&1");
 
 unless ($LAST eq $DATE) {
 	system("rm last && ln -s $DATE last && rm -r $LAST");

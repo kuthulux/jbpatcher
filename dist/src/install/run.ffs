@@ -32,7 +32,7 @@ MD5=`md5sum /opt/amazon/ebook/bin/init.xargs|awk '{print $1}'`
 
 if [ "$MD5" = "62f63a926425eda66714b178999aeea6" ]; then
 	# original (5.1.0)
-	sed -i '10 i -istart jbpatch.jar' /opt/amazon/ebook/bin/init.xargs || exit 1
+	sed -i '10 i -istart jbpatch.jar' /opt/amazon/ebook/bin/init.xargs || fail "Failed to patch init.xargs"
 elif [ "$MD5" = "5c7e4b6b7e328076c0d5d1479bf5e1ec" ]; then
 	# already patched (5.1.0)
 	echo "not changing init.xargs";
@@ -42,6 +42,7 @@ fi
 
 progress 60 "Installing patches locally"
 mkdir -p /var/local/jbpatch || fail "Unable to create local jbpatch directory"
+
 # fix a mistake from version 2.1.2
 rm -rf /var/local/jbpatch/com.mobileread.ixtab.patch.hyphenation
 
