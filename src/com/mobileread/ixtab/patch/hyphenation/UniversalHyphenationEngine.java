@@ -25,6 +25,9 @@ public class UniversalHyphenationEngine extends AbstractHyphenationEngine {
 
 	private HyphenationTree tree = null;
 	private boolean treeInitialized = false;
+	
+	private int minPrefix = 3;
+	private int minSuffix = 3;
 
 	public UniversalHyphenationEngine() {
 		super();
@@ -53,6 +56,8 @@ public class UniversalHyphenationEngine extends AbstractHyphenationEngine {
 			languageId[0] = lcid;
 			treeInitialized = false;
 			tree = null;
+			minPrefix = HyphenationPatch.INSTANCE.getMinimumFirstSyllableLength();
+			minSuffix = HyphenationPatch.INSTANCE.getMinimumLastSyllableLength();
 		}
 	}
 
@@ -64,7 +69,7 @@ public class UniversalHyphenationEngine extends AbstractHyphenationEngine {
 		}
 
 		if (mode == MODE_DUMB_HYPHENATION) {
-			for (int i = 2; i < s.length() - (1 + 2); ++i) {
+			for (int i = minPrefix; i < s.length() - (1 + minSuffix); ++i) {
 				h.addHyphenationPoint(i);
 			}
 			return h;
@@ -79,7 +84,7 @@ public class UniversalHyphenationEngine extends AbstractHyphenationEngine {
 		}
 		if (tree != null) {
 			com.mobileread.ixtab.patch.hyphenation.itextpdf.Hyphenation source = tree
-					.hyphenate(s, 2, 2);
+					.hyphenate(s, minPrefix, minSuffix);
 			if (source != null) {
 				h.setHyphenationPoints(source.getHyphenationPoints());
 			}

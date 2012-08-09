@@ -9,6 +9,7 @@ import serp.bytecode.BCMethod;
 import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 
+import com.amazon.kindle.kindlet.input.keyboard.OnscreenKeyboardUtil;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
@@ -18,6 +19,7 @@ import com.mobileread.ixtab.jbpatch.conf.ui.ComboBoxSettingPanel;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingEntry;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
+import com.mobileread.ixtab.jbpatch.conf.ui.TextSettingPanel;
 
 public class HyphenationPatch extends Patch {
 
@@ -31,6 +33,10 @@ public class HyphenationPatch extends Patch {
 	static final String MODE_DUMB_KEY = "Dumb";
 	static final String MODE_SMART_KEY = "Smart";
 	
+	private static final int SYLLABLE_LENGTH_MIN = 1;
+	private static final int SYLLABLE_LENGTH_MAX = 10;
+	private static final int SYLLABLE_LENGTH_DEFAULT = 3;
+
 	private static final String CONF_MODE_KEY = "mode";
 	private static final String CONF_MODE_DEFAULT = MODE_SMART_KEY;
 	private static final String CONF_MODE_I18N_NAME = "mode.name";
@@ -45,6 +51,16 @@ public class HyphenationPatch extends Patch {
 	private static final String CONF_MODE_DUMB_SHORT_I18N = "mode.dumb.short";
 	private static final String CONF_MODE_SMART_SHORT_I18N = "mode.smart.short";
 	
+	private static final String CONF_MINPREFIX_KEY = "minprefix";
+	private static final String CONF_MINPREFIX_I18N_NAME = "minprefix.name";
+	private static final String CONF_MINPREFIX_I18N_DESC = "minprefix.description";
+	private static final String CONF_MINPREFIX_I18N_HINT = "minprefix.hint";
+
+	private static final String CONF_MINSUFFIX_KEY = "minsuffix";
+	private static final String CONF_MINSUFFIX_I18N_NAME = "minsuffix.name";
+	private static final String CONF_MINSUFFIX_I18N_DESC = "minsuffix.description";
+	private static final String CONF_MINSUFFIX_I18N_HINT = "minsuffix.hint";
+
 	static HyphenationPatch INSTANCE;
 	
 	public HyphenationPatch() {
@@ -52,7 +68,7 @@ public class HyphenationPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120803;
+		return 20120807;
 	}
 
 	public PatchMetadata getMetadata() {
@@ -80,13 +96,40 @@ public class HyphenationPatch extends Patch {
 			map.put(CONF_MODE_JUSTIFY_SHORT_I18N, MODE_JUSTIFY_KEY);
 			map.put(CONF_MODE_DUMB_SHORT_I18N, MODE_DUMB_KEY);
 			map.put(CONF_MODE_SMART_SHORT_I18N, MODE_SMART_KEY);
+			
+			
+			map.put(CONF_MINPREFIX_I18N_NAME, "Minimal First Syllable Length");
+			map.put(CONF_MINPREFIX_I18N_DESC, "Minimum number of leading characters before a word is hyphenated");
+			map.put(CONF_MINPREFIX_I18N_HINT, "This determines the minimum amount of characters that the first portion of a hyphenated word must contain. In other words, no word will be hyphenated unless the first part of the hyphenated word contains at least that many characters. Acceptable values for this setting are between 1 and 10.");
+			
+			map.put(CONF_MINSUFFIX_I18N_NAME, "Minimal Last Syllable Length");
+			map.put(CONF_MINSUFFIX_I18N_DESC, "Minimum number of trailing characters when a word is hyphenated");
+			map.put(CONF_MINSUFFIX_I18N_HINT, "This determines the minimum amount of characters that the last portion of a hyphenated word must contain. In other words, no word will be hyphenated unless the last part of the hyphenated word contains at least that many characters. Acceptable values for this setting are between 1 and 10.");
 		}
 	}
 
 	protected ConfigurableSettings initConfigurableSettings() {
 		ConfigurableSettings map = new ConfigurableSettings();
 		map.add(new ModeSetting());
+		map.add(new LengthSetting(localize(CONF_MINPREFIX_I18N_NAME), localize(CONF_MINPREFIX_I18N_DESC), localize(CONF_MINPREFIX_I18N_HINT), CONF_MINPREFIX_KEY, SYLLABLE_LENGTH_DEFAULT+""));
+		map.add(new LengthSetting(localize(CONF_MINSUFFIX_I18N_NAME), localize(CONF_MINSUFFIX_I18N_DESC), localize(CONF_MINSUFFIX_I18N_HINT), CONF_MINSUFFIX_KEY, SYLLABLE_LENGTH_DEFAULT+""));
 		return map;
+	}
+	
+	int getMinimumFirstSyllableLength() {
+		int length = SYLLABLE_LENGTH_DEFAULT;
+		try {
+			length = Integer.parseInt(getConfigured(CONF_MINPREFIX_KEY));
+		} catch  (Throwable t) {};
+		return length;
+	}
+	
+	int getMinimumLastSyllableLength() {
+		int length = SYLLABLE_LENGTH_DEFAULT;
+		try {
+			length = Integer.parseInt(getConfigured(CONF_MINSUFFIX_KEY));
+		} catch  (Throwable t) {};
+		return length;
 	}
 	
 	public String getMode() {
@@ -182,5 +225,30 @@ public class HyphenationPatch extends Patch {
 			}
 			return value;
 		}
+	}
+	
+	private static class LengthSetting extends ConfigurableSetting {
+
+		public LengthSetting(String name, String description, String hint,
+				String key, String defaultValue) {
+			super(name, description, hint, key, defaultValue);
+		}
+
+		public SettingPanel getPanel(SettingChangeListener listener) {
+			return new TextSettingPanel(listener, OnscreenKeyboardUtil.KEYBOARD_MODE_NUMBERS_AND_SYMBOLS, true);
+		}
+
+		public boolean isValid(String value) {
+			if (value == null || value.length() < 1) {
+				return false;
+			}
+			try {
+				int i = Integer.parseInt(value);
+				return i >= SYLLABLE_LENGTH_MIN && i <= SYLLABLE_LENGTH_MAX;
+			} catch (Throwable t) {
+			}
+			return false;
+		}
+		
 	}
 }
