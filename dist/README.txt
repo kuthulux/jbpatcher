@@ -98,6 +98,15 @@ DEVELOPING NEW PATCHES
 Please take a look at the Wiki page.
 
 
+SUPPORTING JBPATCH
+------------------
+JBPatch is free software - in both senses of "free beer" and "free speech".
+However, its development takes a lot of time and effort. If you like
+JBPatch and wish to support its future development, a small donation is very
+much appreciated!
+You can donate any amount that you see fit at http://ixtab.tk - thank you!
+
+
 ACKNOWLEDGEMENTS
 ----------------
 This software would not have been possible without the truely excellent

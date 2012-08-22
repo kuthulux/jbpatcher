@@ -8,6 +8,7 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 
+import com.amazon.kindle.content.catalog.MutableItem;
 import com.amazon.kindle.home.HomeBooklet;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
@@ -33,6 +34,10 @@ public class CoverViewPatch extends Patch {
 	public static final String MD5_HOMEBOOKLET_BEFORE = "83836d8792099cdf7c2dac9866ae845d";
 	private static final String MD5_HOMEBOOKLET_AFTER = "?";
 
+	private static final String CLASS_MOBI7EXTRACTOR = "com.amazon.kindle.extractor.mobi.Mobi7Extractor";
+	public static final String MD5_MOBI7EXTRACTOR_BEFORE = "55caf19a2d1bd8accd0daa6a01813317";
+	private static final String MD5_MOBI7EXTRACTOR_AFTER = "?";
+
 	private static final String COVER_VIEW_MODE = "COVER_VIEW_MODE";
 	private static final String LIST_VIEW_MODE = "LIST_VIEW_MODE";
 	
@@ -48,7 +53,7 @@ public class CoverViewPatch extends Patch {
 	private static String currentViewMode = null;
 	
 	public int getVersion() {
-		return 20120804;
+		return 20120822;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -73,6 +78,9 @@ public class CoverViewPatch extends Patch {
 						new PatchableClass(CLASS_J).withChecksums(MD5_J_BEFORE,
 								MD5_J_AFTER))
 				.withClass(
+						new PatchableClass(CLASS_MOBI7EXTRACTOR).withChecksums(MD5_MOBI7EXTRACTOR_BEFORE,
+								MD5_MOBI7EXTRACTOR_AFTER))
+				.withClass(
 						new PatchableClass(CLASS_HOMEBOOKLET).withChecksums(
 								MD5_HOMEBOOKLET_BEFORE, MD5_HOMEBOOKLET_AFTER));
 	}
@@ -96,7 +104,38 @@ public class CoverViewPatch extends Patch {
 		if (md5.equals(MD5_HOMEBOOKLET_BEFORE)) {
 			return patchHomeBooklet(clazz);
 		}
+		if (md5.equals(MD5_MOBI7EXTRACTOR_BEFORE)) {
+			return patchMobi7Extractor(clazz);
+		}
 		return "Unsupported MD5: " + md5;
+	}
+
+	private String patchMobi7Extractor(BCClass clazz) throws Exception {
+		Code c = clazz.getDeclaredMethod("D", new String[]{"com.amazon.kindle.content.catalog.MutableItem","java.lang.String"}).getCode(false);
+		c.before(545);
+		c.iload().setLocal(11);
+		c.aload().setLocal(1);
+		c.invokestatic().setMethod(CoverViewPatch.class.getMethod("isInvalidASIN", new Class[]{boolean.class, Object.class}));
+		c.istore().setLocal(11);
+		return null;
+	}
+	
+	public static boolean isInvalidASIN(boolean flag, Object item) {
+		if (flag) return true;
+		MutableItem m = (MutableItem) item;
+		String cde = m.getCDEKey();
+		if (cde == null || cde.length() != 10) {
+			return true;
+		}
+		char[] cs = cde.toCharArray();
+		for (int i=0; i < cs.length; ++i) {
+			char c = cs[i];
+			if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z')) {
+				continue;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	private String patchMethodL(BCClass clazz) {

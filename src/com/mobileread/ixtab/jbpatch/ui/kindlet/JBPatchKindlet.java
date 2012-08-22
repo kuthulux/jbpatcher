@@ -27,7 +27,7 @@ public class JBPatchKindlet extends SuicidalKindlet {
 	public void onCreate(KindletContext kindletContext) {
 		this.context = kindletContext;
 		//final Container root = context.getRootContainer();
-		String startupMessage = "mobileread.net";
+		String startupMessage = "www.ixtab.tk";
 		this.centerLabel = new JLabel(startupMessage);
 		initUi();
 		

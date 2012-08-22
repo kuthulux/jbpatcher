@@ -26,10 +26,10 @@ public class TestCurrentGoal extends TestCase {
 	public void testAndDump() throws Throwable {
 		Project p = new Project();
 		
-		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/amazon/kindle/home/view/browse/BrowseContentCell.class"));
+		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/amazon/kindle/extractor/mobi/Mobi7Extractor.class"));
 //		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/mobipocket/common/log/j.class"));
 //		BCClass cls = p.loadClass(HomeBooklet.class);
-		String result = new CoverViewPatch().perform(CoverViewPatch.MD5_J_BEFORE, cls);
+		String result = new CoverViewPatch().perform(CoverViewPatch.MD5_MOBI7EXTRACTOR_BEFORE, cls);
 		if (result != null) {
 			System.err.println("patch failed to perform, error is: "+result);
 			fail(result);
@@ -52,7 +52,7 @@ public class TestCurrentGoal extends TestCase {
 	}
 	
 	public void testReflect() throws Throwable {
-		//if (1 == 1 ) return;
+		if (1 == 1 ) return;
 		BCClass cls = new Project().loadClass(TestCurrentGoal.class);
 		Code c = cls.getDeclaredMethod("reflected").getCode(false);
 		Patch.dump(c);
