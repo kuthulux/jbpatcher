@@ -55,6 +55,12 @@ file_filter = com.mobileread.ixtab.patch.passwd-<lang>.txt
 source_lang = en
 type = MOZILLAPROPERTIES
 
+[jbpatch.ixtab-patch-progressbar]
+source_file = com.mobileread.ixtab.patch.progressbar-en.txt
+file_filter = com.mobileread.ixtab.patch.progressbar-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
 [jbpatch.ixtab-patch-scrollbar]
 source_file = com.mobileread.ixtab.patch.scrollbar-en.txt
 file_filter = com.mobileread.ixtab.patch.scrollbar-<lang>.txt

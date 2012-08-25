@@ -26,8 +26,11 @@ public class HyphenationPatch extends Patch {
 	private static final String CLASS_HYPHENATIONMANAGER_510 = "com.mobipocket.common.library.reader.hyphenation.j";
 	private static final String CLASS_FRAMECONSTRUCTOR_510 = "com.mobipocket.common.library.reader.db";
 
-	public static final String MD5_HYPHENATIONMANAGER_510 = "630a7704149435140c4ef8406749160d";
-	public static final String MD5_FRAMECONSTRUCTOR_510 = "cbbba07fab3a4e1be58a9553f8a2e700";
+	public static final String MD5_HYPHENATIONMANAGER_510_BEFORE = "630a7704149435140c4ef8406749160d";
+	public static final String MD5_HYPHENATIONMANAGER_510_AFTER = "7d974db6e5a3d1e6d649f39f746cc3bf";
+	
+	public static final String MD5_FRAMECONSTRUCTOR_510_BEFORE = "cbbba07fab3a4e1be58a9553f8a2e700";
+	public static final String MD5_FRAMECONSTRUCTOR_510_AFTER = "efb227b84d4fdf4f58d551634d6fcdb9";
 	
 	static final String MODE_JUSTIFY_KEY = "Justify";
 	static final String MODE_DUMB_KEY = "Dumb";
@@ -68,15 +71,15 @@ public class HyphenationPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120807;
+		return 20120823;
 	}
 
 	public PatchMetadata getMetadata() {
 		return new PatchMetadata(this).withClass(
 				new PatchableClass(CLASS_FRAMECONSTRUCTOR_510).withChecksums(
-						MD5_FRAMECONSTRUCTOR_510, "?")).withClass(
+						MD5_FRAMECONSTRUCTOR_510_BEFORE, MD5_FRAMECONSTRUCTOR_510_AFTER)).withClass(
 				new PatchableClass(CLASS_HYPHENATIONMANAGER_510).withChecksums(
-						MD5_HYPHENATIONMANAGER_510, "?"));
+						MD5_HYPHENATIONMANAGER_510_BEFORE, MD5_HYPHENATIONMANAGER_510_AFTER));
 	}
 
 
@@ -137,10 +140,10 @@ public class HyphenationPatch extends Patch {
 	}
 	
 	public String perform(String md5, BCClass clazz) throws Throwable {
-		if (md5.equals(MD5_HYPHENATIONMANAGER_510)) {
+		if (md5.equals(MD5_HYPHENATIONMANAGER_510_BEFORE)) {
 			return patchHyphenationManager510(clazz);
 		}
-		if (md5.equals(MD5_FRAMECONSTRUCTOR_510)) {
+		if (md5.equals(MD5_FRAMECONSTRUCTOR_510_BEFORE)) {
 			return patchFrameConstructor510(clazz);
 		}
 		return "Unexpected error: unknown MD5 " + md5;

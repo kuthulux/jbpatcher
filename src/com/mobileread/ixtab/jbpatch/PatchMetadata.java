@@ -1,7 +1,10 @@
 package com.mobileread.ixtab.jbpatch;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import com.mobileread.ixtab.jbpatch.PatchMetadata.ClassChecksum;
 
 /**
  * This class represents metadata about a particular patch, in particular, which
@@ -107,6 +110,17 @@ public final class PatchMetadata {
 			checksums.add(new ClassChecksum(before, after));
 			return this;
 		}
+
+		public ClassChecksum getChecksumsFor(String md5) {
+			Iterator csit = checksums.iterator();
+			while (csit.hasNext()) {
+				ClassChecksum cs = (ClassChecksum) csit.next();
+				if (cs.beforePatch.equals(md5)) {
+					return cs;
+				}
+			}
+			return null;
+		}
 	}
 
 	public static final class ClassChecksum {
@@ -118,6 +132,17 @@ public final class PatchMetadata {
 			this.beforePatch = beforePatch;
 			this.afterPatch = afterPatch;
 		}
+	}
+
+	public ClassChecksum getChecksumsFor(String className, String md5) {
+		Iterator classes = supportedClasses.iterator();
+		while (classes.hasNext()) {
+			PatchableClass patchable = (PatchableClass) classes.next();
+			if (patchable.className.equals(className)) {
+				return patchable.getChecksumsFor(md5);
+			}
+		}
+		return null;
 	}
 
 }

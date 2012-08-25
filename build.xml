@@ -74,6 +74,15 @@
 		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.LegalIllegalPatch.class"/>
 		<copy file="bin/com/mobileread/ixtab/patch/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.NoAdsPatch.class"/>
 
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.coverview.jar">
+            <manifest>
+            	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.coverview.CoverViewPatch"/>
+			</manifest>
+            <fileset dir="bin">
+            	<include name="com/mobileread/ixtab/patch/coverview/**/*.class"/>
+        	</fileset>
+		</jar>
+		
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.devcert.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.devcert.DevCertInjectPatch"/>
@@ -81,42 +90,6 @@
 			<fileset dir="bin">
 				<include name="com/mobileread/ixtab/patch/devcert/*.class"/>
 				<include name="com/mobileread/ixtab/patch/devcert/developer.keystore"/>
-			</fileset>
-		</jar>
-
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.margins.jar">
-			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.margins.MarginsPatch"/>
-			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/margins/*.class"/>
-			</fileset>
-		</jar>
-
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.passwd.jar">
-			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.passwd.PasswordPatch"/>
-			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/passwd/*.class"/>
-			</fileset>
-		</jar>
-
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.tts.jar">
-			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.tts.TTSPatch"/>
-			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/tts/*.class"/>
-			</fileset>
-		</jar>
-
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.scrollbar.jar">
-			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.scrollbar.ScrollbarPatch"/>
-			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/scrollbar/*.class"/>
 			</fileset>
 		</jar>
 
@@ -136,15 +109,51 @@
 			</fileset>
 		</copy>
 		
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.coverview.jar">
-            <manifest>
-            	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.coverview.CoverViewPatch"/>
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.margins.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.margins.MarginsPatch"/>
 			</manifest>
-            <fileset dir="bin">
-            	<include name="com/mobileread/ixtab/patch/coverview/**/*.class"/>
-        	</fileset>
+			<fileset dir="bin">
+				<include name="com/mobileread/ixtab/patch/margins/*.class"/>
+			</fileset>
 		</jar>
-		
+
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.passwd.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.passwd.PasswordPatch"/>
+			</manifest>
+			<fileset dir="bin">
+				<include name="com/mobileread/ixtab/patch/passwd/*.class"/>
+			</fileset>
+		</jar>
+
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.progressbar.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.progressbar.ProgressBarPatch"/>
+			</manifest>
+			<fileset dir="bin">
+				<include name="com/mobileread/ixtab/patch/progressbar/*.class"/>
+			</fileset>
+		</jar>
+
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.scrollbar.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.scrollbar.ScrollbarPatch"/>
+			</manifest>
+			<fileset dir="bin">
+				<include name="com/mobileread/ixtab/patch/scrollbar/*.class"/>
+			</fileset>
+		</jar>
+
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.tts.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.tts.TTSPatch"/>
+			</manifest>
+			<fileset dir="bin">
+				<include name="com/mobileread/ixtab/patch/tts/*.class"/>
+			</fileset>
+		</jar>
+
 		<!-- pack (only) the patches to be distributed -->
 		<delete file="dist/src/install/patches.zip" />
 		<zip destfile="dist/src/install/patches.zip">
@@ -155,6 +164,7 @@
 				<include name="com.mobileread.ixtab.patch.hyphenation.jar"/>
 				<include name="com.mobileread.ixtab.patch.margins.jar"/>
 				<include name="com.mobileread.ixtab.patch.passwd.jar"/>
+				<include name="com.mobileread.ixtab.patch.progressbar.jar"/>
 				<include name="com.mobileread.ixtab.patch.scrollbar.jar"/>
 				<include name="com.mobileread.ixtab.patch.tts.jar"/>
 			</fileset>

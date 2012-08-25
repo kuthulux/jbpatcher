@@ -24,14 +24,22 @@ public class TTSPatch extends Patch {
 	private static final String KEY_MALE = "male";
 	private static final String KEY_FEMALE = "female";
 
-	public static final String MD5_EN = "c92781d51b2ad1951e2c6d5279afe6d5";
-	public static final String MD5_DE = "cd9041a3105c19c2de0f61dd012872d3";
-	public static final String MD5_ES = "af8a8c3d465f54c79d7b1bc51fed018a";
-	public static final String MD5_FR = "17a930c0e35f606ce087a468bbe3da31";
-	public static final String MD5_IT = "1458ab0b2c750163f7f51b28cba26306";
-	public static final String MD5_PT = "4e2abf106695447de436b6b4bc2ccad9";
+	public static final String MD5_EN_BEFORE = "c92781d51b2ad1951e2c6d5279afe6d5";
+	public static final String MD5_DE_BEFORE = "cd9041a3105c19c2de0f61dd012872d3";
+	public static final String MD5_ES_BEFORE = "af8a8c3d465f54c79d7b1bc51fed018a";
+	public static final String MD5_FR_BEFORE = "17a930c0e35f606ce087a468bbe3da31";
+	public static final String MD5_IT_BEFORE = "1458ab0b2c750163f7f51b28cba26306";
+	public static final String MD5_PT_BEFORE = "4e2abf106695447de436b6b4bc2ccad9";
 
-	public static final String MD5_TTSACTION = "7342c90af8a837f4632d62d74ea86242";
+	public static final String MD5_EN_AFTER = "5d57fed161e28bcf074dc9da75074a67";
+	public static final String MD5_DE_AFTER = "cd9041a3105c19c2de0f61dd012872d3";
+	public static final String MD5_ES_AFTER = "?";
+	public static final String MD5_FR_AFTER = "?";
+	public static final String MD5_IT_AFTER = "?";
+	public static final String MD5_PT_AFTER = "?";
+
+	public static final String MD5_TTSACTION_BEFORE = "7342c90af8a837f4632d62d74ea86242";
+	public static final String MD5_TTSACTION_AFTER = "?";
 
 	private static final String[] ORIGINAL_EN = new String[] { "Female", "Male" };
 	private static final String[] ORIGINAL_DE = new String[] { "Weiblich",
@@ -81,23 +89,23 @@ public class TTSPatch extends Patch {
 	private void fillMetadata(PatchMetadata pd) {
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources")
-				.withChecksums(MD5_EN, "?"));
+				.withChecksums(MD5_EN_BEFORE, MD5_EN_AFTER));
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_de")
-				.withChecksums(MD5_DE, "?"));
+				.withChecksums(MD5_DE_BEFORE, MD5_DE_AFTER));
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_es")
-				.withChecksums(MD5_ES, "?"));
+				.withChecksums(MD5_ES_BEFORE, MD5_ES_AFTER));
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_fr")
-				.withChecksums(MD5_FR, "?"));
+				.withChecksums(MD5_FR_BEFORE, MD5_FR_AFTER));
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_it")
-				.withChecksums(MD5_IT, "?"));
+				.withChecksums(MD5_IT_BEFORE, MD5_IT_AFTER));
 		pd.withClass(new PatchableClass(
 				"com.amazon.ebook.booklet.reader.plugin.tts.resources.TTSResources_pt")
-				.withChecksums(MD5_PT, "?"));
-		pd.withClass(new PatchableClass("com.amazon.ebook.booklet.reader.plugin.tts.TTSProvider$TTSAction").withChecksums(MD5_TTSACTION, "?"));
+				.withChecksums(MD5_PT_BEFORE, MD5_PT_AFTER));
+		pd.withClass(new PatchableClass("com.amazon.ebook.booklet.reader.plugin.tts.TTSProvider$TTSAction").withChecksums(MD5_TTSACTION_BEFORE, MD5_TTSACTION_AFTER));
 	}
 
 	
@@ -126,19 +134,19 @@ public class TTSPatch extends Patch {
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
-		if (md5.equals(MD5_EN))
+		if (md5.equals(MD5_EN_BEFORE))
 			return patchDescription(clazz, ORIGINAL_EN);
-		if (md5.equals(MD5_DE))
+		if (md5.equals(MD5_DE_BEFORE))
 			return patchDescription(clazz, ORIGINAL_DE);
-		if (md5.equals(MD5_ES))
+		if (md5.equals(MD5_ES_BEFORE))
 			return patchDescription(clazz, ORIGINAL_ES);
-		if (md5.equals(MD5_FR))
+		if (md5.equals(MD5_FR_BEFORE))
 			return patchDescription(clazz, ORIGINAL_FR);
-		if (md5.equals(MD5_IT))
+		if (md5.equals(MD5_IT_BEFORE))
 			return patchDescription(clazz, ORIGINAL_IT);
-		if (md5.equals(MD5_PT))
+		if (md5.equals(MD5_PT_BEFORE))
 			return patchDescription(clazz, ORIGINAL_PT);
-		if (md5.equals(MD5_TTSACTION))
+		if (md5.equals(MD5_TTSACTION_BEFORE))
 			return patchTTSAction(clazz);
 		return "unexpected error: unsupported MD5 " + md5;
 	}

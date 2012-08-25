@@ -42,7 +42,7 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 
 	private static final String PAGINGCONTAINER_CLASS = "com.amazon.agui.swing.PagingContainer";
 	private static final String PAGINGCONTAINER_MD5_BEFORE = "c3b30042a1bbab39b1c5cb33a5603dde";
-	private static final String PAGINGCONTAINER_MD5_AFTER = "31e20abf2204ea67363f09d2384a2957";
+	private static final String PAGINGCONTAINER_MD5_AFTER = "4b2190d930bce943e8b8778159bfc7ba";
 
 	public ScrollbarPatch() {
 		synchronized (ScrollbarPatch.class) {
@@ -53,7 +53,7 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 	}
 
 	public int getVersion() {
-		return 20120803;
+		return 20120823;
 	}
 
 	public PatchMetadata getMetadata() {

@@ -16,6 +16,7 @@ import com.mobileread.ixtab.patch.coverview.CoverViewPatch;
 import com.mobileread.ixtab.patch.hyphenation.HyphenationPatch;
 import com.mobileread.ixtab.patch.margins.MarginsPatch;
 import com.mobileread.ixtab.patch.passwd.PasswordPatch;
+import com.mobileread.ixtab.patch.progressbar.ProgressBarPatch;
 
 /*
  * This isn't really a Unit Test, I know. It ended up just being a quick way to
@@ -26,10 +27,10 @@ public class TestCurrentGoal extends TestCase {
 	public void testAndDump() throws Throwable {
 		Project p = new Project();
 		
-		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/amazon/kindle/extractor/mobi/Mobi7Extractor.class"));
+		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/amazon/ebook/booklet/reader/impl/ui/ProgressBarImpl.class"));
 //		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/mobipocket/common/log/j.class"));
 //		BCClass cls = p.loadClass(HomeBooklet.class);
-		String result = new CoverViewPatch().perform(CoverViewPatch.MD5_MOBI7EXTRACTOR_BEFORE, cls);
+		String result = new ProgressBarPatch().perform(ProgressBarPatch.MD5_BEFORE_MARGINSPATCH, cls);
 		if (result != null) {
 			System.err.println("patch failed to perform, error is: "+result);
 			fail(result);

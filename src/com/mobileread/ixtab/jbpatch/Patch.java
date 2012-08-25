@@ -262,7 +262,6 @@ public abstract class Patch implements Comparable, ResourceMapProvider {
 			// log("D: about to invoke "+id+" for "+className);
 			String error = perform(md5, clazz);
 			if (error == null) {
-				log("I: " + id + " applied to " + className + " (" + md5 + ")");
 				Patches.reportActive();
 				return clazz.toByteArray();
 			}
@@ -313,4 +312,7 @@ public abstract class Patch implements Comparable, ResourceMapProvider {
 		return id().compareTo(other.id());
 	}
 
+	public String toString() {
+		return id();
+	}
 }

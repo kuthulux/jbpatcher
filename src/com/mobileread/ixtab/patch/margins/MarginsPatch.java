@@ -27,7 +27,7 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 	public static final String MD5_READERSTATEDATA_510_BEFORE = "62eae0a2e91163cdbe392de862598955";
 	public static final String MD5_FONTDIALOG_510_BEFORE = "ac4fc5fad698a4c27e7fd495513b1ed1";
 	public static final String MD5_PROGRESSBARIMPL_510_BEFORE = "4b168e63797ccaf1f642872b71c09ef9";
-
+	
 	private static final String MD5_READERUIIMPL_510_AFTER = "913a4740558cc6b9e5a446bf52b850f6";
 	private static final String MD5_READERSTATEDATA_510_AFTER = "9b95e1a3b4e2d34d8c9491ae20ee03dc";
 	private static final String MD5_FONTDIALOG_510_AFTER = "5907949458a3f666e68b41981b47c0c7";

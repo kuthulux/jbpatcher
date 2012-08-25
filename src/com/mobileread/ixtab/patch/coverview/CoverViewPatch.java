@@ -24,19 +24,19 @@ public class CoverViewPatch extends Patch {
 
 	private static final String CLASS_U = "com.amazon.kindle.home.view.browse.u";
 	public static final String MD5_U_BEFORE = "7514fc95c491b7688ab7ead1c5786fdd";
-	private static final String MD5_U_AFTER = "?";
+	private static final String MD5_U_AFTER = "0600f28d4d862dd78bb22d84c31c6240";
 
 	private static final String CLASS_J = "com.amazon.kindle.home.view.c.j";
 	public static final String MD5_J_BEFORE = "d19abbac19cd0c6afd26320594b70e75";
-	private static final String MD5_J_AFTER = "?";
+	private static final String MD5_J_AFTER = "655d426e27352326c8fcda6d03889314";
 
 	private static final String CLASS_HOMEBOOKLET = "com.amazon.kindle.home.HomeBooklet";
 	public static final String MD5_HOMEBOOKLET_BEFORE = "83836d8792099cdf7c2dac9866ae845d";
-	private static final String MD5_HOMEBOOKLET_AFTER = "?";
+	private static final String MD5_HOMEBOOKLET_AFTER = "5fbb7d25312338f5d931cd102dd8f366";
 
 	private static final String CLASS_MOBI7EXTRACTOR = "com.amazon.kindle.extractor.mobi.Mobi7Extractor";
 	public static final String MD5_MOBI7EXTRACTOR_BEFORE = "55caf19a2d1bd8accd0daa6a01813317";
-	private static final String MD5_MOBI7EXTRACTOR_AFTER = "?";
+	private static final String MD5_MOBI7EXTRACTOR_AFTER = "5d9fcabf3ec2becd4e82a2bca3671013";
 
 	private static final String COVER_VIEW_MODE = "COVER_VIEW_MODE";
 	private static final String LIST_VIEW_MODE = "LIST_VIEW_MODE";
@@ -53,7 +53,7 @@ public class CoverViewPatch extends Patch {
 	private static String currentViewMode = null;
 	
 	public int getVersion() {
-		return 20120822;
+		return 20120823;
 	}
 
 	protected void initLocalization(String locale, Map map) {

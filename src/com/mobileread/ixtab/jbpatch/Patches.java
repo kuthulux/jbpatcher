@@ -38,9 +38,17 @@ public class Patches {
 		log.println(msg);
 	}
 
-	public static Object[] get(String className) {
+	public static Patch[] get(String className) {
 		List result = (List) patches.get(className);
-		return result == null ? null : result.toArray();
+		if (result == null) {
+			return null;
+		}
+		Object[] objects = result.toArray();
+		Patch[] patches = new Patch[objects.length];
+		for (int i=0; i < objects.length; ++i) {
+			patches[i] = (Patch) objects[i];
+		}
+		return patches;
 	}
 
 	private static boolean enable(Patch patch) {

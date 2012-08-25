@@ -19,9 +19,12 @@ import java.util.jar.Manifest;
 import sun.misc.Resource;
 import sun.misc.URLClassPath;
 
+import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.MD5;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.Patches;
+import com.mobileread.ixtab.jbpatch.PatchMetadata.ClassChecksum;
+import com.mobileread.ixtab.jbpatch.composition.PathFinder;
 
 class PatchingClassLoader extends URLClassLoader {
 
@@ -242,21 +245,34 @@ class PatchingClassLoader extends URLClassLoader {
 	}
 
 	private byte[] patch(String name, byte[] input) {
-		Object[] patches = Patches.get(name);
+		Patch[] patches = Patches.get(name);
 		if (patches == null || patches.length == 0) {
 			return input;
 		}
-
 		byte[] output = input;
 		String md5 = MD5.getMd5String(input);
 
+		if (patches.length > 1) {
+			PathFinder path = new PathFinder(md5);
+			patches = path.findPath(patches, name);
+		}
+
 		for (int i = 0; i < patches.length; ++i) {
 			Patch p = (Patch) patches[i];
+			ClassChecksum checksums = p.getMetadata().getChecksumsFor(name, md5);
+			if (checksums == null) {
+				Log.INSTANCE.println("E: "+p+" does not support MD5 "+md5+" for class "+name);
+				continue;
+			}
 			output = p.patch(name, input, md5);
-			if (output != input && i < patches.length - 1) {
-				// patches can be chained, so update current state
+			if (output != input) {
 				input = output;
+				String pmd5 = md5;
 				md5 = MD5.getMd5String(input);
+				log("I: " + p.id() + " applied to " + name + " (" + pmd5 + " -> " + md5 + ")");
+				if (!md5.equals(checksums.afterPatch)) {
+					log("W: " + p + " produced MD5 \"" + md5 + "\", but declared \""+checksums.afterPatch+"\"");
+				}
 			}
 		}
 		return output;

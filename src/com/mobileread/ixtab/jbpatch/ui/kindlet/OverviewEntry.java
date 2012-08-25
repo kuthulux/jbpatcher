@@ -47,9 +47,9 @@ class OverviewEntry extends JPanel {
 			Patch p = source.patch;
 			boolean enable = e.getStateChange() == ItemEvent.SELECTED;
 			if (PatchRepository.getInstance().setPatchState(p, enable)) {
-				Log.INSTANCE.println((enable ? "Enabled":"Disabled") +" patch: "+p.getName());
+				Log.INSTANCE.println("I: "+ (enable ? "Enabled":"Disabled") +" patch: "+p.getName());
 			} else {
-				Log.INSTANCE.println("FAILED TO " + (enable ? "ENABLE":"DISABLE") +" PATCH: "+p.getName());
+				Log.INSTANCE.println("W: FAILED TO " + (enable ? "ENABLE":"DISABLE") +" PATCH: "+p.getName());
 			}
 			updateTitleDisplay(source.title, enable);
 		}
