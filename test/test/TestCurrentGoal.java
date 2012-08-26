@@ -1,6 +1,5 @@
 package test;
 
-
 import java.io.File;
 
 import junit.framework.TestCase;
@@ -23,40 +22,47 @@ import com.mobileread.ixtab.patch.progressbar.ProgressBarPatch;
  * gain some insight into serp, and to dump things for quick analysis using jad.
  */
 public class TestCurrentGoal extends TestCase {
-	
+
 	public void testAndDump() throws Throwable {
 		Project p = new Project();
-		
-		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/amazon/ebook/booklet/reader/impl/ui/ProgressBarImpl.class"));
-//		BCClass cls = p.loadClass(new File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/mobipocket/common/log/j.class"));
-//		BCClass cls = p.loadClass(HomeBooklet.class);
-		String result = new ProgressBarPatch().perform(ProgressBarPatch.MD5_BEFORE_MARGINSPATCH, cls);
+
+		BCClass cls = p
+				.loadClass(new File(
+						System.getProperty("user.home")
+								+ "/kindle-touch/java.512/classes/com/amazon/ebook/booklet/reader/impl/ui/ProgressBarImpl.class"));
+		// BCClass cls = p.loadClass(new
+		// File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/mobipocket/common/log/j.class"));
+		// BCClass cls = p.loadClass(HomeBooklet.class);
+		String result = new ProgressBarPatch().perform(
+				ProgressBarPatch.MD5_PROGRESSBARIMPL_BEFORE_PRISTINE, cls);
 		if (result != null) {
-			System.err.println("patch failed to perform, error is: "+result);
+			System.err.println("patch failed to perform, error is: " + result);
 			fail(result);
 		}
 		cls.write(new File("/tmp/test.class"));
 		try {
 			new BCClassLoader(p).loadClass(cls.getName());
 		} catch (Throwable t) {
-			System.err.println("class failed to load. This may be harmless... up to you to know");
+			System.err
+					.println("class failed to load. This may be harmless... up to you to know");
 			t.printStackTrace(System.err);
 		}
 	}
-	
+
 	public String reflected() throws Exception {
 		return super.toString();
 	}
-	
+
 	public void doThings(Object o) throws Exception {
-		
+
 	}
-	
+
 	public void testReflect() throws Throwable {
-		if (1 == 1 ) return;
+		if (1 == 1)
+			return;
 		BCClass cls = new Project().loadClass(TestCurrentGoal.class);
 		Code c = cls.getDeclaredMethod("reflected").getCode(false);
 		Patch.dump(c);
 	}
-	
+
 }
