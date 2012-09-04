@@ -11,6 +11,7 @@ import serp.bytecode.Project;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.patch.NoAdsPatch;
 import com.mobileread.ixtab.patch.NoStoreMenuPatch;
+import com.mobileread.ixtab.patch.collectioncount.CollectionCountPatch;
 import com.mobileread.ixtab.patch.coverview.CoverViewPatch;
 import com.mobileread.ixtab.patch.hyphenation.HyphenationPatch;
 import com.mobileread.ixtab.patch.margins.MarginsPatch;
@@ -29,12 +30,9 @@ public class TestCurrentGoal extends TestCase {
 		BCClass cls = p
 				.loadClass(new File(
 						System.getProperty("user.home")
-								+ "/kindle-touch/java.512/classes/com/amazon/ebook/booklet/reader/impl/ui/ProgressBarImpl.class"));
-		// BCClass cls = p.loadClass(new
-		// File(System.getProperty("user.home")+"/kindle-touch/java.512/classes/com/mobipocket/common/log/j.class"));
-		// BCClass cls = p.loadClass(HomeBooklet.class);
-		String result = new ProgressBarPatch().perform(
-				ProgressBarPatch.MD5_PROGRESSBARIMPL_BEFORE_PRISTINE, cls);
+								+ "/kindle-touch/java.512/classes/com/amazon/kindle/apps/content/view/DefaultContentCell.class"));
+		String result = new CollectionCountPatch().perform(
+				CollectionCountPatch.MD5_BEFORE, cls);
 		if (result != null) {
 			System.err.println("patch failed to perform, error is: " + result);
 			fail(result);

@@ -10,6 +10,7 @@ public class ProgressBarPainter {
 	private static final Color COLOR_FOREGROUND = Color.BLACK;
 	private static final Color COLOR_BACKGROUND = Color.WHITE;
 	private static final Color COLOR_READ = Color.LIGHT_GRAY;
+	private static final Color COLOR_READ_CHAPTER = Color.DARK_GRAY;
 	private static final Color COLOR_TOC = Color.DARK_GRAY;
 
 	// preferred size of the progressbar, relative to the total screen width
@@ -26,7 +27,7 @@ public class ProgressBarPainter {
 	private static final int TOCENTRY0_RADIUS = 2;
 
 	public static void paint(Graphics2D g, int graphicsWidth, int graphicsHeight, int bookEnd,
-			TocEntry[] tocEntries, int position, int startReadingPosition) {
+			TocEntry[] tocEntries, int position, int startReadingPosition, boolean chapterOnly) {
 		
 		if (BAR_HEIGHT > graphicsHeight) {
 			// there is not enough space to draw the progress bar, so don't even bother.
@@ -58,10 +59,30 @@ public class ProgressBarPainter {
 		int h = BAR_HEIGHT -1;
 		g.drawRoundRect(x, y, w, h, ARC_SIZE, ARC_SIZE);
 		
+		// context is normally the entire book, but if it's the chapter only,
+		// we need to find the relevant toc entries.
+		int contextStart = 0;
+		int contextEnd = bookEnd;
+		
+		if (chapterOnly) {
+			for (int i=0; i < tocEntries.length; ++i) {
+				if (position < tocEntries[i].position) {
+					break;
+				}
+				contextStart = tocEntries[i].position;
+			}
+			for (int i=tocEntries.length - 1; i >= 0; --i) {
+				if (position > tocEntries[i].position) {
+					break;
+				}
+				contextEnd = tocEntries[i].position;
+			}
+		}
+		
 		// draw marker
 		int[] mx = new int[3];
 		int[] my = new int[3];
-		mx[0] = scale(startReadingPosition, bookEnd, graphicsWidth);
+		mx[0] = scale(startReadingPosition - contextStart, contextEnd - contextStart, graphicsWidth);
 		my[0] = graphicsHeight - bottomMargin - BAR_HEIGHT;
 		mx[1] = mx[0] - MARKER_HEIGHT;
 		my[1] = my[0] - MARKER_HEIGHT;
@@ -70,10 +91,10 @@ public class ProgressBarPainter {
 		g.fillPolygon(new Polygon(mx, my, 3));
 
 		// draw progress indicator
-		g.setColor(COLOR_READ);
+		g.setColor(chapterOnly ? COLOR_READ_CHAPTER : COLOR_READ);
 		x = READ_PADDING;
 		y = graphicsHeight - bottomMargin - BAR_HEIGHT + READ_PADDING;
-		w = scale(position, bookEnd, graphicsWidth) - READ_PADDING -1 ;
+		w = scale(position - contextStart, contextEnd - contextStart, graphicsWidth) - READ_PADDING -1 ;
 		if (w >= graphicsWidth -1) {
 			w -= READ_PADDING;
 		}
@@ -84,26 +105,29 @@ public class ProgressBarPainter {
 		
 		// draw toc entries
 		
-		g.setColor(COLOR_TOC);
-		// y designates the *center* of each entry now
-		y = graphicsHeight-bottomMargin-BAR_HEIGHT / 2;
-		for (int i=0; i < tocEntries.length; ++i) {
-			TocEntry entry = tocEntries[i];
-			int radius = TOCENTRY0_RADIUS - entry.level;
-			if (radius < 1) {
-				continue;
+		if (!chapterOnly) {
+			g.setColor(COLOR_TOC);
+			// y designates the *center* of each entry now
+			y = graphicsHeight-bottomMargin-BAR_HEIGHT / 2;
+			for (int i=0; i < tocEntries.length; ++i) {
+				TocEntry entry = tocEntries[i];
+				int radius = TOCENTRY0_RADIUS - entry.level;
+				if (radius < 1) {
+					continue;
+				}
+				x = scale(entry.position, bookEnd, graphicsWidth);
+//				g.fillRect(x-radius, y-radius, 2*radius, 2*radius);
+				g.fillOval(x-radius, y-radius, 2*radius, 2*radius);
 			}
-			x = scale(entry.position, bookEnd, graphicsWidth);
-//			g.fillRect(x-radius, y-radius, 2*radius, 2*radius);
-			g.fillOval(x-radius, y-radius, 2*radius, 2*radius);
 		}
 		
-		
+		// clean up
 		g.setColor(originalColor);
 		g.setStroke(originalStroke);
 	}
 
-	private static int scale(int position, int bookEnd, int width) {
-		return Math.round(((float)position / bookEnd) * width);
+	private static int scale(int position, int total, int width) {
+		float percent = ((float)position / total);
+		return Math.round(percent * width);
 	}
 }

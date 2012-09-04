@@ -33,6 +33,7 @@ import com.mobileread.ixtab.jbpatch.conf.ui.RadioButtonsSettingPanel;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingEntry;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
+import com.mobileread.ixtab.patch.progressbar.ProgressBarDialog.ExtendedSettingEntry;
 
 public class ProgressBarPatch extends Patch {
 
@@ -45,13 +46,14 @@ public class ProgressBarPatch extends Patch {
 	private static final String CLASS_READERUIIMPL = "com.amazon.ebook.booklet.reader.impl.n";
 	
 	public static final String MD5_READERUIIMPL_BEFORE_PRISTINE = "e2cd2f0631d4a75bf278c9c3a1008216";
-	private static final String MD5_READERUIIMPL_AFTER_PRISTINE = "372badcf2b5ef1834bbc87538f1109e2";
+	private static final String MD5_READERUIIMPL_AFTER_PRISTINE = "de4c202d1eb55f45b799a0e504a19ca5";
 	public static final String MD5_READERUIIMPL_BEFORE_WITH_MARGINSPATCH = "913a4740558cc6b9e5a446bf52b850f6";
-	private static final String MD5_READERUIIMPL_AFTER_WITH_MARGINSPATCH = "ab08718d704eb075597611a46ae71600";
+	private static final String MD5_READERUIIMPL_AFTER_WITH_MARGINSPATCH = "f61a8e0cea38b2ff6dada71b1f81cd6b";
 
 	private static final String MODE_DEFAULT = "default";
 	private static final String MODE_FULL = "full";
 	private static final String MODE_PROGRESS = "progress";
+	private static final String MODE_PROGRESS_CHAPTER = "chapter";
 
 	private static ProgressBarPatch instance;
 
@@ -59,7 +61,7 @@ public class ProgressBarPatch extends Patch {
 	private static int leftBorder;
 	private static int rightBorder;
 
-	private static Integer lastBookHashCode = null;
+	private static Integer currentBookHashCode = null;
 	private static int startReadingPosition = 0;
 	private static TocEntry[] tocEntries = null;
 	private static Integer targetObjectHashCode = null;
@@ -71,6 +73,7 @@ public class ProgressBarPatch extends Patch {
 	private static final String UI_MODE_DEFAULT = "mode.desc.default";
 	private static final String UI_MODE_FULL = "mode.desc.full";
 	private static final String UI_MODE_PROGRESS = "mode.desc.progress";
+	private static final String UI_MODE_PROGRESS_CHAPTER = "mode.desc.chapter";
 	private static final String UI_MODE_DEFAULT_SHORT = "mode.desc.default.short";
 	private static final String UI_MODE_FULL_SHORT = "mode.desc.full.short";
 	private static final String UI_MODE_PROGRESS_SHORT = "mode.desc.progress.short";
@@ -82,7 +85,7 @@ public class ProgressBarPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120826;
+		return 20120904;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -99,7 +102,9 @@ public class ProgressBarPatch extends Patch {
 			map.put(UI_MODE_DEFAULT, "Default: Position and percentage");
 			map.put(UI_MODE_FULL, "Full: Display all information");
 			map.put(UI_MODE_PROGRESS,
-					"Graphical: Progress bar, similar to the Kindle 3");
+			"Graphical: Progress bar, similar to the Kindle 3");
+			map.put(UI_MODE_PROGRESS_CHAPTER,
+			"Chapter: Graphical, for the current chapter");
 			map.put(UI_MODE_DEFAULT_SHORT, "Default");
 			map.put(UI_MODE_FULL_SHORT, "Full");
 			map.put(UI_MODE_PROGRESS_SHORT, "Graphical");
@@ -124,34 +129,37 @@ public class ProgressBarPatch extends Patch {
 
 	private String getDisplayMode() {
 		if (displayMode == null) {
-			String configuredMode = getConfigured(CONF_KEY);
-			if (isValidDisplayMode(configuredMode)) {
-				displayMode = configuredMode;
-			} else {
-				displayMode = MODE_PROGRESS;
-			}
+			setMode(getConfigured(CONF_KEY));
 		}
 		return displayMode;
 	}
 	
+	void setMode(String mode) {
+		if (isValidDisplayMode(mode)) {
+			displayMode = mode;
+		} else if (displayMode == null ){
+			displayMode = MODE_PROGRESS;
+		}
+	}
+
 	protected void switchToNextMode() {
 		String currentMode = getDisplayMode();
 		String nextMode = currentMode;
 		if (MODE_PROGRESS.equals(currentMode)) {
+			nextMode = currentBookHasTocEntries() ? MODE_PROGRESS_CHAPTER : MODE_FULL;
+		} else if (MODE_PROGRESS_CHAPTER.equals(currentMode)) {
 			nextMode = MODE_FULL;
 		} else if (MODE_FULL.equals(currentMode)) {
 			nextMode = MODE_DEFAULT;
 		} else if (MODE_DEFAULT.equals(currentMode)) {
 			nextMode = MODE_PROGRESS;
 		}
-		displayMode = nextMode;
+		setMode(nextMode);
 	}
 
-
-
 	private static boolean isValidDisplayMode(String value) {
-		return MODE_DEFAULT.equals(value) || MODE_FULL.equals(value)
-				|| MODE_PROGRESS.equals(value);
+		return value != null && MODE_DEFAULT.equals(value) || MODE_FULL.equals(value)
+				|| MODE_PROGRESS.equals(value) || MODE_PROGRESS_CHAPTER.equals(value);
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
@@ -174,19 +182,31 @@ public class ProgressBarPatch extends Patch {
 		c.aastore();
 		c.dup();
 		c.constant().setValue(3);
-		c.invokestatic().setMethod(ProgressBarPatch.class.getMethod("getReaderAction", new Class[0]));
+		c.aload().setThis();
+		c.invokestatic().setMethod(ProgressBarPatch.class.getMethod("getReaderAction", new Class[] {Object.class}));
 		
 		c.calculateMaxLocals();
 		c.calculateMaxStack();
 		return null;
 	}
 
-	public static Object getReaderAction() {
+	public static Object getReaderAction(final Object readerUI) {
 		ReaderAction action = new ReaderAction("%") {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				instance.switchToNextMode();
+				SettingEntry[] settings = instance.getSettingEntries(true);
+				ExtendedSettingEntry[] settingsEx = new ExtendedSettingEntry[settings.length];
+				for (int i=0; i < settings.length; ++i) {
+					boolean enabled = true;
+					if (MODE_PROGRESS_CHAPTER.equals(settings[i].key)) {
+						enabled = currentBookHasTocEntries();
+					}
+					boolean selected = settings[i].key.equals(instance.displayMode);
+					settingsEx[i] = new ExtendedSettingEntry(settings[i], enabled, selected);
+				}
+				JComponent view = ((com.amazon.ebook.booklet.reader.impl.n)readerUI).jA();
+				ProgressBarDialog.post(ProgressBarPatch.instance, settingsEx, view);
 			}
 			
 			public int b() {
@@ -270,7 +290,7 @@ public class ProgressBarPatch extends Patch {
 
 	public static void onLeftStringSet(boolean full, String string,
 			FontMetrics metrics, int margin) {
-		if (!full && MODE_PROGRESS.equals(instance.getDisplayMode())) {
+		if (!full && isGraphicalMode()) {
 			int textWidth = metrics.stringWidth(string);
 			leftBorder = margin + textWidth;
 		}
@@ -279,7 +299,7 @@ public class ProgressBarPatch extends Patch {
 	public static void onRightStringSet(boolean full, int width,
 			Object progressBarImplObject, Object viewPortObject, int margin,
 			Object graphicsObject) {
-		if (full || !MODE_PROGRESS.equals(instance.getDisplayMode())) {
+		if (full || !isGraphicalMode()) {
 			return;
 		}
 
@@ -306,6 +326,11 @@ public class ProgressBarPatch extends Patch {
 				absoluteWidthUsed, footer.getHeight());
 	}
 
+	private static boolean isGraphicalMode() {
+		String mode = instance.getDisplayMode();
+		return MODE_PROGRESS.equals(mode) || MODE_PROGRESS_CHAPTER.equals(mode);
+	}
+
 	private static void ensureFieldsAreInitialized(Object o) throws Exception {
 		if (showFullInfoField == null) {
 			showFullInfoField = makeFieldAccessible(o.getClass(),
@@ -330,17 +355,26 @@ public class ProgressBarPatch extends Patch {
 			int bookStart = book.C().c();
 			int bookEnd = book.d().c() - bookStart;
 			int position = vp.H().c() - bookStart;
-			if (lastBookHashCode == null
-					|| lastBookHashCode.intValue() != book.hashCode()) {
-				lastBookHashCode = new Integer(book.hashCode());
+			if (currentBookHashCode == null
+					|| currentBookHashCode.intValue() != book.hashCode()) {
+				currentBookHashCode = new Integer(book.hashCode());
 				startReadingPosition = position;
 				tocEntries = createTocEntries(toc, bookStart);
+				// switch back to normal progress mode if current mode is "chapter",
+				// and book doesn't have chapters
+				if (!currentBookHasTocEntries() && MODE_PROGRESS_CHAPTER.equals(instance.displayMode)) {
+					instance.setMode(MODE_PROGRESS);
+				}
 			}
 			ProgressBarPainter.paint((Graphics2D) g, width, height, bookEnd,
-					tocEntries, position, startReadingPosition);
+					tocEntries, position, startReadingPosition, MODE_PROGRESS_CHAPTER.equals(instance.displayMode));
 		} catch (Throwable t) {
 			t.printStackTrace(Log.INSTANCE);
 		}
+	}
+	
+	private static boolean currentBookHasTocEntries() {
+		return tocEntries != null && tocEntries.length > 0;
 	}
 
 	private static TocEntry[] createTocEntries(TableOfContents toc,
@@ -382,6 +416,20 @@ public class ProgressBarPatch extends Patch {
 		return settings;
 	}
 
+	private SettingEntry[] getSettingEntries(boolean includeChapter) {
+		SettingEntry[] entries = new SettingEntry[3 + (includeChapter ? 1 : 0)];
+		entries[0] = new SettingEntry(MODE_DEFAULT,
+				localize(UI_MODE_DEFAULT));
+		entries[1] = new SettingEntry(MODE_FULL, localize(UI_MODE_FULL));
+		entries[2] = new SettingEntry(MODE_PROGRESS,
+				localize(UI_MODE_PROGRESS));
+		if (includeChapter) {
+			entries[3] = new SettingEntry(MODE_PROGRESS_CHAPTER,
+					localize(UI_MODE_PROGRESS_CHAPTER));
+		}
+		return entries;
+	}
+
 	private class ProgressBarSetting extends ConfigurableSetting {
 
 		private final SettingEntry[] entries;
@@ -389,12 +437,7 @@ public class ProgressBarPatch extends Patch {
 		public ProgressBarSetting() {
 			super(localize(UI_NAME), localize(UI_DESC), localize(UI_HINT),
 					CONF_KEY, MODE_PROGRESS);
-			entries = new SettingEntry[3];
-			entries[0] = new SettingEntry(MODE_DEFAULT,
-					localize(UI_MODE_DEFAULT));
-			entries[1] = new SettingEntry(MODE_FULL, localize(UI_MODE_FULL));
-			entries[2] = new SettingEntry(MODE_PROGRESS,
-					localize(UI_MODE_PROGRESS));
+			entries = getSettingEntries(false);
 		}
 
 		public SettingPanel getPanel(SettingChangeListener listener) {

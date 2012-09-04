@@ -74,6 +74,15 @@
 		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.LegalIllegalPatch.class"/>
 		<copy file="bin/com/mobileread/ixtab/patch/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.NoAdsPatch.class"/>
 
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.collectioncount.jar">
+            <manifest>
+            	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.collectioncount.CollectionCountPatch"/>
+			</manifest>
+            <fileset dir="bin">
+            	<include name="com/mobileread/ixtab/patch/collectioncount/**/*.class"/>
+        	</fileset>
+		</jar>
+		
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.coverview.jar">
             <manifest>
             	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.coverview.CoverViewPatch"/>
