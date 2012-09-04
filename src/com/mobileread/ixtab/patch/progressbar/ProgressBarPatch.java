@@ -85,7 +85,7 @@ public class ProgressBarPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120904;
+		return 20120905;
 	}
 
 	protected void initLocalization(String locale, Map map) {

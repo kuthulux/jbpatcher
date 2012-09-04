@@ -78,7 +78,6 @@ public class CollectionCountPatch extends Patch {
 	}
 	
 	private static int countRecursive(UUID[] uuids, Collection seen) {
-		// uuids are items; entries will "filter" these uuids to only collections.
 		for (int i=0; i < uuids.length; ++i) {
 			seen.add(uuids[i]);
 		}

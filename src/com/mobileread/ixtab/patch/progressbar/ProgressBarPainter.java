@@ -72,7 +72,7 @@ public class ProgressBarPainter {
 				contextStart = tocEntries[i].position;
 			}
 			for (int i=tocEntries.length - 1; i >= 0; --i) {
-				if (position > tocEntries[i].position) {
+				if (position >= tocEntries[i].position) {
 					break;
 				}
 				contextEnd = tocEntries[i].position;
