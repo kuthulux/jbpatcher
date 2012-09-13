@@ -102,6 +102,15 @@
 			</fileset>
 		</jar>
 
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.dictionaries.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.dictionaries.DictionariesPatch"/>
+			</manifest>
+			<fileset dir="bin">
+				<include name="com/mobileread/ixtab/patch/dictionaries/**/*.class"/>
+			</fileset>
+		</jar>
+
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation.jar">
             <manifest>
             	<attribute name="Main-Class" value="com.mobileread.ixtab.patch.hyphenation.HyphenationPatch"/>

@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Stroke;
 
+
 public class ProgressBarPainter {
 	private static final Color COLOR_FOREGROUND = Color.BLACK;
 	private static final Color COLOR_BACKGROUND = Color.WHITE;

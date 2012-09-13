@@ -13,6 +13,7 @@ import com.mobileread.ixtab.patch.NoAdsPatch;
 import com.mobileread.ixtab.patch.NoStoreMenuPatch;
 import com.mobileread.ixtab.patch.collectioncount.CollectionCountPatch;
 import com.mobileread.ixtab.patch.coverview.CoverViewPatch;
+import com.mobileread.ixtab.patch.dictionaries.DictionariesPatch;
 import com.mobileread.ixtab.patch.hyphenation.HyphenationPatch;
 import com.mobileread.ixtab.patch.margins.MarginsPatch;
 import com.mobileread.ixtab.patch.passwd.PasswordPatch;
@@ -30,9 +31,9 @@ public class TestCurrentGoal extends TestCase {
 		BCClass cls = p
 				.loadClass(new File(
 						System.getProperty("user.home")
-								+ "/kindle-touch/java.512/classes/com/amazon/kindle/apps/content/view/DefaultContentCell.class"));
-		String result = new CollectionCountPatch().perform(
-				CollectionCountPatch.MD5_BEFORE, cls);
+								+ "/kindle-touch/java.512/classes/com/amazon/ebook/booklet/reader/plugin/systemcards/DictionaryCard.class"));
+		String result = new DictionariesPatch().perform(
+				DictionariesPatch.MD5_BEFORE, cls);
 		if (result != null) {
 			System.err.println("patch failed to perform, error is: " + result);
 			fail(result);
