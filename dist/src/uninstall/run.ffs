@@ -1,26 +1,48 @@
 #!/bin/sh
-lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 0
-mntroot rw || exit 1
+OTA=com.lab126.blanket.ota
 
-lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 25
+progress()
+{
+	lipc-send-event $OTA otaSplashProgress -i $1
+	local x=48
+	local y=11
+	eips 0 $y "                                                ";
+	eips $((($x - $(expr length "$2")) / 2)) $y "$2"
+	sleep 3
+}
+
+fail()
+{
+	lipc-send-event $OTA otaSplashError -s "${1}"
+	sleep 10
+	exit 1;
+}
+
+progress 10 "Mounting r/w"
+mntroot rw || fail "Unable to mount r/w"
+
+progress 20 "Restoring init.xargs"
 
 MD5=`md5sum /opt/amazon/ebook/bin/init.xargs|awk '{print $1}'`
 
 if [ "$MD5" = "5c7e4b6b7e328076c0d5d1479bf5e1ec" ]; then
 	# patched (5.1.0)
-	grep -v jbpatch.jar /opt/amazon/ebook/bin/init.xargs > /tmp/jbpatch_init.xargs || exit 1
-	mv /tmp/jbpatch_init.xargs /opt/amazon/ebook/bin/init.xargs || exit 1
+	grep -v jbpatch.jar /opt/amazon/ebook/bin/init.xargs > /tmp/jbpatch_init.xargs || fail "Unable to restore init.xargs (1)"
+	mv /tmp/jbpatch_init.xargs /opt/amazon/ebook/bin/init.xargs || fail "Unable to restore init.xargs (2)"
 else
-	exit 1;
+	fail "Unsupported init.xargs, bailing out"
 fi
 
-lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 50
+progress 50 "Deleting jbpatch.jar"
+rm /opt/amazon/ebook/lib/jbpatch.jar || fail "Unable to delete jbpatch.jar"
 
-rm /opt/amazon/ebook/lib/jbpatch.jar || exit 1
-lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 75
-
+progress 70 "Deleting patches from internal filesystem"
 rm -rf /var/local/jbpatch
+
+progress 80 "Deleting patches from USB filesystem"
 rm -rf /mnt/us/opt/jbpatch
+
+progress 90 "Deleting jbpatch.azw2"
 rm -f /mnt/us/documents/jbpatch.azw2
 
-lipc-send-event com.lab126.blanket.ota otaSplashProgress -i 100
+progress 100 "Uninstallation complete."

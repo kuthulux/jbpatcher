@@ -27,7 +27,7 @@ public class DictionariesPatch extends Patch {
 
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {
-			map.put(I18N_JBPATCH_NAME, "Enhance dictionary lookup");
+			map.put(I18N_JBPATCH_NAME, "Enhance Dictionary Lookup");
 			map.put(I18N_JBPATCH_DESCRIPTION, "This patch allows to consult all dictionaries, instead of only one.");
 		}
 	}
@@ -65,7 +65,4 @@ public class DictionariesPatch extends Patch {
 		Backend.modifyPanel(o, currentIndex);
 	}
 	
-	public static int getDefinitionLines() {
-		return 12;
-	}
 }

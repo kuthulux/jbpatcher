@@ -177,8 +177,10 @@
 		<zip destfile="dist/src/install/patches.zip">
 			<fileset dir="dist/opt/jbpatch">
 				<include name="com.mobileread.ixtab.patch.AllRotationsPatch.class"/>
+				<include name="com.mobileread.ixtab.patch.collectioncount.jar"/>
 				<include name="com.mobileread.ixtab.patch.coverview.jar"/>
 				<include name="com.mobileread.ixtab.patch.devcert.jar"/>
+				<include name="com.mobileread.ixtab.patch.dictionaries.jar"/>
 				<include name="com.mobileread.ixtab.patch.hyphenation.jar"/>
 				<include name="com.mobileread.ixtab.patch.margins.jar"/>
 				<include name="com.mobileread.ixtab.patch.passwd.jar"/>

@@ -21,10 +21,10 @@ fail()
 progress 10 "Mounting r/w"
 mntroot rw || fail "Unable to mount r/w"
 
-progress 20 "Copying jbpatch.jar"
+progress 20 "Installing jbpatch.jar"
 cp jbpatch.jar /opt/amazon/ebook/lib/ || fail "Unable to copy jbpatch.jar"
 
-progress 30 "Copying jbpatch.azw2"
+progress 30 "Installing jbpatch.azw2"
 cp jbpatch.azw2 /mnt/us/documents/ || fail "Unable to copy jbpatch.azw2"
 
 progress 40 "Updating init.xargs"
@@ -40,7 +40,7 @@ else
 	fail "Unsupported init.xargs"
 fi
 
-progress 60 "Installing patches locally"
+progress 60 "Installing patches to internal filesystem"
 mkdir -p /var/local/jbpatch || fail "Unable to create local jbpatch directory"
 
 # fix a mistake from version 2.1.2
@@ -48,7 +48,7 @@ rm -rf /var/local/jbpatch/com.mobileread.ixtab.patch.hyphenation
 
 unzip -o patches.zip -d /var/local/jbpatch/ || fail "Unable to install patches to local directory"
 
-progress 80 "Installing patches to USB"
+progress 80 "Installing patches to USB filesystem"
 
 mkdir -p /mnt/us/opt/jbpatch || fail "Unable to create USB jbpatch directory"
 unzip -o patches.zip -d /mnt/us/opt/jbpatch/ || fail "Unable to install patches to USB directory"

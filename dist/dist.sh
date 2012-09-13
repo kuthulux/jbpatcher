@@ -1,5 +1,5 @@
 PRODUCT=jbpatch
-VERSION=2.3.1
+VERSION=2.3.2
 
 rm *.bin *.zip
 
