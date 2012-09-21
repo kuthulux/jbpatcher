@@ -1,4 +1,4 @@
-package com.mobileread.ixtab.jbpatch.ui.kindlet;
+package com.mobileread.ixtab.jbpatch.conf.ui;
 
 import javax.swing.JTextArea;
 

@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSetting;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
+import com.mobileread.ixtab.jbpatch.conf.ui.JMultiLineLabel;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
 import com.mobileread.ixtab.jbpatch.ui.images.Images;

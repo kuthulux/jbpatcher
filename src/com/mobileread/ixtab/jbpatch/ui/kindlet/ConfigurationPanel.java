@@ -22,6 +22,7 @@ import javax.swing.event.ChangeListener;
 
 import com.amazon.kindle.kindlet.ui.KOptionPane;
 import com.mobileread.ixtab.jbpatch.Patch;
+import com.mobileread.ixtab.jbpatch.conf.ui.JMultiLineLabel;
 
 public class ConfigurationPanel extends JPanel implements ChangeListener,
 		LocalizationKeys {
