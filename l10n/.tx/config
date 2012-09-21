@@ -37,6 +37,12 @@ file_filter = com.mobileread.ixtab.patch.dictionaries-<lang>.txt
 source_lang = en
 type = MOZILLAPROPERTIES
 
+[jbpatch.ixtab-patch-fontsize]
+source_file = com.mobileread.ixtab.patch.fontsize-en.txt
+file_filter = com.mobileread.ixtab.patch.fontsize-<lang>.txt
+source_lang = en
+type = MOZILLAPROPERTIES
+
 [jbpatch.ixtab-patch-hyphenation]
 source_file = com.mobileread.ixtab.patch.hyphenation-en.txt
 file_filter = com.mobileread.ixtab.patch.hyphenation-<lang>.txt
