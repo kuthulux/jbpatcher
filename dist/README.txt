@@ -43,9 +43,6 @@ INSTALLATION
 2. Copy update_jbpatch-*.install.bin directly onto the Kindle device
    (i.e., not into any sub-directory)
 3. Restart your Kindle using Menu > Settings, Menu > Update.
-4. If you do not see all the expected results directly after the
-   installation, reboot your Kindle once more.
-
 
 KINDLET JAILBREAK
 -----------------

@@ -20,6 +20,8 @@ import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 public class FontSizePatch extends Patch {
 
 	// As great as the ResourceBundle internationalization normally is: in this case, it requires to know
@@ -149,7 +151,7 @@ public class FontSizePatch extends Patch {
 		return isSupportedLocale;
 	}
 	public int getVersion() {
-		return 20120921;
+		return 20120925;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -229,21 +231,35 @@ public class FontSizePatch extends Patch {
 		for (int i=0; i < contents.length; ++i) {
 			Object[] kv = contents[i];
 			if ("font.menu.size.list".equals(kv[0]) || "mobireader.default.font.size.list".equals(kv[0])) {
+				boolean alternativePatch = "mobireader.default.font.size.list".equals(kv[0]);
 				Object value = kv[1];
 				if (value instanceof int[][]) {
 					int[][] array = (int[][]) value;
-					array[0] = getConfiguredFontSizes();
+					array[0] = getConfiguredFontSizes(alternativePatch);
 				} else if (value instanceof int[]) {
-					kv[1] = getConfiguredFontSizes();
+					kv[1] = getConfiguredFontSizes(alternativePatch);
 				}
 			}
 		}
 	}
 
-	private static int[] getConfiguredFontSizes() {
-		return instance.getConfiguredSizes();
+	private static int[] getConfiguredFontSizes(boolean alt) {
+		int[] result = instance.getConfiguredSizes();
+		return alt ? createFilledArray(result) : result;
 	}
 	
+	private static int[] createFilledArray(int[] org) {
+		int base = org[0];
+		int min = Math.min(base, 7);
+		int max = Math.max(org[org.length-1], 43);
+		int[] alt = new int[max-min+1];
+		for (int i=0; i < alt.length; ++i) {
+			alt[i] = base++;
+		}
+//		Log.INSTANCE.println("ALT: "+Arrays.toString(alt));
+		return alt;
+	}
+
 	private int[] cachedSizes = null;
 	
 	private int[] getConfiguredSizes() {

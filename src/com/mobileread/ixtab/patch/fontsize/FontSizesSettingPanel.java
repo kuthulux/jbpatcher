@@ -26,8 +26,9 @@ public class FontSizesSettingPanel extends SettingPanel implements ActionListene
 
 	private static final long serialVersionUID = 1L;
 	
-	// anything smaller is really unusable.
+	// anything smaller/larger is really unusable.
 	private static final int MIN_FONT_SIZE = 4;
+	private static final int MAX_FONT_SIZE = 37;
 	
 	private final JPanel settingsPanel = new JPanel();
 	private final JPanel demoPanel = new JPanel();
@@ -171,7 +172,8 @@ public class FontSizesSettingPanel extends SettingPanel implements ActionListene
 				FontSizeEntry next = entries[index+1];
 				larger.setEnabled(size + 1 < next.size);
 			} else {
-				larger.setEnabled(true);
+				larger.setEnabled(size < MAX_FONT_SIZE);
+				moreButton.setEnabled(size < MAX_FONT_SIZE && entries.length < FontSizePatch.MAX_SETTINGS);
 			}
 			demo.setFont(new Font(demo.getFont().getName(), demo.getFont().getStyle(), size));
 			
