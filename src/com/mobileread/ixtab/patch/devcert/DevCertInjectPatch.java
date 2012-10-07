@@ -33,13 +33,13 @@ public class DevCertInjectPatch extends Patch {
 	private static final String MD5_AFTER = "b1ea6c018cbddb9fde405e3947e612f5";
 
 	public int getVersion() {
-		return 20120803;
+		return 20121007;
 	}
 
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {
 			map.put(I18N_JBPATCH_NAME, "Install mobileread.com Developer Certificates");
-			map.put(I18N_JBPATCH_DESCRIPTION, "Kindlets must be signed with a developer certificate. This patch will automatically install a set of known certificates used by mobileread.com developers (Version: 2012-07-12), if required.");
+			map.put(I18N_JBPATCH_DESCRIPTION, "Kindlets must be signed with a developer certificate. This patch will automatically install a set of known certificates used by mobileread.com developers (Version: 2012-10-02), if required.");
 			map.put(KEY_ARCHIVE_INVALID,"The patch to automatically install the mobileread.com developer certificates is invalid. Please re-download the patch.");
 			map.put(KEY_INSTALL_FAILED,"The mobileread.com developer certificates could not be properly installed.");
 			map.put(KEY_INSTALL_SUCCEEDED,"The mobileread.com developer certificates have been successfully installed. Please close this message and start the application again. If the application was signed with one of the included certificates, it will work.");

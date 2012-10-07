@@ -49,6 +49,9 @@
    Aurélio Buarque de Holanda Ferreira:
       Novo Dicionário Aurélio da Língua Portuguesa: - Editora Nova Fronteira.
 
+	  Alteração efetuada em 06.10.2012 para corrigir a hifenização das palavras
+	  "ninguém", "alguém" e "aquém". 
+	  Autor: Antoine Youssef Kamel (antoine12@gmail.com).
 -->
 <hyphenation-info>
 <hyphen-char value="-"/>
@@ -196,6 +199,11 @@ pu-dla-gem
 1g2la 1g2lá 1g2lâ 1g2lã 1g2le 1g2lé 1g2lê 1g2li 1g2lí 1g2lo 1g2ló 1g2lô 1g2lõ 1g2lu 1g2lú
 1p2la 1p2lá 1p2lâ 1p2lã 1p2le 1p2lé 1p2lê 1p2li 1p2lí 1p2lo 1p2ló 1p2lô 1p2lõ 1p2lu 1p2lú
 1t2la 1t2lá 1t2lâ 1t2lã 1t2le 1t2lé 1t2lê 1t2li 1t2lí 1t2lo 1t2ló 1t2lô 1t2lõ 1t2lu 1t2lú
+
+<!-- hifenização de "ninguém", "alguém" e "aquém" -->
+
+g4u4é4m q4u4é4m
+
 <!--
    Ditongos e hiatos / Diphtongs and hiatus.
 -->
