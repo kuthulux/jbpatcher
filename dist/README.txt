@@ -49,8 +49,8 @@ KINDLET JAILBREAK
 The user interface of JBPatch requires permissions not normally available to
 Kindle applications. If you try to access the UI part, but only get an error
 that the Kindlet Jailbreak is missing, then please install the Kindlet
-Jailbreak from http://ge.tt/4wapSaK/v/02 to allow access to these restricted
-permissions.
+Jailbreak (kindlet-jailbreak-*.zip) from http://ge.tt/4wapSaK/ to allow access
+to these restricted permissions.
 
 VERIFYING THAT THE INSTALLATION WORKED
 --------------------------------------

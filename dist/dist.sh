@@ -1,5 +1,5 @@
 PRODUCT=jbpatch
-VERSION=2.4.0
+VERSION=3.0.0a
 
 rm *.bin *.zip
 
@@ -7,5 +7,5 @@ rm *.bin *.zip
 kindletool create ota2 -d k5w -d k5g -d k5gb -d k5u -C src/install update_${PRODUCT}_${VERSION}_install.bin
 kindletool create ota2 -d k5w -d k5g -d k5gb -d k5u -C src/uninstall update_${PRODUCT}_${VERSION}_uninstall.bin
 
-zip -9 -r ${PRODUCT}_${VERSION}.zip update_${PRODUCT}_${VERSION}_install.bin update_${PRODUCT}_${VERSION}_uninstall.bin *.txt src/
+zip -9 -r ${PRODUCT}_${VERSION}.zip update_${PRODUCT}_${VERSION}_install.bin update_${PRODUCT}_${VERSION}_uninstall.bin *.txt
 

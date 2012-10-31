@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.mobileread.ixtab.jbpatch.PatchMetadata.ClassChecksum;
-
 /**
  * This class represents metadata about a particular patch, in particular, which
  * exact versions of which exact classes are supported on which exact device.
