@@ -11,16 +11,16 @@ import serp.bytecode.Project;
 import com.amazon.ebook.booklet.mobireader.impl.resources.MobiReaderImplResources_de;
 import com.amazon.ebook.booklet.reader.resources.ReaderResources_de;
 import com.mobileread.ixtab.jbpatch.Patch;
-import com.mobileread.ixtab.patch.kt.NoAdsPatch;
-import com.mobileread.ixtab.patch.kt.NoStoreMenuPatch;
-import com.mobileread.ixtab.patch.kt.collectioncount.CollectionCountPatch;
-import com.mobileread.ixtab.patch.kt.coverview.CoverViewPatch;
-import com.mobileread.ixtab.patch.kt.dictionaries.DictionariesPatch;
-import com.mobileread.ixtab.patch.kt.fontsize.FontSizePatch;
-import com.mobileread.ixtab.patch.kt.hyphenation.HyphenationPatch;
-import com.mobileread.ixtab.patch.kt.margins.MarginsPatch;
-import com.mobileread.ixtab.patch.kt.passwd.PasswordPatch;
-import com.mobileread.ixtab.patch.kt.progressbar.ProgressBarPatch;
+import com.mobileread.ixtab.patch.NoAdsPatch;
+import com.mobileread.ixtab.patch.NoStoreMenuPatch;
+import com.mobileread.ixtab.patch.collectioncount.CollectionCountPatch;
+import com.mobileread.ixtab.patch.coverview.CoverViewPatch;
+import com.mobileread.ixtab.patch.dictionaries.DictionariesPatch;
+import com.mobileread.ixtab.patch.fontsize.FontSizePatch;
+import com.mobileread.ixtab.patch.hyphenation.HyphenationPatch;
+import com.mobileread.ixtab.patch.margins.MarginsPatch;
+import com.mobileread.ixtab.patch.passwd.PasswordPatch;
+import com.mobileread.ixtab.patch.progressbar.ProgressBarPatch;
 
 /*
  * This isn't really a Unit Test, I know. It ended up just being a quick way to

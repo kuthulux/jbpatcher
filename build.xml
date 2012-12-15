@@ -1,27 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="JBPatch" default="dist">
+<project name="JBPatch" default="dist-all">
 
 	<property file="build.properties" />
 
 
-	<path id="classpath">
+	<path id="classpath.lib">
 		<fileset dir="lib" includes="**/*.jar" />
 	</path>
 
-	<target name="build-jar">
+	<path id="classpath.jdk14">
+		<fileset dir="${build.classpath.jdk14}" includes="**/*.jar" />
+	</path>
+
+	<path id="classpath.512">
+		<fileset dir="lib" includes="**/*.jar" />
+		<fileset dir="${build.classpath.512}" includes="**/*.jar" />
+	</path>
+
+	<path id="classpath.531">
+		<fileset dir="lib" includes="**/*.jar" />
+		<fileset dir="${build.classpath.531}" includes="**/*.jar" />
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<target name="compile" depends="clean">
+		<!-- Firmware 5.1.2 (as default), excludes files which are specific to later FW versions -->
+		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.512" srcdir="src" destdir="${build.dir}">
+			<include name="**/*.java" />
+			<exclude name="**/fw531/**/*.java" />
+		</javac>
+		<!-- Firmware 5.3.1 -->
+		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.531" srcdir="src" destdir="${build.dir}">
+			<include name="**/fw531/**/*.java" />
+		</javac>
+		<!-- Copy required resource files (of specific types) explicitly, because ant doesn't do so -->
+		<copy todir="${build.dir}">
+			<fileset dir="src" includes="**/*.png" />
+		</copy>
+	</target>
+
+	<target name="build-jar" depends="compile">
 		<delete file="jbpatch.jar" />
 		<jar destfile="jbpatch.jar">
 			<manifest>
-				<attribute name="Bundle-Name" value="JBPatch" />
-				<attribute name="Bundle-Version" value="1.0.1" />
-				<attribute name="Bundle-Description" value="Kindle Patcher" />
-				<attribute name="Bundle-Vendor" value="ixtab" />
+				<attribute name="Bundle-Name" value="${product.name}" />
+				<attribute name="Bundle-Version" value="${product.version}" />
+				<attribute name="Bundle-Description" value="Java Bytecode Patcher" />
+				<attribute name="Bundle-Vendor" value="${product.vendor}" />
 				<attribute name="Bundle-Activator" value="com.mobileread.ixtab.jbpatch.bootstrap.Stage1" />
 			</manifest>
 			<zipfileset src="lib/serp.jar">
 				<include name="**/*.class" />
 			</zipfileset>
-			<fileset dir="bin">
+			<fileset dir="${build.dir}">
 				<include name="com/mobileread/ixtab/jbpatch/**/*" />
 				<exclude name="com/mobileread/ixtab/jbpatch/ui/**/*" />
 				<exclude name="com/mobileread/ixtab/jbpatch/ui" />
@@ -29,9 +64,9 @@
 		</jar>
 	</target>
 
-	<target name="build-azw2">
-		<delete file="dist/src/install/${product.filename}.azw2" />
-		<jar destfile="dist/src/install/${product.filename}.azw2">
+	<target name="build-azw2" depends="compile">
+		<delete file="dist/common/${product.filename}.azw2" />
+		<jar destfile="dist/common/${product.filename}.azw2">
 			<manifest>
 				<attribute name="Implementation-Title" value="${product.name}" />
 				<attribute name="Implementation-Version" value="${product.version}" />
@@ -46,7 +81,7 @@
 				<attribute name="Font-Size-Mode" value="point" />
 
 			</manifest>
-			<fileset dir="bin">
+			<fileset dir="${build.dir}">
 				<include name="com/mobileread/ixtab/jbpatch/ui/**/*" />
 			</fileset>
 			<fileset dir=".">
@@ -56,157 +91,174 @@
 				<include name="**/*.class" />
 			</zipfileset>
 		</jar>
-		<signjar jar="dist/src/install/${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="dk${sign.aliases}" />
-		<signjar jar="dist/src/install/${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="di${sign.aliases}" />
-		<signjar jar="dist/src/install/${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="dn${sign.aliases}" />
+		<signjar jar="dist/common/${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="dk${sign.aliases}" />
+		<signjar jar="dist/common/${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="di${sign.aliases}" />
+		<signjar jar="dist/common/${product.filename}.azw2" keystore="${sign.keystore.file}" storepass="${sign.keystore.password}" alias="dn${sign.aliases}" />
 
 	</target>
 
 	<target name="build" depends="build-azw2, build-jar" />
 
-	<target name="dist" depends="build">
-		<move file="jbpatch.jar" todir="dist/src/install" overwrite="true" failonerror="true" />
+	<target name="dist-patches" depends="build">
+		<!-- This packages ALL patches, assuming that they compiled properly. -->
+		<move file="jbpatch.jar" todir="dist/common" overwrite="true" failonerror="true" />
 
 		<delete dir="dist/opt/jbpatch" />
 		<mkdir dir="dist/opt/jbpatch" />
 
-		<copy file="bin/com/mobileread/ixtab/patch/kt/AllRotationsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.AllRotationsPatch.class" />
-		<copy file="bin/com/mobileread/ixtab/patch/kt/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.LegalIllegalPatch.class" />
-		<copy file="bin/com/mobileread/ixtab/patch/kt/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.NoAdsPatch.class" />
+		<copy file="bin/com/mobileread/ixtab/patch/AllRotationsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.AllRotationsPatch.class" />
+		<copy file="bin/com/mobileread/ixtab/patch/LegalIllegalPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.LegalIllegalPatch.class" />
+		<copy file="bin/com/mobileread/ixtab/patch/NoAdsPatch.class" tofile="dist/opt/jbpatch/com.mobileread.ixtab.patch.NoAdsPatch.class" />
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.collectioncount.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.collectioncount.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.collectioncount.CollectionCountPatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.collectioncount.CollectionCountPatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/collectioncount/**/*.class" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/collectioncount/**/*.class" />
 			</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.coverview.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.coverview.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.coverview.CoverViewPatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.coverview.CoverViewPatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/coverview/**/*.class" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/coverview/**/*.class" />
 			</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.devcert.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.devcert.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.devcert.DevCertInjectPatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.devcert.DevCertInjectPatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/devcert/*.class" />
-				<include name="com/mobileread/ixtab/patch/kt/devcert/developer.keystore" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/devcert/*.class" />
+				<include name="com/mobileread/ixtab/patch/devcert/developer.keystore" />
 			</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.dictionaries.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.dictionaries.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.dictionaries.DictionariesPatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.dictionaries.DictionariesPatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/dictionaries/**/*.class" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/dictionaries/**/*.class" />
 			</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.fontsize.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.fontsize.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.fontsize.FontSizePatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.fontsize.FontSizePatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/fontsize/**/*.class" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/fontsize/**/*.class" />
 			</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.hyphenation.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.hyphenation.HyphenationPatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.hyphenation.HyphenationPatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/hyphenation/**/*.class" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/hyphenation/**/*.class" />
 			</fileset>
 		</jar>
 
-		<mkdir dir="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.hyphenation" />
-		<copy todir="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.hyphenation">
-			<fileset dir="src/com/mobileread/ixtab/patch/kt/hyphenation/itextpdf/definitions">
+		<mkdir dir="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation" />
+		<copy todir="dist/opt/jbpatch/com.mobileread.ixtab.patch.hyphenation">
+			<fileset dir="src/com/mobileread/ixtab/patch/hyphenation/itextpdf/definitions">
 				<include name="*.*" />
 			</fileset>
 		</copy>
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.margins.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.margins.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.margins.MarginsPatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.margins.MarginsPatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/margins/*.class" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/margins/*.class" />
 			</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.passwd.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.passwd.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.passwd.PasswordPatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.passwd.PasswordPatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/passwd/*.class" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/passwd/*.class" />
 			</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.progressbar.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.progressbar.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.progressbar.ProgressBarPatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.progressbar.ProgressBarPatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/progressbar/*.class" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/progressbar/*.class" />
 			</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.scrollbar.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.scrollbar.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.scrollbar.ScrollbarPatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.scrollbar.ScrollbarPatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/scrollbar/*.class" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/scrollbar/*.class" />
 			</fileset>
 		</jar>
 
-		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.kt.tts.jar">
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.tts.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.kt.tts.TTSPatch" />
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.tts.TTSPatch" />
 			</manifest>
-			<fileset dir="bin">
-				<include name="com/mobileread/ixtab/patch/kt/tts/*.class" />
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/tts/*.class" />
 			</fileset>
 		</jar>
 
-		<!-- pack (only) the patches to be distributed -->
-		<delete file="dist/src/install/patches.zip" />
-		<zip destfile="dist/src/install/patches.zip">
+		<delete file="dist/common/hyphenations.zip" />
+		<zip destfile="dist/common/hyphenations.zip">
 			<fileset dir="dist/opt/jbpatch">
-				<include name="com.mobileread.ixtab.patch.kt.AllRotationsPatch.class" />
-				<include name="com.mobileread.ixtab.patch.kt.collectioncount.jar" />
-				<include name="com.mobileread.ixtab.patch.kt.coverview.jar" />
-				<include name="com.mobileread.ixtab.patch.kt.devcert.jar" />
-				<include name="com.mobileread.ixtab.patch.kt.dictionaries.jar" />
-				<include name="com.mobileread.ixtab.patch.kt.fontsize.jar" />
-				<include name="com.mobileread.ixtab.patch.kt.hyphenation.jar" />
-				<include name="com.mobileread.ixtab.patch.kt.margins.jar" />
-				<include name="com.mobileread.ixtab.patch.kt.passwd.jar" />
-				<include name="com.mobileread.ixtab.patch.kt.progressbar.jar" />
-				<include name="com.mobileread.ixtab.patch.kt.scrollbar.jar" />
-				<include name="com.mobileread.ixtab.patch.kt.tts.jar" />
+				<include name="com.mobileread.ixtab.patch.hyphenation/*.*" />
 			</fileset>
 		</zip>
 
-		<delete file="dist/src/install/hyphenations.zip" />
-		<zip destfile="dist/src/install/hyphenations.zip">
+	</target>
+
+	<target name="pack-510" depends="dist-patches">
+		<!-- pack the patches that work on Firmware 5.1.0 -->
+		<delete file="dist/fw510/install/patches.zip" />
+		<zip destfile="dist/fw510/install/patches.zip">
 			<fileset dir="dist/opt/jbpatch">
-				<include name="com.mobileread.ixtab.patch.kt.hyphenation/*.*" />
+				<include name="com.mobileread.ixtab.patch.AllRotationsPatch.class" />
+				<include name="com.mobileread.ixtab.patch.collectioncount.jar" />
+				<include name="com.mobileread.ixtab.patch.coverview.jar" />
+				<include name="com.mobileread.ixtab.patch.devcert.jar" />
+				<include name="com.mobileread.ixtab.patch.dictionaries.jar" />
+				<include name="com.mobileread.ixtab.patch.fontsize.jar" />
+				<include name="com.mobileread.ixtab.patch.hyphenation.jar" />
+				<include name="com.mobileread.ixtab.patch.margins.jar" />
+				<include name="com.mobileread.ixtab.patch.passwd.jar" />
+				<include name="com.mobileread.ixtab.patch.progressbar.jar" />
+				<include name="com.mobileread.ixtab.patch.scrollbar.jar" />
+				<include name="com.mobileread.ixtab.patch.tts.jar" />
 			</fileset>
 		</zip>
+	</target>
 
+	<target name="pack-531" depends="dist-patches">
+		<!-- pack the patches that work on Firmware 5.3.1 -->
+		<delete file="dist/fw531/install/patches.zip" />
+		<zip destfile="dist/fw531/install/patches.zip">
+			<fileset dir="dist/opt/jbpatch">
+				<include name="com.mobileread.ixtab.patch.hyphenation.jar" />
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="dist-all" depends="dist-patches, pack-510, pack-531">
+		<echo>***NOTE*** WE'RE NOT DONE YET! Final packaging is done from the dist.sh shell script.</echo>
 	</target>
 
 	<!-- This is a private (and moving) target which will probably only work on ixtab's computer.
@@ -215,7 +267,7 @@
 
 	<property name="dev-ssh-id-ixtab" value="/home/ixtab/.ssh/id_kindle" />
 
-	<target name="dev-ixtab" depends="dist">
+	<target name="dev-ixtab" depends="dist-all">
 		<exec command="scp -i ${dev-ssh-id} dist/src/install/jbpatch.jar root@kindle:/opt/amazon/ebook/lib/jbpatch.jar" />
 		<exec command="scp -i ${dev-ssh-id} dist/src/install/${product.filename}.azw2 root@kindle:/mnt/us/documents/" />
 		<exec command="scp -i ${dev-ssh-id} -r dist/opt/jbpatch root@kindle:/mnt/us/opt/" />

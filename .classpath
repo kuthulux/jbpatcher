@@ -5,6 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/j2sdk1.4.2_19"/>
 	<classpathentry kind="lib" path="lib/serp.jar"/>
 	<classpathentry kind="lib" path="lib/jailbreak.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Kindle Touch 5.1.2"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Kindle Paperwhite 5.3.1"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

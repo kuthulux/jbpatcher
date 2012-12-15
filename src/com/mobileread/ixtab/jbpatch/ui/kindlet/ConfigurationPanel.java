@@ -21,6 +21,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.amazon.kindle.kindlet.ui.KOptionPane;
+import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.conf.ui.JMultiLineLabel;
 
@@ -269,38 +270,43 @@ public class ConfigurationPanel extends JPanel implements ChangeListener,
 	}
 
 	private void displayPatch(Patch patch) {
-		String title = null;
-		String subtitle = null;
-		String description = null;
-		Component content = null;
-		ButtonsPanel buttons = noSettingsButtonPanel;
-
-		if (patch == null) {
-			currentState = null;
-			title = JBPatchUI.localize(_CONFIG_NOPATCH_TITLE);
-			subtitle = JBPatchUI.localize(_CONFIG_NOPATCH_SUBTITLE);
-			description = "";
-			content = new JMultiLineLabel(
-					JBPatchUI.localize(_CONFIG_NOPATCH_DESCRIPTION));
-		} else {
-			if (currentState == null || currentState.patch != patch) {
-				currentState = new ConfigurationState(patch);
-			}
-			title = patch.getName();
-			subtitle = JBPatchUI.localize(_CONFIG_PATCH_SUBTITLE);
-			description = patch.getDescription();
-			if (currentState.getSettingsCount() == 0) {
-				buttons = noSettingsButtonPanel;
+		try {
+			String title = null;
+			String subtitle = null;
+			String description = null;
+			Component content = null;
+			ButtonsPanel buttons = noSettingsButtonPanel;
+	
+			if (patch == null) {
+				currentState = null;
+				title = JBPatchUI.localize(_CONFIG_NOPATCH_TITLE);
+				subtitle = JBPatchUI.localize(_CONFIG_NOPATCH_SUBTITLE);
+				description = "";
 				content = new JMultiLineLabel(
-						JBPatchUI.localize(_CONFIG_PATCH_NOTCONFIGURABLE));
+						JBPatchUI.localize(_CONFIG_NOPATCH_DESCRIPTION));
 			} else {
-				buttons = allSettingsButtonPanel;
-				content = new ConfigurableItemsPanel();
-				currentState.createPanels(this, (JPanel) content);
+				if (currentState == null || currentState.patch != patch) {
+					currentState = new ConfigurationState(patch);
+				}
+				title = patch.getName();
+				subtitle = JBPatchUI.localize(_CONFIG_PATCH_SUBTITLE);
+				description = patch.getDescription();
+				if (currentState.getSettingsCount() == 0) {
+					buttons = noSettingsButtonPanel;
+					content = new JMultiLineLabel(
+							JBPatchUI.localize(_CONFIG_PATCH_NOTCONFIGURABLE));
+				} else {
+					buttons = allSettingsButtonPanel;
+					content = new ConfigurableItemsPanel();
+					currentState.createPanels(this, (JPanel) content);
+				}
 			}
+	
+			updateUI(title, subtitle, description, content, buttons);
+		} catch (Throwable t) {
+			// should never happen, but will provide helpful output if it does.
+			t.printStackTrace(Log.INSTANCE);
 		}
-
-		updateUI(title, subtitle, description, content, buttons);
 	}
 
 	void displaySetting(ConfigurationState.ConfiguredSetting setting) {

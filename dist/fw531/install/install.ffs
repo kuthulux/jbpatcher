@@ -1,0 +1,54 @@
+#!/bin/sh
+OTA=com.lab126.blanket.ota
+
+progress()
+{
+	lipc-send-event $OTA otaSplashProgress -i $1
+	local x=48
+	local y=11
+	eips 0 $y "                                                ";
+	eips $((($x - $(expr length "$2")) / 2)) $y "$2"
+	sleep 3
+}
+
+fail()
+{
+	lipc-send-event $OTA otaSplashError -s "${1}"
+	sleep 10
+	exit 1;
+}
+
+progress 10 "Mounting r/w"
+mntroot rw || fail "Unable to mount r/w"
+
+progress 20 "Installing jbpatch.jar"
+cp jbpatch.jar /opt/amazon/ebook/lib/ || fail "Unable to copy jbpatch.jar"
+
+progress 30 "Installing jbpatch.azw2"
+cp jbpatch.azw2 /mnt/us/documents/ || fail "Unable to copy jbpatch.azw2"
+
+progress 40 "Updating init.xargs"
+MD5=`md5sum /opt/amazon/ebook/bin/init.xargs|awk '{print $1}'`
+
+if [ "$MD5" = "155c731ce4306ae23c18ddcd462fcf1e" ]; then
+	# original (5.3.1)
+	sed -i '10 i -istart jbpatch.jar' /opt/amazon/ebook/bin/init.xargs || fail "Failed to patch init.xargs"
+elif [ "$MD5" = "3dd958d8ba85810fa0a3de6ac23b4a58" ]; then
+	# already patched (5.3.1)
+	echo "not changing init.xargs";
+else
+	fail "Unsupported init.xargs"
+fi
+
+progress 60 "Installing patches to internal filesystem"
+mkdir -p /var/local/jbpatch || fail "Unable to create local jbpatch directory"
+
+unzip -o patches.zip -d /var/local/jbpatch/ || fail "Unable to install patches to local directory"
+
+progress 80 "Installing patches to USB filesystem"
+
+mkdir -p /mnt/us/opt/jbpatch || fail "Unable to create USB jbpatch directory"
+unzip -o patches.zip -d /mnt/us/opt/jbpatch/ || fail "Unable to install patches to USB directory"
+unzip -o hyphenations.zip -d /mnt/us/opt/jbpatch/ || fail "Unable to install hyphenations to USB directory"
+
+progress 100 "Installation complete."
