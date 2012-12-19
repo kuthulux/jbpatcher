@@ -1,5 +1,5 @@
-JBPatch for Kindle Touch
-========================
+JBPatch: Java Bytecode Patch
+============================
 
 JBPatch is an extremely powerful tool that allows to change almost
 all aspects of your Kindle's behavior (at least the parts that have been
@@ -55,15 +55,7 @@ to these restricted permissions.
 VERIFYING THAT THE INSTALLATION WORKED
 --------------------------------------
 Go to Menu > Settings, Menu > Device Info. You should see a new entry
-telling you how many patches are currently active, and how many are
-available, along with the version of jbpatch that you have installed.
-
-Note:
-- it is normal that the "available" count is larger than the number of
-  patch files that you specified in the configuration file. A single patch
-  can potentially alter behavior in many classes.
-- it is also normal that the "active" count is smaller than the "available"
-  count. Patches only become active when they are actually needed.
+which indicates the JBPatch version.
 
 You can also check /tmp/jbpatch.log on the device, or display the log in the UI.
 

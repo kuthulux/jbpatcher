@@ -10,12 +10,16 @@ import serp.bytecode.Project;
 
 import com.amazon.ebook.booklet.mobireader.impl.resources.MobiReaderImplResources_de;
 import com.amazon.ebook.booklet.reader.resources.ReaderResources_de;
+import com.mobileread.ixtab.jbpatch.MD5;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.patch.NoAdsPatch;
 import com.mobileread.ixtab.patch.NoStoreMenuPatch;
 import com.mobileread.ixtab.patch.collectioncount.CollectionCountPatch;
 import com.mobileread.ixtab.patch.coverview.CoverViewPatch;
 import com.mobileread.ixtab.patch.dictionaries.DictionariesPatch;
+import com.mobileread.ixtab.patch.fontsize.FWAdapter;
+import com.mobileread.ixtab.patch.fontsize.FWAdapter512;
+import com.mobileread.ixtab.patch.fontsize.FWAdapter531;
 import com.mobileread.ixtab.patch.fontsize.FontSizePatch;
 import com.mobileread.ixtab.patch.hyphenation.HyphenationPatch;
 import com.mobileread.ixtab.patch.margins.MarginsPatch;
@@ -88,4 +92,41 @@ public class TestCurrentGoal extends TestCase {
 		Patch.dump(c);
 	}
 
+	public void testThosePeskyTranslationsForFontSizePatch() throws Throwable {
+		// not really a test either, just a method to ensure that we provide correct metadata (md5 sums) for all locales.
+		
+		Project project = new Project();
+		
+		// Make sure that you have the correct framework library on the classpath before running the test.
+//		FWAdapter fontAdapter = new FWAdapter512();
+		FWAdapter fontAdapter = new FWAdapter531();
+		String[] classes = fontAdapter.getClasses();
+		for (int i=0; i < classes.length; ++i) {
+			String className = classes[i];
+			BCClass clazz = project.loadClass(Class.forName(className));
+			String isBefore = MD5.getMd5String(clazz.toByteArray());
+			
+//			if ("com.amazon.ebook.booklet.reader.resources.ReaderResources_it".equals(className)) {
+//				System.err.println("break");
+//			}
+			String err = new FontSizePatch().perform(isBefore, clazz);
+			if (err != null) {
+				System.err.println("While patching "+ className+ " with MD5 "+isBefore);
+				System.err.println(err);
+				fail();
+			}
+			String isAfter = MD5.getMd5String(clazz.toByteArray());
+			if (isBefore.equals(isAfter)) {
+				System.err.println(className+" - nothing happened.");
+			}
+			
+			String shouldBefore = fontAdapter.getMd5Before()[i];
+			String shouldAfter = fontAdapter.getMd5After()[i];
+			if (!(shouldBefore.equals(isBefore) && shouldAfter.equals(isAfter))) {
+				System.out.println("DECLARED:    " + className+": " + shouldBefore +" -> " +shouldAfter);
+				System.out.println("ACTUAL  :    " + className+": " + isBefore +" -> " +isAfter);
+				fail();
+			}
+		}
+	}
 }
