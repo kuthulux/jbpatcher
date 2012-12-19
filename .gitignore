@@ -3,6 +3,7 @@ bin/
 *.azw2
 build/
 dist/*.bin
+dist/*.zip
 dist/**/*.zip
 dist/src/install/*.jar
 dist/src/install/*.zip
