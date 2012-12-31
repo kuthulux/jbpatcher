@@ -27,7 +27,6 @@ public class ReaderResources extends ResourceBundle implements MarginsPatchKeys 
 	}
 
 	protected Object handleGetObject(String key) {
-
 		ResourceBundle original = delegate();
 		Object value = overridden.get(key);
 		if (value != null) {

@@ -4,7 +4,8 @@ bin/
 build/
 dist/*.bin
 dist/*.zip
-dist/**/*.zip
+dist/*/*.zip
+dist/*/install/patches.zip
 dist/src/install/*.jar
 dist/src/install/*.zip
 dist/src/install/*.azw2
