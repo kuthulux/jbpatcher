@@ -35,33 +35,33 @@ public class TestCurrentGoal extends TestCase {
 	public void testAndDump() throws Throwable {
 		Project p = new Project();
 
-		BCClass cls = p
-				.loadClass(new File(
-						System.getProperty("user.home")
-								+ "/kindle-touch/java.512/classes/com/amazon/ebook/booklet/reader/plugin/systemcards/DictionaryCard.class"));
+//		BCClass cls = p
+//				.loadClass(new File(
+//						System.getProperty("user.home")
+//								+ "/kindle-touch/fw-531/java/classes/com/amazon/ebook/booklet/reader/impl/E.class"));
+//		
+//		String[] locales = new String[] {"", "_de", "_en", "_en_GB", "_es", "_fr", "_it", "_pt"};
+//		String[] classes = new String[] {"com.amazon.ebook.booklet.reader.resources.ReaderResources","com.amazon.ebook.booklet.mobireader.impl.resources.MobiReaderImplResources","com.amazon.ebook.booklet.reader.utils.resources.ReaderUtilsResources"};
+//		
+//		for (int c=0; c < classes.length; ++c) {
+//			for (int l = 0; l < locales.length; ++l) {
+//				String cn = classes[c];
+//				cn += locales[l];
+//				try {
+//					Class k = Class.forName(cn);
+//					System.err.println(cn);
+//					cls = p.loadClass(k);
+//					new FontSizePatch().perform(FontSizePatch.MD5_BEFORE[0], cls);
+//				} catch (Throwable t) {
+//					//t.printStackTrace();
+//				}
+//			}
+//		}
+//		if (1 == 1) return;
 		
-		String[] locales = new String[] {"", "_de", "_en", "_en_GB", "_es", "_fr", "_it", "_pt"};
-		String[] classes = new String[] {"com.amazon.ebook.booklet.reader.resources.ReaderResources","com.amazon.ebook.booklet.mobireader.impl.resources.MobiReaderImplResources","com.amazon.ebook.booklet.reader.utils.resources.ReaderUtilsResources"};
-		
-		for (int c=0; c < classes.length; ++c) {
-			for (int l = 0; l < locales.length; ++l) {
-				String cn = classes[c];
-				cn += locales[l];
-				try {
-					Class k = Class.forName(cn);
-					System.err.println(cn);
-					cls = p.loadClass(k);
-					new FontSizePatch().perform(FontSizePatch.MD5_BEFORE[0], cls);
-				} catch (Throwable t) {
-					//t.printStackTrace();
-				}
-			}
-		}
-		if (1 == 1) return;
-		
-		cls = p.loadClass(MobiReaderImplResources_de.class);
-		String result = new FontSizePatch().perform(
-				FontSizePatch.MD5_BEFORE[0], cls);
+		BCClass cls = p.loadClass(com.amazon.ebook.booklet.reader.impl.E.class);
+		String result = new MarginsPatch().perform(
+				MarginsPatch.MD5_READERUIIMPL_531_BEFORE, cls);
 		if (result != null) {
 			System.err.println("patch failed to perform, error is: " + result);
 			fail(result);

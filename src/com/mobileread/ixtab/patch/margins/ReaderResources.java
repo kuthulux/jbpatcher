@@ -21,6 +21,26 @@ public class ReaderResources extends ResourceBundle implements MarginsPatchKeys 
 	private static ResourceBundle delegate;
 
 	private static final Map overridden = new HashMap();
+	private static ReaderResources instance;
+	
+	public static ReaderResources getInstance() {
+		if (instance == null) {
+			synchronized (ReaderResources.class) {
+				if (instance == null) {
+					instance = new ReaderResources();
+				}
+			}
+		}
+		return instance;
+	}
+	
+	public ReaderResources() {
+		synchronized (ReaderResources.class) {
+			if (instance == null) {
+				instance = this;
+			}
+		}
+	}
 
 	public Enumeration getKeys() {
 		return delegate().getKeys();
@@ -30,6 +50,7 @@ public class ReaderResources extends ResourceBundle implements MarginsPatchKeys 
 		ResourceBundle original = delegate();
 		Object value = overridden.get(key);
 		if (value != null) {
+//			Log.INSTANCE.println("DEBUG: ReaderResources."+key+"="+value);
 			return value;
 		}
 		return original.getObject(key);

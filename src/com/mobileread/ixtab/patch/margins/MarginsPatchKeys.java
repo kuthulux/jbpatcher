@@ -11,7 +11,7 @@ interface MarginsPatchKeys {
 		public static synchronized boolean isKPW() {
 			if (!isInitialized) {
 				try {
-					// class present on Touch, but ot on PW.
+					// class present on Touch, but not on PW.
 					Class.forName("com.amazon.ebook.util.lang.UUID");
 					isPaperwhite = false;
 				} catch (Throwable t) {

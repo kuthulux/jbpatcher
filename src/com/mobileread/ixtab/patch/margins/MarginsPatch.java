@@ -1,6 +1,7 @@
 package com.mobileread.ixtab.patch.margins;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
@@ -43,7 +44,7 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 	public static final String MD5_FONTDIALOG_531_BEFORE = "254d26503d6c8e6fee22c535ffb22faa";
 	public static final String MD5_PROGRESSBARIMPL_531_BEFORE = "b4a619322d95604b80f868042ab99b46";
 
-	private static final String MD5_READERUIIMPL_531_AFTER = "4938d191acb18dd3ac2d34ca4eafddbd";
+	private static final String MD5_READERUIIMPL_531_AFTER = "aeeedb4b464fc0e1dd60a3496971c3d9";
 	private static final String MD5_READERSTATEDATA_531_AFTER = "a6431ccb0ea66d745a51b4f4a6e8323b";
 	private static final String MD5_FONTDIALOG_531_AFTER = "28ef8af25d0c834e0e2c92d5b3bda6f5";
 	private static final String MD5_PROGRESSBARIMPL_531_AFTER = "7fc026b0b14fbf8a845dc9691978ebbd";
@@ -58,7 +59,7 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 	}
 
 	public int getVersion() {
-		return 20121231;
+		return 20130102;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -194,12 +195,53 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 		return null;
 	}
 
-	private String patchReaderUiImpl531(BCClass clazz) {
+	private String patchReaderUiImpl531(BCClass clazz) throws Throwable {
 		Code c = clazz.getDeclaredMethod("<init>").getCode(false);
 		c.before(11);
 		((ConstantInstruction) c.next()).setValue(ReaderResources.class
 				.getName());
+		
+		// resetMargins method on the PW. For some reason, it actually switches instances at runtime to the localized
+		// version, so the first thing (instruction 0) to do is get the original (patched) version back in.
+		// Then, it also ties the horizontal margins to be at least the vertical margins (instructions 10-17), and vice-
+		// versa (instructions 41-48). These conditions are all disabled with the following code. Note that for
+		// sanity reasons, the patches are defined backwards, so that the offsets mentioned in this code match the original
+		// offsets.
+		c = clazz.getDeclaredMethod("MR").getCode(false);
+		
+		// Ignore the "bottom = top = max(left, top)" instruction.
+		// I actually don't know when this is really used, but it
+		// seems to make sense to prevent it anyway.
+		c.before(46);
+		c.pop(); // discard result of max() calculation
+		c.before(43);
+		c.dup(); // instead, just use the top value.
+		
+		// Ignore the "left = right = max(left, top)" instruction.
+		c.before(14);
+		c.pop(); // discard top margin
+		c.dup(); // use left margin instead. max(x,x) = x ;)
+		
+		// Force the reader back to our patched resource file, in case it decided to go for a localized one instead. This
+		// shouldn't really have any implication: the localized resources contain the same values as the non-localized
+		// one by default. And the generic resource (including the patched one) will delegate all requests for
+		// properties it doesn't know about to the localized one anyway.
+		c.before(0);
+		c.aload().setThis(); // for putfield
+		c.aload().setThis(); // for getfield
+		c.getfield().setFieldIndex(2);
+		c.invokestatic().setMethod(MarginsPatch.class.getDeclaredMethod("fixupReaderUIImplResources", new Class[]{Object.class}));
+		c.putfield().setFieldIndex(2);
+		
 		return null;
+	}
+	
+	public static ResourceBundle fixupReaderUIImplResources(Object resourcesInstance) {
+		if (resourcesInstance != null && !resourcesInstance.getClass().getName().startsWith("com.mobileread")) {
+			resourcesInstance = ReaderResources.getInstance();
+//			Log.INSTANCE.println("replaced ReaderResources instance with " + resourcesInstance);
+		}
+		return (ResourceBundle) resourcesInstance;
 	}
 
 	private String patchReaderStateData510(BCClass clazz) {
@@ -210,11 +252,12 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 		return null;
 	}
 
-	private String patchReaderStateData531(BCClass clazz) {
+	private String patchReaderStateData531(BCClass clazz) throws Throwable {
 		Code c = clazz.getDeclaredMethod("CW").getCode(false);
 		c.before(5);
 		((ConstantInstruction) c.next()).setValue(ReaderResources.class
 				.getName());
+		
 		return null;
 	}
 
