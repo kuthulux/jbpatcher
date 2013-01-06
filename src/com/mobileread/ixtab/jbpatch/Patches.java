@@ -8,11 +8,11 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.Project;
@@ -25,7 +25,7 @@ public class Patches {
 	private static final String PCL_CLASSNAME = "com.mobileread.ixtab.jbpatch.bootstrap.PatchingClassLoader";
 	private static final String PCL_DEFINECLASS_METHODNAME = "defineClass";
 
-	private static final Map patches = new TreeMap();
+	private static final Map patches = new HashMap();
 	private static final PrintStream log = Log.INSTANCE;
 	
 	private static int active = 0;

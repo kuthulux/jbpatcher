@@ -20,6 +20,5 @@ public abstract class Factories {
 	}
 
 	public abstract Hyphenation newHyphenation(String word);
-
 	public abstract UniversalHyphenationEngine newHyphenationEngine();
 }

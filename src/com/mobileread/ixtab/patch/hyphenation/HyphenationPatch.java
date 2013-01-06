@@ -20,12 +20,14 @@ import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingEntry;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
 import com.mobileread.ixtab.jbpatch.conf.ui.TextSettingPanel;
+import com.mobileread.ixtab.patch.hyphenation.common.Factories;
 import com.mobileread.ixtab.patch.hyphenation.common.UniversalHyphenationEngine;
 
 public class HyphenationPatch extends Patch {
 
 	private static final String CLASS_HYPHENATIONMANAGER_510 = "com.mobipocket.common.library.reader.hyphenation.j";
 	private static final String CLASS_FRAMECONSTRUCTOR_510 = "com.mobipocket.common.library.reader.db";
+	
 	private static final String CLASS_HYPHENATIONMANAGER_531 = "com.mobipocket.common.library.reader.hyphenation.b";
 	private static final String CLASS_FRAMECONSTRUCTOR_531 = "com.mobipocket.common.library.reader.R";
 
@@ -78,12 +80,14 @@ public class HyphenationPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20121216;
+		return 20130106;
 	}
 
 	public PatchMetadata getMetadata() {
-		return new PatchMetadata(this)
-				.withClass(
+		PatchMetadata md = new PatchMetadata(this);
+		String factoryClassName = Factories.INSTANCE.getClass().getName();
+		if (factoryClassName.endsWith("512")) {
+				md.withClass(
 						new PatchableClass(CLASS_FRAMECONSTRUCTOR_510)
 								.withChecksums(MD5_FRAMECONSTRUCTOR_510_BEFORE,
 										MD5_FRAMECONSTRUCTOR_510_AFTER))
@@ -91,8 +95,9 @@ public class HyphenationPatch extends Patch {
 						new PatchableClass(CLASS_HYPHENATIONMANAGER_510)
 								.withChecksums(
 										MD5_HYPHENATIONMANAGER_510_BEFORE,
-										MD5_HYPHENATIONMANAGER_510_AFTER))
-				.withClass(
+										MD5_HYPHENATIONMANAGER_510_AFTER));
+		} else {
+				md.withClass(
 						new PatchableClass(CLASS_FRAMECONSTRUCTOR_531)
 								.withChecksums(MD5_FRAMECONSTRUCTOR_531_BEFORE,
 										MD5_FRAMECONSTRUCTOR_531_AFTER))
@@ -100,8 +105,9 @@ public class HyphenationPatch extends Patch {
 						new PatchableClass(CLASS_HYPHENATIONMANAGER_531)
 								.withChecksums(
 										MD5_HYPHENATIONMANAGER_531_BEFORE,
-										MD5_HYPHENATIONMANAGER_531_AFTER))
-				;
+										MD5_HYPHENATIONMANAGER_531_AFTER));
+		}
+		return md;
 	}
 
 	protected void initLocalization(String locale, Map map) {

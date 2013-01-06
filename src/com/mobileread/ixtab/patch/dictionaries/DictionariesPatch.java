@@ -15,7 +15,7 @@ public class DictionariesPatch extends Patch {
 
 	private static final String CLASS_510 = "com.amazon.ebook.booklet.reader.plugin.systemcards.DictionaryCard";
 	public static final String MD5_BEFORE_510 = "cc8be7129f5b45d370f5b3fd41cd069f";
-	private static final String MD5_AFTER_510 = "b81427199453be5c3077e81b1c3f893b";
+	private static final String MD5_AFTER_510 = "4dd81f926a035bd62f628f3734bb7131";
 
 	private static final String CLASS_531 = "com.amazon.ebook.booklet.reader.plugin.systemcards.G";
 	public static final String MD5_BEFORE_531 = "f19fe224aae57e9a972dd439127418bd";
@@ -24,7 +24,7 @@ public class DictionariesPatch extends Patch {
 	private static Boolean isPaperwhite;
 	
 	public int getVersion() {
-		return 20130105;
+		return 20130106;
 	}
 	
 	static boolean isPaperWhite() {

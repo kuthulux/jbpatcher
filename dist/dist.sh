@@ -4,7 +4,7 @@
 # It requires NiLuJe's kindletool, version >= 1.5.0
 
 PRODUCT=jbpatch
-VERSION=3.0.0
+VERSION=3.1.0
 
 firmware=$1
 

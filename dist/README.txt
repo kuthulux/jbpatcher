@@ -1,8 +1,8 @@
 JBPatch: Java Bytecode Patch
 ============================
 
-JBPatch is an extremely powerful tool that allows to change almost
-all aspects of your Kindle's behavior (at least the parts that have been
+JBPatch is a powerful tool that allows to change almost all aspects
+of your Kindle's behavior (at least of the parts that have been
 implemented in Java).
 
 It is as unintrusive as possible (it only requires a benign modification
@@ -18,7 +18,7 @@ Patches, as well as their configuration, and localizations,
 reside in the opt/jbpatch directory on the Kindle.
 
 More user documentation, new patches, and additional localizations
-is available at the Wiki page:
+are available at the Wiki page:
 http://wiki.mobileread.com/wiki/JBPatch
 BTW: You are more than welcome to contribute to that page!
 
@@ -27,9 +27,9 @@ http://www.mobileread.com/forums/showthread.php?t=175512
 
 PREREQUISITES
 ------------
-In order to be able to install this, your device has to have the
-jailbreak installed. If you want to use the User Interface, you will
-also need the Kindlet jailbreak.
+Before you can install JBPatch, your device needs to have the
+Jailbreak installed. If you want to use the User Interface, you will
+also need the Kindlet Jailbreak.
 
 JAILBREAK
 ---------

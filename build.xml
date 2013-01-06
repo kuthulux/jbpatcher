@@ -252,8 +252,10 @@
 		<delete file="dist/fw531/install/patches.zip" />
 		<zip destfile="dist/fw531/install/patches.zip">
 			<fileset dir="dist/opt/jbpatch">
-				<include name="com.mobileread.ixtab.patch.hyphenation.jar" />
+				<include name="com.mobileread.ixtab.patch.dictionaries.jar" />
 				<include name="com.mobileread.ixtab.patch.fontsize.jar" />
+				<include name="com.mobileread.ixtab.patch.hyphenation.jar" />
+				<include name="com.mobileread.ixtab.patch.margins.jar" />
 			</fileset>
 		</zip>
 	</target>
