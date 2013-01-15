@@ -1,0 +1,19 @@
+1. Install Eclipse
+2. Import the existing project into Eclipse
+3. Modify build.properties. You will need to adapt the paths for the Java 1.4 SDK,
+   and for *all* supported firmware libraries. You'll need to extract the libraries
+   from a Kindle device running the respective version (or from an image or update
+   file). It's enough to copy *all* .jar files found in the /opt/amazon/ebook/lib
+   directory, and its subdirectories.
+4. Run the "dist-all" target of build.xml to compile and prepare for packaging.
+5. To generate the update packages, run dist.sh in the dist directory (requires
+   a compatible kindletool, and Linux or cygwin).
+   
+Good luck!
+
+PS: Don't worry if part of the project's sources is displayed as "broken" in Eclipse.
+    That's because different classes use different versions of the libraries, so it's
+    generally not possible to satisfy all dependencies at the same time.
+    The build.xml works around this by compiling in multiple stages, using the
+    correct required libraries at each stage.
+    
