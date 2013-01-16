@@ -27,11 +27,11 @@ cp jbpatch.jar /opt/amazon/ebook/lib/ || fail "Unable to copy jbpatch.jar"
 progress 30 "Updating init.xargs"
 MD5=`md5sum /opt/amazon/ebook/bin/init.xargs|awk '{print $1}'`
 
-if [ "$MD5" = "155c731ce4306ae23c18ddcd462fcf1e" ]; then
-	# original (5.3.1)
+if [ "$MD5" = "25649e453f7a7ff08b09d81470c9da14" ]; then
+	# original (5.3.2)
 	sed -i '10 i -istart jbpatch.jar' /opt/amazon/ebook/bin/init.xargs || fail "Failed to patch init.xargs"
-elif [ "$MD5" = "3dd958d8ba85810fa0a3de6ac23b4a58" ]; then
-	# already patched (5.3.1)
+elif [ "$MD5" = "aca24e52495d93a4f8f44d423fdd0315" ]; then
+	# already patched (5.3.2)
 	echo "not changing init.xargs";
 else
 	fail "Unsupported init.xargs"

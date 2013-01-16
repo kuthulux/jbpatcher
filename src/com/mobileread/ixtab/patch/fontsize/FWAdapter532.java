@@ -1,6 +1,6 @@
 package com.mobileread.ixtab.patch.fontsize;
 
-public class FWAdapter531 extends FWAdapter {
+public class FWAdapter532 extends FWAdapter {
 
 	public String[] getSupportedLocales() {
 		return new String[]{"de","en_GB","es","fr","it","ja","pt","zh"};
@@ -41,35 +41,35 @@ public class FWAdapter531 extends FWAdapter {
 	public String[] getMd5Before() {
 		return new String[] {
 				// ReaderResources
-				"352802e537d0456b20ecb0f69f43ef5c", // default
-				"696eb2fcf01a45f9aaf5ee45a583a23e", // de
-				"e829a742ec11be5000dc39b43b2ed406", // en_GB
-				"4a9a0823691ed3619e6f1feb97b3a441", // es
-				"e5122e6f2d83888f6900b7eb07a53ed7", // fr
-				"63b57539515f3e7617dd0134bc77a603", // it
-				"a3e9aab4545440840d87377db25f18dc", // ja
-				"4acbf0de4e67d847ee93e2b36f986db6", // pt
-				"31e597113fef4ab7e6618d25ef4e327c", // zh
+				"07c7636445d091e89620058d96204ede", // default
+				"442f95ef54a505d8770ce4751b51488a", // de
+				"5ddcf895d6baad0ebf947cb93ade7ed2", // en_GB
+				"be83404d501b53ef477b8cd7ae8b8a5c", // es
+				"2b5694b0ae313f039343c23d63eb98e3", // fr
+				"4ff4baf567c44f4b180530a0dc8909ad", // it
+				"23f951c874448894a2bce5202ea20a59", // ja
+				"2d7c21795bcd9744e18420ef628aea20", // pt
+				"71691f1509c01a456db70ad771f6a5df", // zh
 				// MobiReaderImplResources
-				"5c3ba5125d1a518b41fa451d12a7a89b", // default
-				"b038a45ed53eb922c2ed632e38a8af31", // de
-				"8147db6b35edf3c9f39d88b4807d55ba", // en_GB
-				"49db788f811482ee0d69fba8dfea9c8a", // es
-				"e921897ff473860bd44cfc85f5a7ebe6", // fr
-				"8f9c44aa1ef9fcdaaad6a3452b1bd98c", // it
-				"6f345189945ae06816366269d8e7667e", // ja
-				"7a8d3c9daef090a69872d18603bf0499", // pt
-				"27831df378209e9a607f8ab488c859b1", // zh
+				"9b270a52d9995414156a9e3164a62853", // default
+				"0f322752fce3af6390c01a4d9487adad", // de
+				"5919f9f86df18bf59807c4f36a1782ef", // en_GB
+				"fa7d723dd000011e9af47d7a18cc0ae8", // es
+				"c416fdba54c6c141460879b8a45fbbd5", // fr
+				"e168d622522c0800ec6a6cc8895b869c", // it
+				"0413594d016b7eac70ab6297f0999b98", // ja
+				"9987885abae0945528d17db1a4bf164a", // pt
+				"55a87bbc952e1201383c4ea403e5f66c", // zh
 				// ReaderUtilsResources
-				"14bf04bf69cd3578137260c6ed0bb82c", // default
-				"2aaf63f1146fbb6e9ba4fcf43e33c604", // de
-				"5fab503396325510125e4ee8fef3f1f4", // en_GB
-				"26a476936799cf8904eef799f8923256", // es
-				"98784df9ee3daf004af782ad6103ac23", // fr
-				"c8a61ed13a2062c9ce2d5ab294151fcd", // it
-				"2b975eb96b27b00e544c994a6c75f426", // ja
-				"c170c59ad11dac2910c75cf68442fba7", // pt
-				"0b61b88f8c8f55f645394b2c112c8c1e", // zh
+				"bb3488fc2643ad56db35c7a29948325e", // default
+				"227bcaab0bf16dae08bdb7ee3a471afd", // de
+				"4ed98bd0616b2550f2ff0052600cc94a", // en_GB
+				"8593c40e30c633a7e74bd7d2e90d0bdf", // es
+				"3a6203741cd2fd1b7da31b0c2bd26f2d", // fr
+				"f59c3373dec5420a8712b0749c5c0626", // it
+				"9e2bdabb9964adacea19d0abd5a0a98a", // ja
+				"dd1eb63fa433568bcacf033816b370e0", // pt
+				"fb3dd2ebd9ab7d6e41cd39d0baf7c795", // zh
 			};
 	}
 
@@ -77,35 +77,35 @@ public class FWAdapter531 extends FWAdapter {
 		return new String[] {
 				//FIXME: these ALL need to be fixed. :-(
 				// ReaderResources
-				"2f5a0f6b2f19d106668f43077c299896", // default
-				"99d68a99ba1f1ea23464733c7eaab72e", // de
-				"9be537a37c85b17b213fd88fe07dfc0f", // en_GB
-				"d8d3a64a658dc4fb8e2672fb9cc13be0", // es
-				"4c22b5e6eca6aaeac60806791c9b2878", // fr
-				"c0325b9aa80291bdf086f50057f5d310", // it
-				"ce6023425cd4c4e3349a8e1c2a4c3402", // ja
-				"fac2601d1f9f7ec2842c680851f3c001", // pt
-				"280947e2847baab967adf2c97ea63a29", // zh
+				"58b4138a95565c05bbf3ba5993403e00", // default
+				"56a0682f199d872b3298bad024df696d", // de
+				"c5e4a530ae2cd4e58f98ed1cd646c4ff", // en_GB
+				"e6ac5073591b85ee49397bebc0188338", // es
+				"119cd47e3d43e4a7ee7a1e2e257fd512", // fr
+				"0c2a4a832971c005319ea6d7bb4377af", // it
+				"b1af745b770cd491b8f8470eb7e334db", // ja
+				"e93a66434442b7a78eff7701cb9465ca", // pt
+				"587ec3d3263f9970b1000e69b55d8b27", // zh
 				// MobiReaderImplResources
-				"4063925ced7f06b9acac354a5c963904", // default
-				"4565348793fae31abad970982d3927f8", // de
-				"c736c9e38ddf12c1a68f72486339a1de", // en_GB
-				"a4d3f5e006b1cfd59389ce7e846d5dc2", // es
-				"128e7ea90550a321d878c7e141d2ed0f", // fr
-				"6eab2da59d0e9d9e9136c48b365b7699", // it
-				"e5aa3953f82a05ad2ea9cae24ee0dc1d", // ja
-				"bbd809510eb2dd7c82227141a5917227", // pt
-				"52a38718c9864a63391011d39fde55b3", // zh
+				"333ad3b5337f5a192ba4c546ff6713ca", // default
+				"41ecd09d0e51f279da87ba06e3916a4e", // de
+				"6f1d686ca9ebe6b897afd44a16a25506", // en_GB
+				"aa03cd3b301da09049e26b8261b23b1f", // es
+				"59fb025e0a0bf3cd541b8ff79e4356bd", // fr
+				"362c4212773d4a24b287676237f1a04f", // it
+				"153901a73a848bf949b9ec6dbcb24857", // ja
+				"6250940d890d25e4b52d9cafce29be02", // pt
+				"a42d157f0b3137c9b2c31599a08174f1", // zh
 				// ReaderUtilsResources
-				"fd416712d8e8c22466b88c3edb6683c8", // default
-				"e24405702945400af764d36552057b35", // de
-				"cc31c53522c77a9dd33d56223ada9cce", // en_GB
-				"20db1480b33df1ced357b5df0b5dbdc6", // es
-				"a80efc70150f7125900b69b356644b21", // fr
-				"79069c1a42abb40da50fe2e3c00e7b5c", // it
-				"13ff507056401d3d2d08363aad4b5849", // ja
-				"4d8ecbde77c4c94b77bc4f797eaf6e33", // pt
-				"59b44dc027a72a35d39661b410067c2f", // zh
+				"789ab8a8ea29e4473c77fafc1d365073", // default
+				"767e3069a9d6b0c9f17c7e6c4677bf02", // de
+				"a5d95b76e02ad35eaf6c1e48a8c74a3b", // en_GB
+				"b615862debebe11a6ab5686ed8efccb5", // es
+				"417622c5c7aadba922e7280babb9b48c", // fr
+				"0ffcff217807f134e8e649cd86c97bed", // it
+				"0fbbe5412a82375b13e84d7aa3ceca8e", // ja
+				"8b3f12676cb2ce4731399ff629bc3997", // pt
+				"39b21caab38c28fba3d3e4824be50e5f", // zh
 			};
 	}
 

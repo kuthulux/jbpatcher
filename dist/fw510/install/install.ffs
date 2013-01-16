@@ -24,10 +24,7 @@ mntroot rw || fail "Unable to mount r/w"
 progress 20 "Installing jbpatch.jar"
 cp jbpatch.jar /opt/amazon/ebook/lib/ || fail "Unable to copy jbpatch.jar"
 
-progress 30 "Installing jbpatch.azw2"
-cp jbpatch.azw2 /mnt/us/documents/ || fail "Unable to copy jbpatch.azw2"
-
-progress 40 "Updating init.xargs"
+progress 30 "Updating init.xargs"
 MD5=`md5sum /opt/amazon/ebook/bin/init.xargs|awk '{print $1}'`
 
 if [ "$MD5" = "62f63a926425eda66714b178999aeea6" ]; then
@@ -40,8 +37,13 @@ else
 	fail "Unsupported init.xargs"
 fi
 
-progress 60 "Installing patches to internal filesystem"
+progress 40 "Creating internal patch repository"
 mkdir -p /var/local/jbpatch || fail "Unable to create local jbpatch directory"
+
+progress 50 "Installing jbpatch.azw2"
+cp jbpatch.azw2 /mnt/us/documents/ || fail "Unable to copy jbpatch.azw2"
+
+progress 60 "Installing patches to internal filesystem"
 
 # fix a mistake from version 2.1.2
 rm -rf /var/local/jbpatch/com.mobileread.ixtab.patch.hyphenation

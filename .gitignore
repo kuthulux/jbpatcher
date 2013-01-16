@@ -4,11 +4,9 @@ bin/
 build/
 dist/*.bin
 dist/*.zip
-dist/*/*.zip
-dist/*/install/patches.zip
-dist/src/install/*.jar
-dist/src/install/*.zip
-dist/src/install/*.azw2
+dist/common/*.zip
+dist/common/*.jar
+dist/common/*.azw2
+dist/*/install/*.zip
 dist/opt/jbpatch
 l10n/*.txt
-

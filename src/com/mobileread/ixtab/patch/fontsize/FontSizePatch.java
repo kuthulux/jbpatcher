@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import serp.bytecode.BCClass;
+import serp.bytecode.BCMethod;
 import serp.bytecode.Code;
 import serp.bytecode.Instruction;
 import serp.bytecode.PutFieldInstruction;
@@ -51,7 +52,7 @@ public class FontSizePatch extends Patch {
 	static FontSizePatch instance = null;
 	
 	public int getVersion() {
-		return 20121219;
+		return 20130115;
 	}
 
 	public FontSizePatch() {
@@ -109,15 +110,29 @@ public class FontSizePatch extends Patch {
 	}
 
 	private void patchResourceClass(BCClass clazz) throws Exception {
-		String fieldName = "CONTENTS_DEFAULT";
-		String methodName = "<init>";
+		String defaultFieldName = "CONTENTS_DEFAULT";
+		String defaultMethodName = "<init>";
+		String fieldName = defaultFieldName;
+		String methodName = defaultMethodName;
 		boolean isInstance = true;
 		if (clazz.getClassName().startsWith("MobiReaderImplResources") || clazz.getClassName().startsWith("ReaderUtilsResources")) {
 			fieldName = FWAdapter.INSTANCE.getFieldName();
 			methodName = "<clinit>";
 			isInstance = false;
 		}
-		Code c = clazz.getDeclaredMethod(methodName).getCode(false);
+		
+		// of course, that would have been too easy. Newer firmware versions (5.3.2) have
+		// switched back to declaring everything as instance methods, instead of static.
+		
+		BCMethod bcMethod = clazz.getDeclaredMethod(methodName);
+		if (bcMethod == null && !isInstance) {
+			isInstance = true;
+			fieldName = defaultFieldName;
+			methodName = defaultMethodName;
+			bcMethod = clazz.getDeclaredMethod(methodName);
+		}
+		
+		Code c = bcMethod.getCode(false);
 		// Yes, this is ugly, but I didn't find a better way yet
 		Integer contentsIndex = null;
 		c.beforeFirst();
@@ -174,6 +189,9 @@ public class FontSizePatch extends Patch {
 	
 	private static int[] createFilledArray(int[] org) {
 		int base = org[0];
+		// this does not have any effect on the "selecting
+		// the wrong font size in the Aa dialog" bug. So we
+		// just keep it at the stock values (between 7 and 43).
 		int min = Math.min(base, 7);
 		int max = Math.max(org[org.length-1], 43);
 		int[] alt = new int[max-min+1];

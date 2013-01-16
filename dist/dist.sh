@@ -4,7 +4,7 @@
 # It requires NiLuJe's kindletool, version >= 1.5.0
 
 PRODUCT=jbpatch
-VERSION=3.1.0
+VERSION=3.1.1
 
 firmware=$1
 
@@ -46,8 +46,8 @@ if [ ! -d "$DIR_UNINSTALL" ]; then
 	fail "Something went wrong - directory $DIR_UNINSTALL does not exist."
 fi
 
-# Kindle Touch, firmwares 5.1.0 - 5.1.2
-if [ "$firmware" = "fw510" ]; then
+# Kindle Touch, firmwares 5.1.0 - 5.1.2, and 5.3.2
+if [ "$firmware" = "fw510" -o "$firmware" = "fw532" ]; then
 	kindletool create ota2 -d k5w -d k5g -d k5gb -d k5u -C "$DIR_INSTALL" update_${PRODUCT}_${VERSION}_${firmware}_install.bin || fail "oops, packing installer failed"
 	kindletool create ota2 -d k5w -d k5g -d k5gb -d k5u -C "$DIR_UNINSTALL" update_${PRODUCT}_${VERSION}_${firmware}_uninstall.bin || fail "oops, packing uninstaller failed"
 	zip -9 -r ${PRODUCT}_${VERSION}_${firmware}.zip update_${PRODUCT}_${VERSION}_${firmware}_install.bin update_${PRODUCT}_${VERSION}_${firmware}_uninstall.bin *.txt || fail "oops, zipping failed"
@@ -55,8 +55,8 @@ fi
 
 # Kindle Paperwhite, firmware 5.3.1
 if [ "$firmware" = "fw531" ]; then
-	kindletool create ota2 -d pw -d pwg -d pwgb -C "$DIR_INSTALL" update_${PRODUCT}_${VERSION}_${firmware}_install.bin || fail "oops, packing installer failed"
-	kindletool create ota2 -d pw -d pwg -d pwgb -C "$DIR_UNINSTALL" update_${PRODUCT}_${VERSION}_${firmware}_uninstall.bin || fail "oops, packing uninstaller failed"
+	kindletool create ota2 -d pw -d pwg -d pwgb -d pwgj -C "$DIR_INSTALL" update_${PRODUCT}_${VERSION}_${firmware}_install.bin || fail "oops, packing installer failed"
+	kindletool create ota2 -d pw -d pwg -d pwgb -d pwgj -C "$DIR_UNINSTALL" update_${PRODUCT}_${VERSION}_${firmware}_uninstall.bin || fail "oops, packing uninstaller failed"
 	zip -9 -r ${PRODUCT}_${VERSION}_${firmware}.zip update_${PRODUCT}_${VERSION}_${firmware}_install.bin update_${PRODUCT}_${VERSION}_${firmware}_uninstall.bin *.txt || fail "oops, zipping failed"
 fi
 

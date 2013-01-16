@@ -7,7 +7,9 @@ public interface Backend {
 
 	static class Init {
 		private static Backend getInstance() {
-			String className = DictionariesPatch.isPaperWhite() ? "com.mobileread.ixtab.patch.dictionaries.fw531.Backend531"
+			String className = DictionariesPatch.isFW53x() ? DictionariesPatch
+					.isFW532() ? "com.mobileread.ixtab.patch.dictionaries.fw532.Backend532"
+					: "com.mobileread.ixtab.patch.dictionaries.fw531.Backend531"
 					: "com.mobileread.ixtab.patch.dictionaries.fw512.Backend512";
 			try {
 				return (Backend) Class.forName(className).newInstance();

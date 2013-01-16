@@ -25,8 +25,8 @@ progress 20 "Restoring init.xargs"
 
 MD5=`md5sum /opt/amazon/ebook/bin/init.xargs|awk '{print $1}'`
 
-if [ "$MD5" = "5c7e4b6b7e328076c0d5d1479bf5e1ec" ]; then
-	# patched (5.1.0)
+if [ "$MD5" = "aca24e52495d93a4f8f44d423fdd0315" ]; then
+	# patched (5.3.2)
 	grep -v jbpatch.jar /opt/amazon/ebook/bin/init.xargs > /tmp/jbpatch_init.xargs || fail "Unable to restore init.xargs (1)"
 	mv /tmp/jbpatch_init.xargs /opt/amazon/ebook/bin/init.xargs || fail "Unable to restore init.xargs (2)"
 else

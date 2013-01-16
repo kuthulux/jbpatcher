@@ -28,8 +28,9 @@ public class HyphenationPatch extends Patch {
 	private static final String CLASS_HYPHENATIONMANAGER_510 = "com.mobipocket.common.library.reader.hyphenation.j";
 	private static final String CLASS_FRAMECONSTRUCTOR_510 = "com.mobipocket.common.library.reader.db";
 	
-	private static final String CLASS_HYPHENATIONMANAGER_531 = "com.mobipocket.common.library.reader.hyphenation.b";
+	private static final String CLASS_HYPHENATIONMANAGER_53X = "com.mobipocket.common.library.reader.hyphenation.b";
 	private static final String CLASS_FRAMECONSTRUCTOR_531 = "com.mobipocket.common.library.reader.R";
+	private static final String CLASS_FRAMECONSTRUCTOR_532 = "com.mobipocket.common.library.reader.S";
 
 	public static final String MD5_HYPHENATIONMANAGER_510_BEFORE = "630a7704149435140c4ef8406749160d";
 	public static final String MD5_HYPHENATIONMANAGER_510_AFTER = "f78ae7d487e2001a998783e673439c72";
@@ -40,6 +41,11 @@ public class HyphenationPatch extends Patch {
 	public static final String MD5_HYPHENATIONMANAGER_531_AFTER = "d7cd8b9799e225039f3610ae73fc0a84";
 	public static final String MD5_FRAMECONSTRUCTOR_531_BEFORE = "66334a7964ec053ac723aaaf7036bca6";
 	public static final String MD5_FRAMECONSTRUCTOR_531_AFTER = "d92ba1327e652df1a6f897a3a7ce6b15";
+
+	public static final String MD5_HYPHENATIONMANAGER_532_BEFORE = "db219868c4ef027887d5ff947a3c1ecf";
+	public static final String MD5_HYPHENATIONMANAGER_532_AFTER = "fcb02281d501fcf4d97dc0c7cf10bbab";
+	public static final String MD5_FRAMECONSTRUCTOR_532_BEFORE = "b8b4fea2c1e5c1670dd4986e5eaa02b2";
+	public static final String MD5_FRAMECONSTRUCTOR_532_AFTER = "5bbb373277913837a1824baaee897375";
 
 	public static final String MODE_JUSTIFY_KEY = "Justify";
 	public static final String MODE_DUMB_KEY = "Dumb";
@@ -72,6 +78,16 @@ public class HyphenationPatch extends Patch {
 	private static final String CONF_MINSUFFIX_I18N_NAME = "minsuffix.name";
 	private static final String CONF_MINSUFFIX_I18N_DESC = "minsuffix.description";
 	private static final String CONF_MINSUFFIX_I18N_HINT = "minsuffix.hint";
+	
+	private static final int FEATURE_NO_HYPHENATION_MINIMUM = 1;
+	private static final int FEATURE_NO_RUGGED_EDGES = 2;
+
+/* The following was experimental for a single guy who requested it.
+	private static final String CONF_FEATURES_KEY = "features";
+	private static final String CONF_FEATURES_I18N_NAME = "features.name";
+	private static final String CONF_FEATURES_I18N_DESC = "features.description";
+	private static final String CONF_FEATURES_I18N_HINT = "features.hint";
+*/
 
 	public static HyphenationPatch INSTANCE;
 
@@ -80,32 +96,42 @@ public class HyphenationPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20130106;
+		return 20130115;
 	}
 
 	public PatchMetadata getMetadata() {
 		PatchMetadata md = new PatchMetadata(this);
 		String factoryClassName = Factories.INSTANCE.getClass().getName();
 		if (factoryClassName.endsWith("512")) {
+			md.withClass(
+					new PatchableClass(CLASS_FRAMECONSTRUCTOR_510)
+							.withChecksums(MD5_FRAMECONSTRUCTOR_510_BEFORE,
+									MD5_FRAMECONSTRUCTOR_510_AFTER))
+			.withClass(
+					new PatchableClass(CLASS_HYPHENATIONMANAGER_510)
+							.withChecksums(
+									MD5_HYPHENATIONMANAGER_510_BEFORE,
+									MD5_HYPHENATIONMANAGER_510_AFTER));
+		} else if (factoryClassName.endsWith("531")) {
+			md.withClass(
+					new PatchableClass(CLASS_FRAMECONSTRUCTOR_531)
+							.withChecksums(MD5_FRAMECONSTRUCTOR_531_BEFORE,
+									MD5_FRAMECONSTRUCTOR_531_AFTER))
+			.withClass(
+					new PatchableClass(CLASS_HYPHENATIONMANAGER_53X)
+							.withChecksums(
+									MD5_HYPHENATIONMANAGER_531_BEFORE,
+									MD5_HYPHENATIONMANAGER_531_AFTER));
+		} else if (factoryClassName.endsWith("532")) {
 				md.withClass(
-						new PatchableClass(CLASS_FRAMECONSTRUCTOR_510)
-								.withChecksums(MD5_FRAMECONSTRUCTOR_510_BEFORE,
-										MD5_FRAMECONSTRUCTOR_510_AFTER))
+						new PatchableClass(CLASS_FRAMECONSTRUCTOR_532)
+								.withChecksums(MD5_FRAMECONSTRUCTOR_532_BEFORE,
+										MD5_FRAMECONSTRUCTOR_532_AFTER))
 				.withClass(
-						new PatchableClass(CLASS_HYPHENATIONMANAGER_510)
+						new PatchableClass(CLASS_HYPHENATIONMANAGER_53X)
 								.withChecksums(
-										MD5_HYPHENATIONMANAGER_510_BEFORE,
-										MD5_HYPHENATIONMANAGER_510_AFTER));
-		} else {
-				md.withClass(
-						new PatchableClass(CLASS_FRAMECONSTRUCTOR_531)
-								.withChecksums(MD5_FRAMECONSTRUCTOR_531_BEFORE,
-										MD5_FRAMECONSTRUCTOR_531_AFTER))
-				.withClass(
-						new PatchableClass(CLASS_HYPHENATIONMANAGER_531)
-								.withChecksums(
-										MD5_HYPHENATIONMANAGER_531_BEFORE,
-										MD5_HYPHENATIONMANAGER_531_AFTER));
+										MD5_HYPHENATIONMANAGER_532_BEFORE,
+										MD5_HYPHENATIONMANAGER_532_AFTER));
 		}
 		return md;
 	}
@@ -157,6 +183,8 @@ public class HyphenationPatch extends Patch {
 				localize(CONF_MINSUFFIX_I18N_DESC),
 				localize(CONF_MINSUFFIX_I18N_HINT), CONF_MINSUFFIX_KEY,
 				SYLLABLE_LENGTH_DEFAULT + ""));
+		
+//		map.add(new FeaturesSetting(localize(CONF_FEATURES_I18N_NAME), localize(CONF_FEATURES_I18N_DESC), localize(CONF_FEATURES_I18N_HINT), CONF_FEATURES_KEY, "3"));
 		return map;
 	}
 
@@ -188,14 +216,20 @@ public class HyphenationPatch extends Patch {
 		if (md5.equals(MD5_HYPHENATIONMANAGER_510_BEFORE)) {
 			return patchHyphenationManager510(clazz);
 		}
-		if (md5.equals(MD5_FRAMECONSTRUCTOR_510_BEFORE)) {
+		else if (md5.equals(MD5_FRAMECONSTRUCTOR_510_BEFORE)) {
 			return patchFrameConstructor510(clazz);
 		}
-		if (md5.equals(MD5_HYPHENATIONMANAGER_531_BEFORE)) {
-			return patchHyphenationManager531(clazz);
+		else if (md5.equals(MD5_HYPHENATIONMANAGER_531_BEFORE)) {
+			return patchHyphenationManager53X(clazz, "YV");
 		}
-		if (md5.equals(MD5_FRAMECONSTRUCTOR_531_BEFORE)) {
-			return patchFrameConstructor531(clazz);
+		else if (md5.equals(MD5_HYPHENATIONMANAGER_532_BEFORE)) {
+			return patchHyphenationManager53X(clazz, "dX");
+		}
+		else if (md5.equals(MD5_FRAMECONSTRUCTOR_531_BEFORE)) {
+			return patchFrameConstructor531(clazz, "KDA", "mbA");
+		}
+		else if (md5.equals(MD5_FRAMECONSTRUCTOR_532_BEFORE)) {
+			return patchFrameConstructor531(clazz, "hBA", "rdA");
 		}
 		return "Unexpected error: unknown MD5 " + md5;
 	}
@@ -203,50 +237,72 @@ public class HyphenationPatch extends Patch {
 	public Permission[] getRequiredPermissions() {
 		return new Permission[] { new AllPermission() };
 	}
-
+	
+	private int getFeatures() {
+		return FEATURE_NO_HYPHENATION_MINIMUM | FEATURE_NO_RUGGED_EDGES;
+//		try {
+//			int f = Integer.parseInt(getConfigured(CONF_FEATURES_KEY));
+//			if (f >= 0 && f <= 3) {
+//				return f;
+//			}
+//			return 3;
+//		} catch (Throwable t) {
+//			return 3;
+//		}
+	}
+	
 	private String patchFrameConstructor510(BCClass clazz) throws Throwable {
 		BCMethod m = clazz.getDeclaredMethod("e");
 		Code c = m.getCode(false);
-		c.before(47);
-		// percentage of a word's width that must be available in the current
-		// line, for it to be considered for hyphenation
-		// original is 25%
-		((ConstantInstruction) c.next()).setValue(-1);
+		
+		int f = getFeatures();
+		if ((f & FEATURE_NO_HYPHENATION_MINIMUM) == FEATURE_NO_HYPHENATION_MINIMUM) {
+			c.before(47);
+			// percentage of a word's width that must be available in the current
+			// line, for it to be considered for hyphenation
+			// original is 25%
+			((ConstantInstruction) c.next()).setValue(-1);
+		}
 
-		// this fixes the weird behavior that some lines do not get justified
-		// it essentially always returns a "false" value for the following
-		// condition
-		// (by turning it into "if (0 > 1)")
-		c = clazz.getDeclaredMethod("L").getCode(false);
-		c.before(45);
-		c.pop();
-		c.pop();
-		c.constant().setValue(0);
-		c.constant().setValue(1);
-
+		if ((f & FEATURE_NO_RUGGED_EDGES) == FEATURE_NO_RUGGED_EDGES) {
+			// this fixes the weird behavior that some lines do not get justified
+			// it essentially always returns a "false" value for the following
+			// condition
+			// (by turning it into "if (0 > 1)")
+			c = clazz.getDeclaredMethod("L").getCode(false);
+			c.before(45);
+			c.pop();
+			c.pop();
+			c.constant().setValue(0);
+			c.constant().setValue(1);
+		}
 		return null;
 	}
 
-	private String patchFrameConstructor531(BCClass clazz) throws Throwable {
-		BCMethod m = clazz.getDeclaredMethod("KDA");
+	private String patchFrameConstructor531(BCClass clazz, String method1, String method2) throws Throwable {
+		BCMethod m = clazz.getDeclaredMethod(method1);
 		Code c = m.getCode(false);
-		c.before(50);
-		// percentage of a word's width that must be available in the current
-		// line, for it to be considered for hyphenation
-		// original is 25%
-		((ConstantInstruction) c.next()).setValue(-1);
+		int f = getFeatures();
+		if ((f & FEATURE_NO_HYPHENATION_MINIMUM) == FEATURE_NO_HYPHENATION_MINIMUM) {
+			c.before(50);
+			// percentage of a word's width that must be available in the current
+			// line, for it to be considered for hyphenation
+			// original is 25%
+			((ConstantInstruction) c.next()).setValue(-1);
+		}
 
-		// this fixes the weird behavior that some lines do not get justified
-		// it essentially always returns a "false" value for the following
-		// condition
-		// (by turning it into "if (0 > 1)")
-		c = clazz.getDeclaredMethod("mbA").getCode(false);
-		c.before(49);
-		c.pop();
-		c.pop();
-		c.constant().setValue(0);
-		c.constant().setValue(1);
-
+		if ((f & FEATURE_NO_RUGGED_EDGES) == FEATURE_NO_RUGGED_EDGES) {
+			// this fixes the weird behavior that some lines do not get justified
+			// it essentially always returns a "false" value for the following
+			// condition
+			// (by turning it into "if (0 > 1)")
+			c = clazz.getDeclaredMethod(method2).getCode(false);
+			c.before(49);
+			c.pop();
+			c.pop();
+			c.constant().setValue(0);
+			c.constant().setValue(1);
+		}
 		return null;
 	}
 
@@ -266,9 +322,9 @@ public class HyphenationPatch extends Patch {
 
 	}
 
-	private String patchHyphenationManager531(BCClass clazz) throws Throwable {
+	private String patchHyphenationManager53X(BCClass clazz, String methodName) throws Throwable {
 
-		BCMethod m = clazz.getDeclaredMethod("YV", new String[] { "int" });
+		BCMethod m = clazz.getDeclaredMethod(methodName, new String[] { "int" });
 		Code c = m.getCode(false);
 
 		c.beforeFirst();
@@ -351,4 +407,39 @@ public class HyphenationPatch extends Patch {
 		}
 
 	}
+	
+
+/*	
+	private static class FeaturesSetting extends ConfigurableSetting {
+
+		public FeaturesSetting(String name, String description, String hint,
+				String key, String defaultValue) {
+			super(name, description, hint, key, defaultValue);
+		}
+
+		public final SettingPanel getPanel(SettingChangeListener listener) {
+			return new TextSettingPanel(listener,
+					OnscreenKeyboardUtil.KEYBOARD_MODE_NUMBERS_AND_SYMBOLS,
+					true);
+		}
+
+		public final boolean isValid(String value) {
+			return isIntegerBetween(value, 0, 3);
+		}
+		
+	}
+
+	private static boolean isIntegerBetween(String value, int minInclusive,
+			int maxInclusive) {
+		if (value == null) {
+			return false;
+		}
+		try {
+			int i = Integer.parseInt(value);
+			return i >= minInclusive && i <= maxInclusive;
+		} catch (Throwable t) {
+			return false;
+		}
+	}
+*/
 }

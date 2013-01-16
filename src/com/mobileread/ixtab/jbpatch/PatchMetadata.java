@@ -6,11 +6,11 @@ import java.util.List;
 
 /**
  * This class represents metadata about a particular patch, in particular, which
- * exact versions of which exact classes are supported on which exact device.
+ * exact versions of which exact classes are supported.
  * The information is represented in a hierarchical top-down manner, i.e. this
- * particular class only contains references to the supported devices, each
- * {@link PatchableDevice} instance contains references to the supported
- * classes, etc.
+ * particular class only contains references to the supported classes, and each
+ * {@link PatchableClass} instance contains references to the supported
+ * versions.
  * 
  * @author ixtab
  */

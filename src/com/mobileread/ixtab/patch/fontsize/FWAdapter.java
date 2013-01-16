@@ -12,6 +12,11 @@ public abstract class FWAdapter {
 			Class.forName("com.amazon.ebook.util.text.LanguageTag");
 		} catch (Throwable t) {
 			className = "com.mobileread.ixtab.patch.fontsize.FWAdapter531";
+			try {
+				Class.forName("com.amazon.kindle.booklet.ad.resources.AdResources_sq");
+				// exists in 5.3.2, but not 5.3.1
+				className="com.mobileread.ixtab.patch.fontsize.FWAdapter532";
+			} catch (Throwable t2) {}
 		}
 		try {
 			Class clazz = Class.forName(className);

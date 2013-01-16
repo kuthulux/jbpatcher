@@ -17,9 +17,12 @@ public class DeviceInfoPatch extends Patch {
 	private static final String FW510_MD5_IN = "9f393118b394eaa5ffcca7f44e47db2b";
 	private static final String FW510_MD5_OUT = "d12a6b3fdcd14d39a8beb9cd4436e6cc";
 
-	private static final String FW530_CLASS = "com.amazon.kindle.settings.e.X";
-	private static final String FW530_MD5_IN = "5a65cdf8740e184fc18e8e4a31d0167a";
-	private static final String FW530_MD5_OUT = "2c8d4c9a4f0ef88ae85f186fcc38790a";
+	private static final String FW53X_CLASS = "com.amazon.kindle.settings.e.X";
+	private static final String FW531_MD5_IN = "5a65cdf8740e184fc18e8e4a31d0167a";
+	private static final String FW531_MD5_OUT = "2c8d4c9a4f0ef88ae85f186fcc38790a";
+	
+	private static final String FW532_MD5_IN = "36008656fe97d502c71b028c47901ac9";
+	private static final String FW532_MD5_OUT = "d59a6e82d2f395350948a341ae0df688";
 
 	public int getVersion() {
 		return 1;
@@ -28,16 +31,18 @@ public class DeviceInfoPatch extends Patch {
 	public PatchMetadata getMetadata() {
 		PatchableClass c510 = new PatchableClass(FW510_CLASS).withChecksums(
 				FW510_MD5_IN, FW510_MD5_OUT);
-		PatchableClass c530 = new PatchableClass(FW530_CLASS).withChecksums(
-				FW530_MD5_IN, FW530_MD5_OUT);
-		return new PatchMetadata(this).withClass(c510).withClass(c530);
+		PatchableClass c53x = new PatchableClass(FW53X_CLASS).withChecksums(
+				FW531_MD5_IN, FW531_MD5_OUT).withChecksums(FW532_MD5_IN, FW532_MD5_OUT);
+		return new PatchMetadata(this).withClass(c510).withClass(c53x);
 	}
 
 	public String perform(String md5, BCClass clazz) throws Throwable {
 		if (md5.equals(FW510_MD5_IN)) {
 			return patchFw510(clazz);
-		} else if (md5.equals(FW530_MD5_IN)) {
-			return patchFw530(clazz);
+		} else if (md5.equals(FW531_MD5_IN)) {
+			return patchFw531(clazz);
+		} else if (md5.equals(FW532_MD5_IN)) {
+			return patchFw532(clazz);
 		} else {
 			return "Unsupported MD5: md5";
 		}
@@ -61,8 +66,26 @@ public class DeviceInfoPatch extends Patch {
 		return null;
 	}
 
-	private String patchFw530(BCClass clazz) throws NoSuchMethodException {
+	private String patchFw531(BCClass clazz) throws NoSuchMethodException {
 		Code c = clazz.getDeclaredMethod("WkA").getCode(false);
+
+		// substitute call to MessageFormat.format by call to ourselves
+		c.before(79);
+		c.invokestatic().setMethod(
+				DeviceInfoPatch.class.getMethod("format", new Class[] {
+						String.class, Object[].class }));
+		c.next();
+		c.remove();
+
+		// increase the dialog height to allow for the added line
+		c.before(186);
+		c.constant().setValue(20);
+		c.iadd();
+		return null;
+	}
+
+	private String patchFw532(BCClass clazz) throws NoSuchMethodException {
+		Code c = clazz.getDeclaredMethod("VJA").getCode(false);
 
 		// substitute call to MessageFormat.format by call to ourselves
 		c.before(79);

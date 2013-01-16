@@ -22,6 +22,11 @@
 		<fileset dir="${build.classpath.531}" includes="**/*.jar" />
 	</path>
 
+	<path id="classpath.532">
+		<fileset dir="lib" includes="**/*.jar" />
+		<fileset dir="${build.classpath.532}" includes="**/*.jar" />
+	</path>
+
 	<target name="clean">
 		<delete dir="${build.dir}" />
 		<mkdir dir="${build.dir}" />
@@ -32,10 +37,15 @@
 		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.512" srcdir="src" destdir="${build.dir}">
 			<include name="**/*.java" />
 			<exclude name="**/fw531/**/*.java" />
+			<exclude name="**/fw532/**/*.java" />
 		</javac>
 		<!-- Firmware 5.3.1 -->
 		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.531" srcdir="src" destdir="${build.dir}">
 			<include name="**/fw531/**/*.java" />
+		</javac>
+		<!-- Firmware 5.3.2 -->
+		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.532" srcdir="src" destdir="${build.dir}">
+			<include name="**/fw532/**/*.java" />
 		</javac>
 		<!-- Copy required resource files (of specific types) explicitly, because ant doesn't do so -->
 		<copy todir="${build.dir}">
@@ -260,7 +270,20 @@
 		</zip>
 	</target>
 
-	<target name="dist-all" depends="dist-patches, pack-510, pack-531">
+	<target name="pack-532" depends="dist-patches">
+		<!-- pack the patches that work on Firmware 5.3.2 -->
+		<delete file="dist/fw532/install/patches.zip" />
+		<zip destfile="dist/fw532/install/patches.zip">
+			<fileset dir="dist/opt/jbpatch">
+				<include name="com.mobileread.ixtab.patch.dictionaries.jar" />
+				<include name="com.mobileread.ixtab.patch.fontsize.jar" />
+				<include name="com.mobileread.ixtab.patch.hyphenation.jar" />
+				<include name="com.mobileread.ixtab.patch.margins.jar" />
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="dist-all" depends="dist-patches, pack-510, pack-531, pack-532">
 		<echo>***NOTE*** WE'RE NOT DONE YET! Final packaging is done from the dist.sh shell script.</echo>
 	</target>
 

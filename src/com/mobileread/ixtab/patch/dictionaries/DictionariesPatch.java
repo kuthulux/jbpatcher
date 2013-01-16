@@ -21,26 +21,48 @@ public class DictionariesPatch extends Patch {
 	public static final String MD5_BEFORE_531 = "f19fe224aae57e9a972dd439127418bd";
 	private static final String MD5_AFTER_531 = "7dab5acc5467969add653deb3e7824ce";
 
-	private static Boolean isPaperwhite;
+	private static final String CLASS_532 = "com.amazon.ebook.booklet.reader.plugin.systemcards.G";
+	public static final String MD5_BEFORE_532 = "e4889ee1b7c3aad259e60c9414d584d4";
+	private static final String MD5_AFTER_532 = "8a211a40494ab8f62c347e82c4e9b67a";
+
+	private static Boolean isFW53x;
+	private static Boolean isFW532;
 	
 	public int getVersion() {
-		return 20130106;
+		return 20130115;
 	}
 	
-	static boolean isPaperWhite() {
-		if (isPaperwhite == null) {
+	static boolean isFW53x() {
+		if (isFW53x == null) {
 			synchronized (DictionariesPatch.class) {
-				if (isPaperwhite == null) {
+				if (isFW53x == null) {
 					try {
 						Class.forName("com.amazon.ebook.util.lang.UUID");
-						isPaperwhite = Boolean.FALSE;
+						isFW53x = Boolean.FALSE;
 					} catch (Throwable t) {
-						isPaperwhite = Boolean.TRUE;
+						isFW53x = Boolean.TRUE;
 					}
 				}
 			}
 		}
-		return isPaperwhite.booleanValue();
+		return isFW53x.booleanValue();
+	}
+	
+	static boolean isFW532() {
+		if (!isFW53x()) {
+			return false;
+		}
+		synchronized (DictionariesPatch.class) {
+			if (isFW532 == null) {
+				try {
+					Class.forName("com.amazon.kindle.booklet.ad.resources.AdResources_sq");
+					isFW532 = Boolean.TRUE;
+				} catch (Throwable t) {
+					isFW532 = Boolean.FALSE;
+				}
+			}
+		}
+		return isFW532.booleanValue();
 	}
 
 	public Permission[] getRequiredPermissions() {
@@ -56,7 +78,11 @@ public class DictionariesPatch extends Patch {
 
 	public PatchMetadata getMetadata() {
 		PatchMetadata md = new PatchMetadata(this);
-		if (isPaperWhite()) {
+		if (isFW532()) {
+			md.withClass(new PatchableClass(CLASS_532).withChecksums(MD5_BEFORE_532,
+					MD5_AFTER_532));
+		}
+		else if (isFW53x()) {
 			md.withClass(new PatchableClass(CLASS_531).withChecksums(MD5_BEFORE_531,
 					MD5_AFTER_531));
 		} else {
@@ -72,6 +98,9 @@ public class DictionariesPatch extends Patch {
 			return null;
 		} else if (md5.equals(MD5_BEFORE_531)) {
 			patchMethod_cO_531(clazz);
+			return null;
+		} else if (md5.equals(MD5_BEFORE_532)) {
+			patchMethod_ON_532(clazz);
 			return null;
 		}
 		return "unsupported MD5: "+md5;
@@ -90,6 +119,17 @@ public class DictionariesPatch extends Patch {
 	
 	private void patchMethod_cO_531(BCClass clazz) throws Exception {
 		Code c = clazz.getDeclaredMethod("cO", new Class[] {int.class}).getCode(false);
+		c.before(189);
+		c.dup();
+		c.iload().setLocal(1);
+		c.invokestatic().setMethod(DictionariesPatch.class.getDeclaredMethod("onGetCard", new Class[]{Object.class, int.class}));
+		c.calculateMaxLocals();
+		c.calculateMaxStack();
+		
+	}
+	
+	private void patchMethod_ON_532(BCClass clazz) throws Exception {
+		Code c = clazz.getDeclaredMethod("ON", new Class[] {int.class}).getCode(false);
 		c.before(189);
 		c.dup();
 		c.iload().setLocal(1);

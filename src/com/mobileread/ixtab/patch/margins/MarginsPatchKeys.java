@@ -16,6 +16,11 @@ interface MarginsPatchKeys {
 					isPaperwhite = false;
 				} catch (Throwable t) {
 					isPaperwhite = true;
+					// version 5.3.2 is KT only for now, but this may well need a revision in the future *sigh*.
+					try {
+						Class.forName("com.amazon.kindle.booklet.ad.resources.AdResources_sq");
+						isPaperwhite = false;
+					} catch (Throwable t2) {}
 				}
 				isInitialized = true;
 			}
