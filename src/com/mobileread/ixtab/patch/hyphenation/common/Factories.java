@@ -14,7 +14,13 @@ public abstract class Factories {
 				Class.forName("com.amazon.kindle.booklet.ad.resources.AdResources_sq");
 				// exists in 5.3.2, but not 5.3.1
 				className = "com.mobileread.ixtab.patch.hyphenation.fw532.Factories532";
-			} catch (Throwable t2) {}
+			} catch (Throwable t2) {
+				try {
+					Class.forName("com.amazon.ebook.booklet.topazreader.impl.A");
+					// exists in 5.3.2, but not 5.3.1
+					className = "com.mobileread.ixtab.patch.hyphenation.fw533.Factories533";
+				} catch (Throwable t3) {}
+			}
 		}
 		try {
 			Class clazz = Class.forName(className);

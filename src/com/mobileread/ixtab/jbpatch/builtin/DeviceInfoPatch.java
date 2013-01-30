@@ -24,6 +24,9 @@ public class DeviceInfoPatch extends Patch {
 	private static final String FW532_MD5_IN = "36008656fe97d502c71b028c47901ac9";
 	private static final String FW532_MD5_OUT = "d59a6e82d2f395350948a341ae0df688";
 
+	private static final String FW533_MD5_IN = "761e84ba4c259c4716f43f785a67df83";
+	private static final String FW533_MD5_OUT = "35ee6a5ccb5e80e65fd3df3d1d779380";
+
 	public int getVersion() {
 		return 1;
 	}
@@ -32,7 +35,7 @@ public class DeviceInfoPatch extends Patch {
 		PatchableClass c510 = new PatchableClass(FW510_CLASS).withChecksums(
 				FW510_MD5_IN, FW510_MD5_OUT);
 		PatchableClass c53x = new PatchableClass(FW53X_CLASS).withChecksums(
-				FW531_MD5_IN, FW531_MD5_OUT).withChecksums(FW532_MD5_IN, FW532_MD5_OUT);
+				FW531_MD5_IN, FW531_MD5_OUT).withChecksums(FW532_MD5_IN, FW532_MD5_OUT).withChecksums(FW533_MD5_IN, FW533_MD5_OUT);
 		return new PatchMetadata(this).withClass(c510).withClass(c53x);
 	}
 
@@ -40,11 +43,13 @@ public class DeviceInfoPatch extends Patch {
 		if (md5.equals(FW510_MD5_IN)) {
 			return patchFw510(clazz);
 		} else if (md5.equals(FW531_MD5_IN)) {
-			return patchFw531(clazz);
+			return patchFw53X(clazz, "WkA");
 		} else if (md5.equals(FW532_MD5_IN)) {
-			return patchFw532(clazz);
+			return patchFw53X(clazz, "VJA");
+		} else if (md5.equals(FW533_MD5_IN)) {
+			return patchFw53X(clazz, "kkA");
 		} else {
-			return "Unsupported MD5: md5";
+			return "Unsupported MD5: "+ md5;
 		}
 	}
 
@@ -66,8 +71,8 @@ public class DeviceInfoPatch extends Patch {
 		return null;
 	}
 
-	private String patchFw531(BCClass clazz) throws NoSuchMethodException {
-		Code c = clazz.getDeclaredMethod("WkA").getCode(false);
+	private String patchFw53X(BCClass clazz, String method) throws Exception {
+		Code c = clazz.getDeclaredMethod(method).getCode(false);
 
 		// substitute call to MessageFormat.format by call to ourselves
 		c.before(79);
@@ -83,26 +88,7 @@ public class DeviceInfoPatch extends Patch {
 		c.iadd();
 		return null;
 	}
-
-	private String patchFw532(BCClass clazz) throws NoSuchMethodException {
-		Code c = clazz.getDeclaredMethod("VJA").getCode(false);
-
-		// substitute call to MessageFormat.format by call to ourselves
-		c.before(79);
-		c.invokestatic().setMethod(
-				DeviceInfoPatch.class.getMethod("format", new Class[] {
-						String.class, Object[].class }));
-		c.next();
-		c.remove();
-
-		// increase the dialog height to allow for the added line
-		c.before(186);
-		c.constant().setValue(20);
-		c.iadd();
-		return null;
-	}
-
-
+	
 	public static String format(String pattern, Object[] arguments) {
 		if (pattern.endsWith("</html>")) {
 			pattern = pattern.substring(0, pattern.length() - 7);

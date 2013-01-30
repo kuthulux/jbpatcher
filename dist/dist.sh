@@ -4,7 +4,7 @@
 # It requires NiLuJe's kindletool, version >= 1.5.0
 
 PRODUCT=jbpatch
-VERSION=3.1.1
+VERSION=3.1.2
 
 firmware=$1
 
@@ -55,8 +55,8 @@ fi
 
 # Kindle Paperwhite, firmware 5.3.1
 if [ "$firmware" = "fw531" ]; then
-	kindletool create ota2 -d pw -d pwg -d pwgb -d pwgj -C "$DIR_INSTALL" update_${PRODUCT}_${VERSION}_${firmware}_install.bin || fail "oops, packing installer failed"
-	kindletool create ota2 -d pw -d pwg -d pwgb -d pwgj -C "$DIR_UNINSTALL" update_${PRODUCT}_${VERSION}_${firmware}_uninstall.bin || fail "oops, packing uninstaller failed"
+	kindletool create ota2 -d pw -d pwg -d pwgb -d pwgj -d pwgc -C "$DIR_INSTALL" update_${PRODUCT}_${VERSION}_${firmware}_install.bin || fail "oops, packing installer failed"
+	kindletool create ota2 -d pw -d pwg -d pwgb -d pwgj -d pwgc -C "$DIR_UNINSTALL" update_${PRODUCT}_${VERSION}_${firmware}_uninstall.bin || fail "oops, packing uninstaller failed"
 	zip -9 -r ${PRODUCT}_${VERSION}_${firmware}.zip update_${PRODUCT}_${VERSION}_${firmware}_install.bin update_${PRODUCT}_${VERSION}_${firmware}_uninstall.bin *.txt || fail "oops, zipping failed"
 fi
 

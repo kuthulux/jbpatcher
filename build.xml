@@ -27,6 +27,11 @@
 		<fileset dir="${build.classpath.532}" includes="**/*.jar" />
 	</path>
 
+	<path id="classpath.533">
+		<fileset dir="lib" includes="**/*.jar" />
+		<fileset dir="${build.classpath.533}" includes="**/*.jar" />
+	</path>
+
 	<target name="clean">
 		<delete dir="${build.dir}" />
 		<mkdir dir="${build.dir}" />
@@ -38,6 +43,7 @@
 			<include name="**/*.java" />
 			<exclude name="**/fw531/**/*.java" />
 			<exclude name="**/fw532/**/*.java" />
+			<exclude name="**/fw533/**/*.java" />
 		</javac>
 		<!-- Firmware 5.3.1 -->
 		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.531" srcdir="src" destdir="${build.dir}">
@@ -46,6 +52,10 @@
 		<!-- Firmware 5.3.2 -->
 		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.532" srcdir="src" destdir="${build.dir}">
 			<include name="**/fw532/**/*.java" />
+		</javac>
+		<!-- Firmware 5.3.3 -->
+		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.533" srcdir="src" destdir="${build.dir}">
+			<include name="**/fw533/**/*.java" />
 		</javac>
 		<!-- Copy required resource files (of specific types) explicitly, because ant doesn't do so -->
 		<copy todir="${build.dir}">

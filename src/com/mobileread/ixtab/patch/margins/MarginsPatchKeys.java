@@ -5,24 +5,47 @@ package com.mobileread.ixtab.patch.margins;
 interface MarginsPatchKeys {
 	
 	static class Env {
-		private static boolean isInitialized = false;
+		
+		private static String firmware = null;
 		private static boolean isPaperwhite;
 		
-		public static synchronized boolean isKPW() {
-			if (!isInitialized) {
-				try {
-					// class present on Touch, but not on PW.
-					Class.forName("com.amazon.ebook.util.lang.UUID");
-					isPaperwhite = false;
-				} catch (Throwable t) {
-					isPaperwhite = true;
-					// version 5.3.2 is KT only for now, but this may well need a revision in the future *sigh*.
-					try {
-						Class.forName("com.amazon.kindle.booklet.ad.resources.AdResources_sq");
-						isPaperwhite = false;
-					} catch (Throwable t2) {}
+		static String getFirmware() {
+			if (firmware == null) {
+				synchronized (Env.class) {
+					if (firmware == null) {
+						firmware= "512";
+						try {
+							// this class is present in the 5.1.2 Firmware, but not in
+							// 5.2.0.
+							Class.forName("com.amazon.ebook.util.lang.UUID");
+						} catch (Throwable t) {
+							firmware = "531";
+							try {
+								// present in 5.3.2 (Touch), but not 5.3.1
+								Class.forName("com.amazon.kindle.booklet.ad.resources.AdResources_sq");
+								firmware = "532";
+							} catch (Throwable t2) {
+								// 5.3.3 (PW).
+								try {
+									Class.forName("com.amazon.ebook.booklet.topazreader.impl.A");
+									firmware = "533";
+								} catch (Throwable t3) {}
+							}
+						}
+					}
 				}
-				isInitialized = true;
+			}
+			return firmware;
+		}
+
+		public static boolean isKPW() {
+			if (firmware == null) {
+				synchronized (Env.class) {
+					if (firmware == null) {
+						String fw = getFirmware();
+						isPaperwhite = fw.equals("531") || fw.equals("533");
+					}
+				}
 			}
 			return isPaperwhite;
 		}

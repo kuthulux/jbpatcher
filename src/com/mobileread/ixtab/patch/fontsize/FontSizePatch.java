@@ -52,7 +52,7 @@ public class FontSizePatch extends Patch {
 	static FontSizePatch instance = null;
 	
 	public int getVersion() {
-		return 20130115;
+		return 20130128;
 	}
 
 	public FontSizePatch() {

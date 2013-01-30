@@ -25,69 +25,72 @@ public class DictionariesPatch extends Patch {
 	public static final String MD5_BEFORE_532 = "e4889ee1b7c3aad259e60c9414d584d4";
 	private static final String MD5_AFTER_532 = "8a211a40494ab8f62c347e82c4e9b67a";
 
-	private static Boolean isFW53x;
-	private static Boolean isFW532;
-	
+	private static final String CLASS_533 = "com.amazon.ebook.booklet.reader.plugin.systemcards.G";
+	public static final String MD5_BEFORE_533 = "f98fb6be90c495368441f88e492fbc73";
+	private static final String MD5_AFTER_533 = "af5785909e701eb8acbbf659a621c15d";
+
+	private static String firmware = null;
+
 	public int getVersion() {
-		return 20130115;
+		return 20130128;
 	}
-	
-	static boolean isFW53x() {
-		if (isFW53x == null) {
+
+	static String getFirmware() {
+		if (firmware == null) {
 			synchronized (DictionariesPatch.class) {
-				if (isFW53x == null) {
+				if (firmware == null) {
+					firmware= "512";
 					try {
+						// this class is present in the 5.1.2 Firmware, but not in
+						// 5.2.0.
 						Class.forName("com.amazon.ebook.util.lang.UUID");
-						isFW53x = Boolean.FALSE;
 					} catch (Throwable t) {
-						isFW53x = Boolean.TRUE;
+						firmware = "531";
+						try {
+							// present in 5.3.2 (Touch), but not 5.3.1
+							Class.forName("com.amazon.kindle.booklet.ad.resources.AdResources_sq");
+							firmware = "532";
+						} catch (Throwable t2) {
+							// 5.3.3 (PW).
+							try {
+								Class.forName("com.amazon.ebook.booklet.topazreader.impl.A");
+								firmware = "533";
+							} catch (Throwable t3) {}
+						}
 					}
 				}
 			}
 		}
-		return isFW53x.booleanValue();
-	}
-	
-	static boolean isFW532() {
-		if (!isFW53x()) {
-			return false;
-		}
-		synchronized (DictionariesPatch.class) {
-			if (isFW532 == null) {
-				try {
-					Class.forName("com.amazon.kindle.booklet.ad.resources.AdResources_sq");
-					isFW532 = Boolean.TRUE;
-				} catch (Throwable t) {
-					isFW532 = Boolean.FALSE;
-				}
-			}
-		}
-		return isFW532.booleanValue();
+		return firmware;
 	}
 
 	public Permission[] getRequiredPermissions() {
-		return new Permission[] {new AllPermission()};
+		return new Permission[] { new AllPermission() };
 	}
 
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {
 			map.put(I18N_JBPATCH_NAME, "Enhance Dictionary Lookup");
-			map.put(I18N_JBPATCH_DESCRIPTION, "This patch allows to consult all dictionaries, instead of only one.");
+			map.put(I18N_JBPATCH_DESCRIPTION,
+					"This patch allows to consult all dictionaries, instead of only one.");
 		}
 	}
 
 	public PatchMetadata getMetadata() {
 		PatchMetadata md = new PatchMetadata(this);
-		if (isFW532()) {
-			md.withClass(new PatchableClass(CLASS_532).withChecksums(MD5_BEFORE_532,
-					MD5_AFTER_532));
-		}
-		else if (isFW53x()) {
-			md.withClass(new PatchableClass(CLASS_531).withChecksums(MD5_BEFORE_531,
-					MD5_AFTER_531));
+		String fw = getFirmware();
+		if (fw.equals("533")) {
+			md.withClass(new PatchableClass(CLASS_533).withChecksums(
+					MD5_BEFORE_533, MD5_AFTER_533));
+		} else if (fw.equals("532")) {
+				md.withClass(new PatchableClass(CLASS_532).withChecksums(
+						MD5_BEFORE_532, MD5_AFTER_532));
+		} else if (fw.equals("531")) {
+			md.withClass(new PatchableClass(CLASS_531).withChecksums(
+					MD5_BEFORE_531, MD5_AFTER_531));
 		} else {
-			md.withClass(new PatchableClass(CLASS_510).withChecksums(MD5_BEFORE_510,
-					MD5_AFTER_510));
+			md.withClass(new PatchableClass(CLASS_510).withChecksums(
+					MD5_BEFORE_510, MD5_AFTER_510));
 		}
 		return md;
 	}
@@ -102,47 +105,73 @@ public class DictionariesPatch extends Patch {
 		} else if (md5.equals(MD5_BEFORE_532)) {
 			patchMethod_ON_532(clazz);
 			return null;
+		} else if (md5.equals(MD5_BEFORE_533)) {
+			patchMethod_zo_533(clazz);
+			return null;
 		}
-		return "unsupported MD5: "+md5;
+		return "unsupported MD5: " + md5;
 	}
 
 	private void patchMethodK510(BCClass clazz) throws Exception {
-		Code c = clazz.getDeclaredMethod("K", new Class[] {int.class}).getCode(false);
+		Code c = clazz.getDeclaredMethod("K", new Class[] { int.class })
+				.getCode(false);
 		c.before(192);
 		c.dup();
 		c.iload().setLocal(1);
-		c.invokestatic().setMethod(DictionariesPatch.class.getDeclaredMethod("onGetCard", new Class[]{Object.class, int.class}));
+		c.invokestatic().setMethod(
+				DictionariesPatch.class.getDeclaredMethod("onGetCard",
+						new Class[] { Object.class, int.class }));
 		c.calculateMaxLocals();
 		c.calculateMaxStack();
-		
+
 	}
-	
+
 	private void patchMethod_cO_531(BCClass clazz) throws Exception {
-		Code c = clazz.getDeclaredMethod("cO", new Class[] {int.class}).getCode(false);
+		Code c = clazz.getDeclaredMethod("cO", new Class[] { int.class })
+				.getCode(false);
 		c.before(189);
 		c.dup();
 		c.iload().setLocal(1);
-		c.invokestatic().setMethod(DictionariesPatch.class.getDeclaredMethod("onGetCard", new Class[]{Object.class, int.class}));
+		c.invokestatic().setMethod(
+				DictionariesPatch.class.getDeclaredMethod("onGetCard",
+						new Class[] { Object.class, int.class }));
 		c.calculateMaxLocals();
 		c.calculateMaxStack();
-		
+
 	}
-	
+
 	private void patchMethod_ON_532(BCClass clazz) throws Exception {
-		Code c = clazz.getDeclaredMethod("ON", new Class[] {int.class}).getCode(false);
+		Code c = clazz.getDeclaredMethod("ON", new Class[] { int.class })
+				.getCode(false);
 		c.before(189);
 		c.dup();
 		c.iload().setLocal(1);
-		c.invokestatic().setMethod(DictionariesPatch.class.getDeclaredMethod("onGetCard", new Class[]{Object.class, int.class}));
+		c.invokestatic().setMethod(
+				DictionariesPatch.class.getDeclaredMethod("onGetCard",
+						new Class[] { Object.class, int.class }));
 		c.calculateMaxLocals();
 		c.calculateMaxStack();
-		
+
 	}
-	
+
+	private void patchMethod_zo_533(BCClass clazz) throws Exception {
+		Code c = clazz.getDeclaredMethod("zo", new Class[] { int.class })
+				.getCode(false);
+		c.before(189);
+		c.dup();
+		c.iload().setLocal(1);
+		c.invokestatic().setMethod(
+				DictionariesPatch.class.getDeclaredMethod("onGetCard",
+						new Class[] { Object.class, int.class }));
+		c.calculateMaxLocals();
+		c.calculateMaxStack();
+
+	}
+
 	public static void onGetCard(Object o, int currentIndex) {
 		if (o != null) {
 			Backend.INSTANCE.modifyPanel(o, currentIndex);
 		}
 	}
-	
+
 }

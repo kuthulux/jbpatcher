@@ -3,6 +3,7 @@ package com.mobileread.ixtab.patch.hyphenation;
 import java.security.AllPermission;
 import java.security.Permission;
 import java.util.Map;
+import java.util.Vector;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.BCMethod;
@@ -10,12 +11,14 @@ import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 
 import com.amazon.kindle.kindlet.input.keyboard.OnscreenKeyboardUtil;
+import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSetting;
 import com.mobileread.ixtab.jbpatch.conf.ConfigurableSettings;
 import com.mobileread.ixtab.jbpatch.conf.ui.ComboBoxSettingPanel;
+import com.mobileread.ixtab.jbpatch.conf.ui.RadioButtonsSettingPanel;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingChangeListener;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingEntry;
 import com.mobileread.ixtab.jbpatch.conf.ui.SettingPanel;
@@ -28,9 +31,14 @@ public class HyphenationPatch extends Patch {
 	private static final String CLASS_HYPHENATIONMANAGER_510 = "com.mobipocket.common.library.reader.hyphenation.j";
 	private static final String CLASS_FRAMECONSTRUCTOR_510 = "com.mobipocket.common.library.reader.db";
 	
-	private static final String CLASS_HYPHENATIONMANAGER_53X = "com.mobipocket.common.library.reader.hyphenation.b";
+	private static final String CLASS_HYPHENATIONMANAGER_531 = "com.mobipocket.common.library.reader.hyphenation.b";
 	private static final String CLASS_FRAMECONSTRUCTOR_531 = "com.mobipocket.common.library.reader.R";
+
+	private static final String CLASS_HYPHENATIONMANAGER_532 = "com.mobipocket.common.library.reader.hyphenation.b";
 	private static final String CLASS_FRAMECONSTRUCTOR_532 = "com.mobipocket.common.library.reader.S";
+
+	private static final String CLASS_HYPHENATIONMANAGER_533 = "com.mobipocket.common.library.reader.hyphenation.b";
+	private static final String CLASS_FRAMECONSTRUCTOR_533 = "com.mobipocket.common.library.reader.R";
 
 	public static final String MD5_HYPHENATIONMANAGER_510_BEFORE = "630a7704149435140c4ef8406749160d";
 	public static final String MD5_HYPHENATIONMANAGER_510_AFTER = "f78ae7d487e2001a998783e673439c72";
@@ -46,6 +54,11 @@ public class HyphenationPatch extends Patch {
 	public static final String MD5_HYPHENATIONMANAGER_532_AFTER = "fcb02281d501fcf4d97dc0c7cf10bbab";
 	public static final String MD5_FRAMECONSTRUCTOR_532_BEFORE = "b8b4fea2c1e5c1670dd4986e5eaa02b2";
 	public static final String MD5_FRAMECONSTRUCTOR_532_AFTER = "5bbb373277913837a1824baaee897375";
+
+	public static final String MD5_HYPHENATIONMANAGER_533_BEFORE = "107be2db2ac56d3088ce503459f808d2";
+	public static final String MD5_HYPHENATIONMANAGER_533_AFTER = "bcbd58585d3b76c63b54d4973bc1a756";
+	public static final String MD5_FRAMECONSTRUCTOR_533_BEFORE = "4b45f0779bb02a22c5c0512640905ae9";
+	public static final String MD5_FRAMECONSTRUCTOR_533_AFTER = "f49446a3059d256f97491ced746fbf56";
 
 	public static final String MODE_JUSTIFY_KEY = "Justify";
 	public static final String MODE_DUMB_KEY = "Dumb";
@@ -79,15 +92,15 @@ public class HyphenationPatch extends Patch {
 	private static final String CONF_MINSUFFIX_I18N_DESC = "minsuffix.description";
 	private static final String CONF_MINSUFFIX_I18N_HINT = "minsuffix.hint";
 	
-	private static final int FEATURE_NO_HYPHENATION_MINIMUM = 1;
-	private static final int FEATURE_NO_RUGGED_EDGES = 2;
-
-/* The following was experimental for a single guy who requested it.
-	private static final String CONF_FEATURES_KEY = "features";
-	private static final String CONF_FEATURES_I18N_NAME = "features.name";
-	private static final String CONF_FEATURES_I18N_DESC = "features.description";
-	private static final String CONF_FEATURES_I18N_HINT = "features.hint";
-*/
+	private static final String CONF_RAGGED_KEY = "ragged";
+	private static final String CONF_RAGGED_I18N_NAME = "ragged.name";
+	private static final String CONF_RAGGED_I18N_DESC = "ragged.description";
+	private static final String CONF_RAGGED_I18N_HINT = "ragged.hint";
+	
+	private static final String CONF_RAGGED_VALUE_ALWAYS = "ragged.always";
+	private static final String CONF_RAGGED_VALUE_NEVER = "ragged.never";
+	private static final String CONF_RAGGED_DEFAULT = CONF_RAGGED_VALUE_NEVER;
+	
 
 	public static HyphenationPatch INSTANCE;
 
@@ -96,7 +109,7 @@ public class HyphenationPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20130115;
+		return 20130130;
 	}
 
 	public PatchMetadata getMetadata() {
@@ -118,20 +131,30 @@ public class HyphenationPatch extends Patch {
 							.withChecksums(MD5_FRAMECONSTRUCTOR_531_BEFORE,
 									MD5_FRAMECONSTRUCTOR_531_AFTER))
 			.withClass(
-					new PatchableClass(CLASS_HYPHENATIONMANAGER_53X)
+					new PatchableClass(CLASS_HYPHENATIONMANAGER_531)
 							.withChecksums(
 									MD5_HYPHENATIONMANAGER_531_BEFORE,
 									MD5_HYPHENATIONMANAGER_531_AFTER));
 		} else if (factoryClassName.endsWith("532")) {
-				md.withClass(
-						new PatchableClass(CLASS_FRAMECONSTRUCTOR_532)
-								.withChecksums(MD5_FRAMECONSTRUCTOR_532_BEFORE,
-										MD5_FRAMECONSTRUCTOR_532_AFTER))
-				.withClass(
-						new PatchableClass(CLASS_HYPHENATIONMANAGER_53X)
-								.withChecksums(
-										MD5_HYPHENATIONMANAGER_532_BEFORE,
-										MD5_HYPHENATIONMANAGER_532_AFTER));
+			md.withClass(
+					new PatchableClass(CLASS_FRAMECONSTRUCTOR_532)
+							.withChecksums(MD5_FRAMECONSTRUCTOR_532_BEFORE,
+									MD5_FRAMECONSTRUCTOR_532_AFTER))
+			.withClass(
+					new PatchableClass(CLASS_HYPHENATIONMANAGER_532)
+							.withChecksums(
+									MD5_HYPHENATIONMANAGER_532_BEFORE,
+									MD5_HYPHENATIONMANAGER_532_AFTER));
+		} else if (factoryClassName.endsWith("533")) {
+			md.withClass(
+					new PatchableClass(CLASS_FRAMECONSTRUCTOR_533)
+							.withChecksums(MD5_FRAMECONSTRUCTOR_533_BEFORE,
+									MD5_FRAMECONSTRUCTOR_533_AFTER))
+			.withClass(
+					new PatchableClass(CLASS_HYPHENATIONMANAGER_533)
+							.withChecksums(
+									MD5_HYPHENATIONMANAGER_533_BEFORE,
+									MD5_HYPHENATIONMANAGER_533_AFTER));
 		}
 		return md;
 	}
@@ -141,6 +164,7 @@ public class HyphenationPatch extends Patch {
 			map.put(I18N_JBPATCH_NAME, "Fix Reader Layout and Hyphenation");
 			map.put(I18N_JBPATCH_DESCRIPTION,
 					"This patch fixes the layout of the E-Book reader, and allows for hyphenation.");
+			
 			map.put(CONF_MODE_I18N_NAME, "Adjustment mode");
 			map.put(CONF_MODE_I18N_DESC,
 					"Select how you want the reader behavior to be modified.");
@@ -169,6 +193,14 @@ public class HyphenationPatch extends Patch {
 					"Minimum number of trailing characters when a word is hyphenated");
 			map.put(CONF_MINSUFFIX_I18N_HINT,
 					"This determines the minimum amount of characters that the last portion of a hyphenated word must contain. In other words, no word will be hyphenated unless the last part of the hyphenated word contains at least that many characters. Acceptable values for this setting are between 1 and 10.");
+			
+			map.put(CONF_RAGGED_I18N_NAME, "Ragged justification");
+			map.put(CONF_RAGGED_I18N_DESC,
+					"Allow some lines to be left-aligned, instead of fully justified");
+			map.put(CONF_RAGGED_I18N_HINT,
+					"Regardless of your justification and hyphenation settings, some lines cannot be layed out perfectly. If you prefer to see such lines left-aligned, instead of justified, check this option.");
+			map.put(CONF_RAGGED_VALUE_ALWAYS, "Allow left-aligned lines");
+			map.put(CONF_RAGGED_VALUE_NEVER, "Force justified lines");
 		}
 	}
 
@@ -183,6 +215,8 @@ public class HyphenationPatch extends Patch {
 				localize(CONF_MINSUFFIX_I18N_DESC),
 				localize(CONF_MINSUFFIX_I18N_HINT), CONF_MINSUFFIX_KEY,
 				SYLLABLE_LENGTH_DEFAULT + ""));
+		
+		map.add(new LayoutSetting(localize(CONF_RAGGED_I18N_NAME), localize(CONF_RAGGED_I18N_DESC), localize(CONF_RAGGED_I18N_HINT), CONF_RAGGED_KEY, CONF_RAGGED_DEFAULT));
 		
 //		map.add(new FeaturesSetting(localize(CONF_FEATURES_I18N_NAME), localize(CONF_FEATURES_I18N_DESC), localize(CONF_FEATURES_I18N_HINT), CONF_FEATURES_KEY, "3"));
 		return map;
@@ -225,11 +259,17 @@ public class HyphenationPatch extends Patch {
 		else if (md5.equals(MD5_HYPHENATIONMANAGER_532_BEFORE)) {
 			return patchHyphenationManager53X(clazz, "dX");
 		}
+		else if (md5.equals(MD5_HYPHENATIONMANAGER_533_BEFORE)) {
+			return patchHyphenationManager53X(clazz, "dX");
+		}
 		else if (md5.equals(MD5_FRAMECONSTRUCTOR_531_BEFORE)) {
-			return patchFrameConstructor531(clazz, "KDA", "mbA");
+			return patchFrameConstructor53X(clazz, "KDA", "mbA");
 		}
 		else if (md5.equals(MD5_FRAMECONSTRUCTOR_532_BEFORE)) {
-			return patchFrameConstructor531(clazz, "hBA", "rdA");
+			return patchFrameConstructor53X(clazz, "hBA", "rdA");
+		}
+		else if (md5.equals(MD5_FRAMECONSTRUCTOR_533_BEFORE)) {
+			return patchFrameConstructor53X(clazz, "hBA", "rdA");
 		}
 		return "Unexpected error: unknown MD5 " + md5;
 	}
@@ -238,33 +278,17 @@ public class HyphenationPatch extends Patch {
 		return new Permission[] { new AllPermission() };
 	}
 	
-	private int getFeatures() {
-		return FEATURE_NO_HYPHENATION_MINIMUM | FEATURE_NO_RUGGED_EDGES;
-//		try {
-//			int f = Integer.parseInt(getConfigured(CONF_FEATURES_KEY));
-//			if (f >= 0 && f <= 3) {
-//				return f;
-//			}
-//			return 3;
-//		} catch (Throwable t) {
-//			return 3;
-//		}
-	}
-	
 	private String patchFrameConstructor510(BCClass clazz) throws Throwable {
 		BCMethod m = clazz.getDeclaredMethod("e");
 		Code c = m.getCode(false);
 		
-		int f = getFeatures();
-		if ((f & FEATURE_NO_HYPHENATION_MINIMUM) == FEATURE_NO_HYPHENATION_MINIMUM) {
-			c.before(47);
-			// percentage of a word's width that must be available in the current
-			// line, for it to be considered for hyphenation
-			// original is 25%
-			((ConstantInstruction) c.next()).setValue(-1);
-		}
+		c.before(47);
+		// percentage of a word's width that must be available in the current
+		// line, for it to be considered for hyphenation
+		// original is 25%
+		((ConstantInstruction) c.next()).setValue(-1);
 
-		if ((f & FEATURE_NO_RUGGED_EDGES) == FEATURE_NO_RUGGED_EDGES) {
+		if (!CONF_RAGGED_VALUE_ALWAYS.equals(getConfigured(CONF_RAGGED_KEY))) {
 			// this fixes the weird behavior that some lines do not get justified
 			// it essentially always returns a "false" value for the following
 			// condition
@@ -279,19 +303,16 @@ public class HyphenationPatch extends Patch {
 		return null;
 	}
 
-	private String patchFrameConstructor531(BCClass clazz, String method1, String method2) throws Throwable {
+	private String patchFrameConstructor53X(BCClass clazz, String method1, String method2) throws Throwable {
 		BCMethod m = clazz.getDeclaredMethod(method1);
 		Code c = m.getCode(false);
-		int f = getFeatures();
-		if ((f & FEATURE_NO_HYPHENATION_MINIMUM) == FEATURE_NO_HYPHENATION_MINIMUM) {
-			c.before(50);
-			// percentage of a word's width that must be available in the current
-			// line, for it to be considered for hyphenation
-			// original is 25%
-			((ConstantInstruction) c.next()).setValue(-1);
-		}
+		c.before(50);
+		// percentage of a word's width that must be available in the current
+		// line, for it to be considered for hyphenation
+		// original is 25%
+		((ConstantInstruction) c.next()).setValue(-1);
 
-		if ((f & FEATURE_NO_RUGGED_EDGES) == FEATURE_NO_RUGGED_EDGES) {
+		if (!CONF_RAGGED_VALUE_ALWAYS.equals(getConfigured(CONF_RAGGED_KEY))) {
 			// this fixes the weird behavior that some lines do not get justified
 			// it essentially always returns a "false" value for the following
 			// condition
@@ -305,7 +326,7 @@ public class HyphenationPatch extends Patch {
 		}
 		return null;
 	}
-
+	
 	private String patchHyphenationManager510(BCClass clazz) throws Throwable {
 
 		BCMethod m = clazz.getDeclaredMethod("D", new String[] { "int" });
@@ -408,6 +429,37 @@ public class HyphenationPatch extends Patch {
 
 	}
 	
+	private class LayoutSetting extends ConfigurableSetting {
+
+		private final SettingEntry[] entries;
+		public LayoutSetting(String name, String description, String hint,
+				String key, String defaultValue) {
+			super(localize(name), localize(description), localize(hint), key , defaultValue);
+			entries = new SettingEntry[2];
+			entries[0] = new SettingEntry(CONF_RAGGED_VALUE_ALWAYS, localize(CONF_RAGGED_VALUE_ALWAYS));
+			entries[1] = new SettingEntry(CONF_RAGGED_VALUE_NEVER, localize(CONF_RAGGED_VALUE_NEVER));
+		}
+
+		public SettingPanel getPanel(SettingChangeListener listener) {
+			return new RadioButtonsSettingPanel(listener, entries);
+		}
+
+		public boolean isValid(String value) {
+			return CONF_RAGGED_VALUE_ALWAYS.equals(value) || CONF_RAGGED_VALUE_NEVER.equals(value);
+		}
+
+		public String getLocalized(String value) {
+			for (int i=0; i < entries.length; ++i) {
+				if (entries[i].key.equals(value)) {
+					return entries[i].displayValue;
+				}
+			}
+			return value;
+		}
+		
+		
+	}
+
 
 /*	
 	private static class FeaturesSetting extends ConfigurableSetting {
