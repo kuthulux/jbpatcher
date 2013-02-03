@@ -3,7 +3,6 @@ package com.mobileread.ixtab.patch.hyphenation;
 import java.security.AllPermission;
 import java.security.Permission;
 import java.util.Map;
-import java.util.Vector;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.BCMethod;
@@ -11,7 +10,6 @@ import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 
 import com.amazon.kindle.kindlet.input.keyboard.OnscreenKeyboardUtil;
-import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;

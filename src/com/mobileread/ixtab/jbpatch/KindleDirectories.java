@@ -222,15 +222,13 @@ public class KindleDirectories {
 			FileModificationInfo info = (FileModificationInfo) knownFiles
 					.get(source.getName());
 			if (info == null) {
-				copy = true;
+				copy = target.exists() ? source.lastModified() > target.lastModified() : true;
 			} else {
 				if (source.lastModified() != info.sourceTimestamp) {
 					// log("I: " + source + " was modified");
 					copy = true;
-				} else if (!target.exists()
-						|| target.lastModified() != info.targetTimestamp) {
-					// log("I: " + target + " is out of sync with " + source);
-					copy = true;
+				} else {
+					copy = !target.exists();
 				}
 			}
 			if (copy) {
