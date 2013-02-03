@@ -165,7 +165,7 @@ public class KindleDirectories {
 					if (!f.isFile() || !f.canRead()) {
 						continue;
 					}
-					synchronize(f);
+					synchronize(f, synchLock.synchronizeAllFiles);
 				}
 				if (synchLock.synchronizeAllFiles) {
 					synchLock.synchronizeAllFiles = false;
@@ -215,24 +215,28 @@ public class KindleDirectories {
 			}
 		}
 
-		private void synchronize(File source) {
-			boolean copy = false;
+		private void synchronize(File source, boolean force) {
 			File target = new File(targetDir + File.separator
 					+ source.getName());
 			FileModificationInfo info = (FileModificationInfo) knownFiles
 					.get(source.getName());
-			if (info == null) {
-				copy = target.exists() ? source.lastModified() > target.lastModified() : true;
+			if (force) {
+				copyIfNeeded(source, target, false);
 			} else {
-				if (source.lastModified() != info.sourceTimestamp) {
-					// log("I: " + source + " was modified");
-					copy = true;
+				boolean copy = false;
+				if (info == null) {
+					copy = target.exists() ? source.lastModified() > target.lastModified() : true;
 				} else {
-					copy = !target.exists();
+					if (source.lastModified() != info.sourceTimestamp) {
+						// log("I: " + source + " was modified");
+						copy = true;
+					} else {
+						copy = !target.exists();
+					}
 				}
-			}
-			if (copy) {
-				copyIfNeeded(source, target, info == null);
+				if (copy) {
+					copyIfNeeded(source, target, info == null);
+				}
 			}
 		}
 
