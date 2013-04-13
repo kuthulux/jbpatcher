@@ -27,15 +27,24 @@ public class DeviceInfoPatch extends Patch {
 	private static final String FW533_MD5_IN = "761e84ba4c259c4716f43f785a67df83";
 	private static final String FW533_MD5_OUT = "35ee6a5ccb5e80e65fd3df3d1d779380";
 
+	private static final String FW534_MD5_IN = "07b2488eb9000de2d5bd413a6087daaf";
+	private static final String FW534_MD5_OUT = "26682a4a28e0a8e73196475ec290b7b5";
+
 	public int getVersion() {
 		return 1;
 	}
+	
+	public boolean isAvailable() {
+		return true;
+	}
+
+
 
 	public PatchMetadata getMetadata() {
 		PatchableClass c510 = new PatchableClass(FW510_CLASS).withChecksums(
 				FW510_MD5_IN, FW510_MD5_OUT);
 		PatchableClass c53x = new PatchableClass(FW53X_CLASS).withChecksums(
-				FW531_MD5_IN, FW531_MD5_OUT).withChecksums(FW532_MD5_IN, FW532_MD5_OUT).withChecksums(FW533_MD5_IN, FW533_MD5_OUT);
+				FW531_MD5_IN, FW531_MD5_OUT).withChecksums(FW532_MD5_IN, FW532_MD5_OUT).withChecksums(FW533_MD5_IN, FW533_MD5_OUT).withChecksums(FW534_MD5_IN, FW534_MD5_OUT);
 		return new PatchMetadata(this).withClass(c510).withClass(c53x);
 	}
 
@@ -48,6 +57,8 @@ public class DeviceInfoPatch extends Patch {
 			return patchFw53X(clazz, "VJA");
 		} else if (md5.equals(FW533_MD5_IN)) {
 			return patchFw53X(clazz, "kkA");
+		} else if (md5.equals(FW534_MD5_IN)) {
+			return patchFw53X(clazz, "ZJA");
 		} else {
 			return "Unsupported MD5: "+ md5;
 		}
@@ -93,16 +104,6 @@ public class DeviceInfoPatch extends Patch {
 		if (pattern.endsWith("</html>")) {
 			pattern = pattern.substring(0, pattern.length() - 7);
 			pattern += "<br/><b>JBPatch:</b>&nbsp;" + JBPatchMetadata.VERSION+"</html>";
-//			pattern += "<br/><b>JBPatch:</b>&nbsp; v" + JBPatchMetadata.VERSION+ "({" + arguments.length
-//					+ ",number,integer}/{" + (arguments.length + 1)
-//					+ ",number,integer}"
-//					+ ")</html>";
-//			Object[] copy = new Object[arguments.length + 2];
-//			System.arraycopy(arguments, 0, copy, 0, arguments.length);
-//			copy[arguments.length] = new Integer(Patches.getActiveCount());
-//			copy[arguments.length + 1] = new Integer(
-//					Patches.getAvailableCount());
-//			arguments = copy;
 		}
 		return MessageFormat.format(pattern, arguments);
 	}

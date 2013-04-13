@@ -10,6 +10,7 @@ import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 
 import com.amazon.kindle.kindlet.input.keyboard.OnscreenKeyboardUtil;
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
@@ -38,6 +39,9 @@ public class HyphenationPatch extends Patch {
 	private static final String CLASS_HYPHENATIONMANAGER_533 = "com.mobipocket.common.library.reader.hyphenation.b";
 	private static final String CLASS_FRAMECONSTRUCTOR_533 = "com.mobipocket.common.library.reader.R";
 
+	private static final String CLASS_HYPHENATIONMANAGER_534 = "com.mobipocket.common.library.reader.hyphenation.b";
+	private static final String CLASS_FRAMECONSTRUCTOR_534 = "com.mobipocket.common.library.reader.R";
+
 	public static final String MD5_HYPHENATIONMANAGER_510_BEFORE = "630a7704149435140c4ef8406749160d";
 	public static final String MD5_HYPHENATIONMANAGER_510_AFTER = "f78ae7d487e2001a998783e673439c72";
 	public static final String MD5_FRAMECONSTRUCTOR_510_BEFORE = "cbbba07fab3a4e1be58a9553f8a2e700";
@@ -57,6 +61,11 @@ public class HyphenationPatch extends Patch {
 	public static final String MD5_HYPHENATIONMANAGER_533_AFTER = "bcbd58585d3b76c63b54d4973bc1a756";
 	public static final String MD5_FRAMECONSTRUCTOR_533_BEFORE = "4b45f0779bb02a22c5c0512640905ae9";
 	public static final String MD5_FRAMECONSTRUCTOR_533_AFTER = "f49446a3059d256f97491ced746fbf56";
+
+	public static final String MD5_HYPHENATIONMANAGER_534_BEFORE = "3a697ce0206d79d4e2b798ab1df2709d";
+	public static final String MD5_HYPHENATIONMANAGER_534_AFTER = "d9133186bdcd7f494d3d2ae51a1a558f";
+	public static final String MD5_FRAMECONSTRUCTOR_534_BEFORE = "7962b9cc9464937fc46b9ca12d6c1cf8";
+	public static final String MD5_FRAMECONSTRUCTOR_534_AFTER = "094ea9a31fff3f257ec5819a87c23b50";
 
 	public static final String MODE_JUSTIFY_KEY = "Justify";
 	public static final String MODE_DUMB_KEY = "Dumb";
@@ -107,7 +116,20 @@ public class HyphenationPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20130130;
+		return 20130413;
+	}
+	
+	public boolean isAvailable() {
+		if (Environment.getJBPatchVersionDate() < 20130328) {
+			return false;
+		}
+		String fw = Environment.getFirmware();
+		if ("5.1.0".equals(fw)) return true;
+		if ("5.3.1".equals(fw)) return true;
+		if ("5.3.2".equals(fw)) return true;
+		if ("5.3.3".equals(fw)) return true;
+		if ("5.3.4".equals(fw)) return true;
+		return false;
 	}
 
 	public PatchMetadata getMetadata() {
@@ -153,6 +175,16 @@ public class HyphenationPatch extends Patch {
 							.withChecksums(
 									MD5_HYPHENATIONMANAGER_533_BEFORE,
 									MD5_HYPHENATIONMANAGER_533_AFTER));
+		} else if (factoryClassName.endsWith("534")) {
+			md.withClass(
+					new PatchableClass(CLASS_FRAMECONSTRUCTOR_534)
+							.withChecksums(MD5_FRAMECONSTRUCTOR_534_BEFORE,
+									MD5_FRAMECONSTRUCTOR_534_AFTER))
+			.withClass(
+					new PatchableClass(CLASS_HYPHENATIONMANAGER_534)
+							.withChecksums(
+									MD5_HYPHENATIONMANAGER_534_BEFORE,
+									MD5_HYPHENATIONMANAGER_534_AFTER));
 		}
 		return md;
 	}
@@ -260,6 +292,9 @@ public class HyphenationPatch extends Patch {
 		else if (md5.equals(MD5_HYPHENATIONMANAGER_533_BEFORE)) {
 			return patchHyphenationManager53X(clazz, "dX");
 		}
+		else if (md5.equals(MD5_HYPHENATIONMANAGER_534_BEFORE)) {
+			return patchHyphenationManager53X(clazz, "ox");
+		}
 		else if (md5.equals(MD5_FRAMECONSTRUCTOR_531_BEFORE)) {
 			return patchFrameConstructor53X(clazz, "KDA", "mbA");
 		}
@@ -268,6 +303,9 @@ public class HyphenationPatch extends Patch {
 		}
 		else if (md5.equals(MD5_FRAMECONSTRUCTOR_533_BEFORE)) {
 			return patchFrameConstructor53X(clazz, "hBA", "rdA");
+		}
+		else if (md5.equals(MD5_FRAMECONSTRUCTOR_534_BEFORE)) {
+			return patchFrameConstructor53X(clazz, "TBA", "ibA");
 		}
 		return "Unexpected error: unknown MD5 " + md5;
 	}
@@ -457,39 +495,4 @@ public class HyphenationPatch extends Patch {
 		
 		
 	}
-
-
-/*	
-	private static class FeaturesSetting extends ConfigurableSetting {
-
-		public FeaturesSetting(String name, String description, String hint,
-				String key, String defaultValue) {
-			super(name, description, hint, key, defaultValue);
-		}
-
-		public final SettingPanel getPanel(SettingChangeListener listener) {
-			return new TextSettingPanel(listener,
-					OnscreenKeyboardUtil.KEYBOARD_MODE_NUMBERS_AND_SYMBOLS,
-					true);
-		}
-
-		public final boolean isValid(String value) {
-			return isIntegerBetween(value, 0, 3);
-		}
-		
-	}
-
-	private static boolean isIntegerBetween(String value, int minInclusive,
-			int maxInclusive) {
-		if (value == null) {
-			return false;
-		}
-		try {
-			int i = Integer.parseInt(value);
-			return i >= minInclusive && i <= maxInclusive;
-		} catch (Throwable t) {
-			return false;
-		}
-	}
-*/
 }

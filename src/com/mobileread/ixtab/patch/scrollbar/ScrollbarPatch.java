@@ -13,6 +13,7 @@ import serp.bytecode.Code;
 
 import com.amazon.agui.swing.PagingContainer;
 import com.amazon.kindle.kindlet.input.keyboard.OnscreenKeyboardUtil;
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
@@ -53,8 +54,15 @@ public class ScrollbarPatch extends Patch implements AdjustmentListener {
 	}
 
 	public int getVersion() {
-		return 20120823;
+		return 20130413;
 	}
+	
+	public boolean isAvailable() {
+		int jb = Environment.getJBPatchVersionDate();
+		String fw = Environment.getFirmware();
+		return jb >= 20130328 && "5.1.0".equals(fw);
+	}
+
 
 	public PatchMetadata getMetadata() {
 		PatchMetadata meta = new PatchMetadata(this);

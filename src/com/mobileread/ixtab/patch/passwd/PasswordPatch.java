@@ -15,6 +15,7 @@ import serp.bytecode.Instruction;
 
 import com.amazon.agui.swing.ConfirmationDialog;
 import com.amazon.kindle.content.catalog.CatalogEntry;
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
@@ -48,7 +49,13 @@ public class PasswordPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120803;
+		return 20130413;
+	}
+	
+	public boolean isAvailable() {
+		int jb = Environment.getJBPatchVersionDate();
+		String fw = Environment.getFirmware();
+		return jb >= 20130328 && "5.1.0".equals(fw);
 	}
 
 	protected void initLocalization(String locale, Map map) {

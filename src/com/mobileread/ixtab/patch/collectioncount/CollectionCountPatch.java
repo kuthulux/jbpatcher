@@ -18,6 +18,7 @@ import com.amazon.kindle.content.catalog.CollationCriteria;
 import com.amazon.kindle.content.catalog.Predicate;
 import com.amazon.kindle.content.catalog.PredicateFactory;
 import com.amazon.kindle.restricted.runtime.Framework;
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
@@ -28,11 +29,16 @@ public class CollectionCountPatch extends Patch {
 	public static final String MD5_BEFORE = "c25ca62e95f31a5184cce2fd573be007";
 	private static final String MD5_AFTER = "d490aff2bc23c1e53ffbaec770c1162d";
 	
-	private static final Predicate PRED_COLLECTION = PredicateFactory.equals("type", "Collection");
-
 	public int getVersion() {
-		return 20120904;
+		return 20130413;
 	}
+	
+	public boolean isAvailable() {
+		int jb = Environment.getJBPatchVersionDate();
+		String fw = Environment.getFirmware();
+		return jb >= 20130328 && "5.1.0".equals(fw);
+	}
+
 
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {
@@ -114,7 +120,7 @@ public class CollectionCountPatch extends Patch {
 	
 	private static CatalogEntry[] getEntries(UUID[] uuids) {
 		Predicate predicate = PredicateFactory.inList("uuid", uuids);
-		predicate = PredicateFactory.and(new Predicate[] {predicate, PRED_COLLECTION});
+		predicate = PredicateFactory.and(new Predicate[] {predicate, PredicateFactory.equals("type", "Collection")});
 		
 		Results r = new Results();
 		synchronized (r) {

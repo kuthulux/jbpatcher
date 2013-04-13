@@ -10,6 +10,7 @@ import serp.bytecode.lowlevel.Entry;
 import serp.bytecode.lowlevel.UTF8Entry;
 
 import com.amazon.kindle.kindlet.input.keyboard.OnscreenKeyboardUtil;
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
@@ -61,8 +62,15 @@ public class TTSPatch extends Patch {
 	private static final String UI_DESC_F = "female.desc";
 
 	public int getVersion() {
-		return 20120803;
+		return 20130413;
 	}
+	
+	public boolean isAvailable() {
+		int jb = Environment.getJBPatchVersionDate();
+		String fw = Environment.getFirmware();
+		return jb >= 20130328 && "5.1.0".equals(fw);
+	}
+
 
 	protected void initLocalization(String id, Map m) {
 		if ("en".equals(id)) {

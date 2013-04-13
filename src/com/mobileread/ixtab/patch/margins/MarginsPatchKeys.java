@@ -1,53 +1,25 @@
 package com.mobileread.ixtab.patch.margins;
 
+import com.mobileread.ixtab.jbpatch.Environment;
+
 /* This is a really ugly way to define constants. Don't do it this way. Really, don't! */
 
 interface MarginsPatchKeys {
 	
 	static class Env {
 		
-		private static String firmware = null;
-		private static boolean isPaperwhite;
+		private static Boolean isPaperwhite;
 		
-		static String getFirmware() {
-			if (firmware == null) {
-				synchronized (Env.class) {
-					if (firmware == null) {
-						firmware= "512";
-						try {
-							// this class is present in the 5.1.2 Firmware, but not in
-							// 5.2.0.
-							Class.forName("com.amazon.ebook.util.lang.UUID");
-						} catch (Throwable t) {
-							firmware = "531";
-							try {
-								// present in 5.3.2 (Touch), but not 5.3.1
-								Class.forName("com.amazon.kindle.booklet.ad.resources.AdResources_sq");
-								firmware = "532";
-							} catch (Throwable t2) {
-								// 5.3.3 (PW).
-								try {
-									Class.forName("com.amazon.ebook.booklet.topazreader.impl.A");
-									firmware = "533";
-								} catch (Throwable t3) {}
-							}
-						}
-					}
-				}
-			}
-			return firmware;
-		}
-
 		public static boolean isKPW() {
-			if (firmware == null) {
+			if (isPaperwhite == null) {
 				synchronized (Env.class) {
-					if (firmware == null) {
-						String fw = getFirmware();
-						isPaperwhite = fw.equals("531") || fw.equals("533");
+					if (isPaperwhite == null) {
+						String fw = Environment.getFirmware();
+						isPaperwhite = Boolean.valueOf(fw.equals("5.3.1") || fw.equals("5.3.3") || fw.equals("5.3.4"));
 					}
 				}
 			}
-			return isPaperwhite;
+			return isPaperwhite.booleanValue();
 		}
 	}
 	

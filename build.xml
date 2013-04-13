@@ -32,6 +32,11 @@
 		<fileset dir="${build.classpath.533}" includes="**/*.jar" />
 	</path>
 
+	<path id="classpath.534">
+		<fileset dir="lib" includes="**/*.jar" />
+		<fileset dir="${build.classpath.534}" includes="**/*.jar" />
+	</path>
+
 	<target name="clean">
 		<delete dir="${build.dir}" />
 		<mkdir dir="${build.dir}" />
@@ -44,6 +49,7 @@
 			<exclude name="**/fw531/**/*.java" />
 			<exclude name="**/fw532/**/*.java" />
 			<exclude name="**/fw533/**/*.java" />
+			<exclude name="**/fw534/**/*.java" />
 		</javac>
 		<!-- Firmware 5.3.1 -->
 		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.531" srcdir="src" destdir="${build.dir}">
@@ -56,6 +62,10 @@
 		<!-- Firmware 5.3.3 -->
 		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.533" srcdir="src" destdir="${build.dir}">
 			<include name="**/fw533/**/*.java" />
+		</javac>
+		<!-- Firmware 5.3.4 -->
+		<javac source="1.4" target="1.4" includeantruntime="false" bootclasspathref="classpath.jdk14" classpathref="classpath.534" srcdir="src" destdir="${build.dir}">
+			<include name="**/fw534/**/*.java" />
 		</javac>
 		<!-- Copy required resource files (of specific types) explicitly, because ant doesn't do so -->
 		<copy todir="${build.dir}">
@@ -273,7 +283,7 @@
 		<zip destfile="dist/fw531/install/patches.zip">
 			<fileset dir="dist/opt/jbpatch">
 				<include name="com.mobileread.ixtab.patch.dictionaries.jar" />
-				<include name="com.mobileread.ixtab.patch.fontsize.jar" />
+				<!-- <include name="com.mobileread.ixtab.patch.fontsize.jar" /> -->
 				<include name="com.mobileread.ixtab.patch.hyphenation.jar" />
 				<include name="com.mobileread.ixtab.patch.margins.jar" />
 			</fileset>
@@ -286,7 +296,7 @@
 		<zip destfile="dist/fw532/install/patches.zip">
 			<fileset dir="dist/opt/jbpatch">
 				<include name="com.mobileread.ixtab.patch.dictionaries.jar" />
-				<include name="com.mobileread.ixtab.patch.fontsize.jar" />
+				<!-- <include name="com.mobileread.ixtab.patch.fontsize.jar" /> -->
 				<include name="com.mobileread.ixtab.patch.hyphenation.jar" />
 				<include name="com.mobileread.ixtab.patch.margins.jar" />
 			</fileset>
@@ -301,11 +311,12 @@
 	It's really only meant to simplify my life.
 	-->
 
-	<property name="dev-ssh-id-ixtab" value="/home/ixtab/.ssh/id_kindle" />
+	<property name="dev-ssh-id" value="/home/ixtab/.ssh/id_kindle" />
 
 	<target name="dev-ixtab" depends="dist-all">
-		<exec command="scp -i ${dev-ssh-id} dist/src/install/jbpatch.jar root@kindle:/opt/amazon/ebook/lib/jbpatch.jar" />
-		<exec command="scp -i ${dev-ssh-id} dist/src/install/${product.filename}.azw2 root@kindle:/mnt/us/documents/" />
+		<exec command="scp -i ${dev-ssh-id} dist/fw531/install/jbpatch.jar root@kindle:/opt/amazon/ebook/lib/jbpatch.jar" />
+		<exec command="scp -i ${dev-ssh-id} dist/fw531/install/${product.filename}.azw2 root@kindle:/mnt/us/documents/" />
+		<!-- This is pretty pointless by now, because not all patches support all firmwares. Copy patches manually. -->
 		<exec command="scp -i ${dev-ssh-id} -r dist/opt/jbpatch root@kindle:/mnt/us/opt/" />
 
 	</target>

@@ -23,6 +23,7 @@ import com.amazon.ebook.booklet.reader.sdk.content.TableOfContents;
 import com.amazon.ebook.booklet.reader.sdk.content.TableOfContentsEntry;
 import com.amazon.ebook.booklet.reader.sdk.ui.ReaderAction;
 import com.amazon.ebook.booklet.reader.sdk.ui.element.Viewport;
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
@@ -85,7 +86,13 @@ public class ProgressBarPatch extends Patch {
 	}
 
 	public int getVersion() {
-		return 20120905;
+		return 20130413;
+	}
+	
+	public boolean isAvailable() {
+		int jb = Environment.getJBPatchVersionDate();
+		String fw = Environment.getFirmware();
+		return jb >= 20130328 && "5.1.0".equals(fw);
 	}
 
 	protected void initLocalization(String locale, Map map) {

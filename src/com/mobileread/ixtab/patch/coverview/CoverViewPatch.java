@@ -10,6 +10,7 @@ import serp.bytecode.ConstantInstruction;
 
 import com.amazon.kindle.content.catalog.MutableItem;
 import com.amazon.kindle.home.HomeBooklet;
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
@@ -53,8 +54,15 @@ public class CoverViewPatch extends Patch {
 	private static String currentViewMode = null;
 	
 	public int getVersion() {
-		return 20120823;
+		return 20130413;
 	}
+	
+	public boolean isAvailable() {
+		int jb = Environment.getJBPatchVersionDate();
+		String fw = Environment.getFirmware();
+		return jb >= 20130328 && "5.1.0".equals(fw);
+	}
+
 
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {

@@ -9,6 +9,7 @@ import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
@@ -24,9 +25,17 @@ public class NoAdsPatch extends Patch {
 	private static final String MD5_ADMANAGERIMPL_AFTER = "ef65c12bd004ebfebb59a64595f0753e";
 
 	public int getVersion() {
-		return 20120723;
+		return 20130413;
 	}
 	
+	
+	public boolean isAvailable() {
+		int jb = Environment.getJBPatchVersionDate();
+		String fw = Environment.getFirmware();
+		return jb >= 20130328 && "5.1.0".equals(fw);
+	}
+
+
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {
 			map.put(I18N_JBPATCH_NAME, "Disable Special Offers");

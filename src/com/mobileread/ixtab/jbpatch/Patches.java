@@ -52,11 +52,12 @@ public class Patches {
 	}
 
 	private static boolean enable(Patch patch) {
-//		PatchableDevice device = validateDevice(patch.metadata().supportedClasses);
-//		if (device == null) {
-//			log("E: "+patch.id()+ " does not support current device "+KindleDevice.THIS_DEVICE);
-//			return false;
-//		}
+		
+		if (!patch.isAvailable()) {
+			log("W: "+patch.id()+" does not support current device/JBPatch constellation, patch disabled");
+			return false;
+		}
+		
 		List classes = patch.metadata().supportedClasses;
 		
 		if (classes != null) {
@@ -72,19 +73,6 @@ public class Patches {
 		}
 		return false;
 	}
-
-//	private static PatchableDevice validateDevice(List supportedDevices) {
-//		if (supportedDevices == null) {
-//			return null;
-//		}
-//		for (int i = 0; i < supportedDevices.size(); ++i) {
-//			PatchableDevice supported = (PatchableDevice) supportedDevices.get(i);
-//			if (KindleDevice.THIS_DEVICE.equals(supported.device)) {
-//				return supported;
-//			}
-//		}
-//		return null;
-//	}
 
 	private static void registerForClass(PatchableClass pclass, Patch patch) {
 		String className = pclass.className;

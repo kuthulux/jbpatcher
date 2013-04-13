@@ -5,6 +5,7 @@ import java.util.Map;
 import serp.bytecode.BCClass;
 import serp.bytecode.Code;
 
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
@@ -16,8 +17,15 @@ public class AllRotationsPatch extends Patch {
 	private static final String MD5_AFTER = "c72c7094a534cefc440b792363024b7f";
 
 	public int getVersion() {
-		return 20120804;
+		return 20130413;
 	}
+	
+	public boolean isAvailable() {
+		int jb = Environment.getJBPatchVersionDate();
+		String fw = Environment.getFirmware();
+		return jb >= 20130328 && "5.1.0".equals(fw);
+	}
+
 
 	protected void initLocalization(String locale, Map map) {
 		if (RESOURCE_ID_ENGLISH.equals(locale)) {

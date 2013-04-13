@@ -12,6 +12,7 @@ import serp.bytecode.Code;
 import serp.bytecode.Instruction;
 import serp.bytecode.PutFieldInstruction;
 
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Log;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
@@ -52,8 +53,21 @@ public class FontSizePatch extends Patch {
 	static FontSizePatch instance = null;
 	
 	public int getVersion() {
-		return 20130128;
+		return 20130413;
 	}
+	
+	public boolean isAvailable() {
+		if (Environment.getJBPatchVersionDate() < 20130328) {
+			return false;
+		}
+		String fw = Environment.getFirmware();
+		if ("5.1.0".equals(fw)) return true;
+		if ("5.3.1".equals(fw)) return true;
+		if ("5.3.2".equals(fw)) return true;
+		if ("5.3.3".equals(fw)) return true;
+		return false;
+	}
+
 
 	public FontSizePatch() {
 		boolean isSupportedLocale = isDeviceRunningASupportedLocale();
@@ -66,6 +80,9 @@ public class FontSizePatch extends Patch {
 	static boolean isDeviceRunningASupportedLocale() {
 		boolean isSupportedLocale = false;
 		String currentLocale = Locale.getDefault().toString();
+		if (currentLocale.equals("en_US")) {
+			return true;
+		}
 		int underscore = currentLocale.indexOf("_");
 		if (underscore >= 0) {
 			currentLocale = currentLocale.substring(0, underscore);

@@ -8,6 +8,7 @@ import serp.bytecode.Code;
 import serp.bytecode.ConstantInstruction;
 
 import com.amazon.kindle.kindlet.input.keyboard.OnscreenKeyboardUtil;
+import com.mobileread.ixtab.jbpatch.Environment;
 import com.mobileread.ixtab.jbpatch.Patch;
 import com.mobileread.ixtab.jbpatch.PatchMetadata;
 import com.mobileread.ixtab.jbpatch.PatchMetadata.PatchableClass;
@@ -38,6 +39,11 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 	private static final String CLASS_READERSTATEDATA_533 = "com.amazon.ebook.booklet.reader.impl.L";
 	private static final String CLASS_FONTDIALOG_533 = "com.amazon.ebook.booklet.reader.impl.ui.GC";
 	private static final String CLASS_PROGRESSBARIMPL_533 = "com.amazon.ebook.booklet.reader.impl.ui.x";
+
+	private static final String CLASS_READERUIIMPL_534 = "com.amazon.ebook.booklet.reader.impl.E";
+	private static final String CLASS_READERSTATEDATA_534 = "com.amazon.ebook.booklet.reader.impl.L";
+	private static final String CLASS_FONTDIALOG_534 = "com.amazon.ebook.booklet.reader.impl.ui.mb";
+	private static final String CLASS_PROGRESSBARIMPL_534 = "com.amazon.ebook.booklet.reader.impl.ui.O";
 
 	public static final String MD5_READERUIIMPL_510_BEFORE = "e2cd2f0631d4a75bf278c9c3a1008216";
 	public static final String MD5_READERSTATEDATA_510_BEFORE = "62eae0a2e91163cdbe392de862598955";
@@ -79,6 +85,16 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 	private static final String MD5_FONTDIALOG_533_AFTER = "0406178dc0cbc455858f6e61080a4cd4";
 	private static final String MD5_PROGRESSBARIMPL_533_AFTER = "ffc9e3c7b144050036028c3a03362c0d";
 
+	public static final String MD5_READERUIIMPL_534_BEFORE = "06f557d02ae56d85b9d8992ed4326bd8";
+	public static final String MD5_READERSTATEDATA_534_BEFORE = "e8489b4debe2168eece76235903bc0d3";
+	public static final String MD5_FONTDIALOG_534_BEFORE = "be8a5993bc6d6b6e70a647faed30c751";
+	public static final String MD5_PROGRESSBARIMPL_534_BEFORE = "b083f89a97fb9e1a10e5b0cddab14bee";
+
+	private static final String MD5_READERUIIMPL_534_AFTER = "77e4f0f30608b9d891a0011dbb13fa28";
+	private static final String MD5_READERSTATEDATA_534_AFTER = "43162d51cb71eda714e8d91e50b6df85";
+	private static final String MD5_FONTDIALOG_534_AFTER = "22c46f4836ca6638eb8f7024c01d2ed8";
+	private static final String MD5_PROGRESSBARIMPL_534_AFTER = "0b1f1df865f8caa752e85d9b6d0f05b7";
+
 	private static final int MAX_SENSIBLE_X_VALUE = 250;
 	private static final int MAX_SENSIBLE_Y_VALUE = 350;
 
@@ -89,7 +105,20 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 	}
 
 	public int getVersion() {
-		return 20130128;
+		return 20130413;
+	}
+	
+	public boolean isAvailable() {
+		if (Environment.getJBPatchVersionDate() < 20130328) {
+			return false;
+		}
+		String fw = Environment.getFirmware();
+		if ("5.1.0".equals(fw)) return true;
+		if ("5.3.1".equals(fw)) return true;
+		if ("5.3.2".equals(fw)) return true;
+		if ("5.3.3".equals(fw)) return true;
+		if ("5.3.4".equals(fw)) return true;
+		return false;
 	}
 
 	protected void initLocalization(String locale, Map map) {
@@ -160,21 +189,21 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 	}
 
 	private void fillMetaData(PatchMetadata pd) {
-		String firmware = MarginsPatchKeys.Env.getFirmware();
-		if ("512".equals(firmware)) {
-				pd.withClass(new PatchableClass(CLASS_PROGRESSBARIMPL_510)
-						.withChecksums(MD5_PROGRESSBARIMPL_510_BEFORE,
-								MD5_PROGRESSBARIMPL_510_AFTER));
-				pd.withClass(new PatchableClass(CLASS_FONTDIALOG_510)
-						.withChecksums(MD5_FONTDIALOG_510_BEFORE,
-								MD5_FONTDIALOG_510_AFTER));
-				pd.withClass(new PatchableClass(CLASS_READERSTATEDATA_510)
-						.withChecksums(MD5_READERSTATEDATA_510_BEFORE,
-								MD5_READERSTATEDATA_510_AFTER));
-				pd.withClass(new PatchableClass(CLASS_READERUIIMPL_510)
-						.withChecksums(MD5_READERUIIMPL_510_BEFORE,
-								MD5_READERUIIMPL_510_AFTER));
-		} else if ("531".equals(firmware)) {
+		String firmware = Environment.getFirmware();
+		if ("5.1.0".equals(firmware)) {
+			pd.withClass(new PatchableClass(CLASS_PROGRESSBARIMPL_510)
+					.withChecksums(MD5_PROGRESSBARIMPL_510_BEFORE,
+							MD5_PROGRESSBARIMPL_510_AFTER));
+			pd.withClass(new PatchableClass(CLASS_FONTDIALOG_510)
+					.withChecksums(MD5_FONTDIALOG_510_BEFORE,
+							MD5_FONTDIALOG_510_AFTER));
+			pd.withClass(new PatchableClass(CLASS_READERSTATEDATA_510)
+					.withChecksums(MD5_READERSTATEDATA_510_BEFORE,
+							MD5_READERSTATEDATA_510_AFTER));
+			pd.withClass(new PatchableClass(CLASS_READERUIIMPL_510)
+					.withChecksums(MD5_READERUIIMPL_510_BEFORE,
+							MD5_READERUIIMPL_510_AFTER));
+		} else if ("5.3.1".equals(firmware)) {
 			pd.withClass(new PatchableClass(CLASS_PROGRESSBARIMPL_531)
 					.withChecksums(MD5_PROGRESSBARIMPL_531_BEFORE,
 							MD5_PROGRESSBARIMPL_531_AFTER));
@@ -187,7 +216,7 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 			pd.withClass(new PatchableClass(CLASS_READERUIIMPL_531)
 					.withChecksums(MD5_READERUIIMPL_531_BEFORE,
 							MD5_READERUIIMPL_531_AFTER));
-		} else if ("532".equals(firmware)) {
+		} else if ("5.3.2".equals(firmware)) {
 			pd.withClass(new PatchableClass(CLASS_PROGRESSBARIMPL_532)
 					.withChecksums(MD5_PROGRESSBARIMPL_532_BEFORE,
 							MD5_PROGRESSBARIMPL_532_AFTER));
@@ -200,7 +229,7 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 			pd.withClass(new PatchableClass(CLASS_READERUIIMPL_532)
 					.withChecksums(MD5_READERUIIMPL_532_BEFORE,
 							MD5_READERUIIMPL_532_AFTER));
-		} else if ("533".equals(firmware)) {
+		} else if ("5.3.3".equals(firmware)) {
 			pd.withClass(new PatchableClass(CLASS_PROGRESSBARIMPL_533)
 					.withChecksums(MD5_PROGRESSBARIMPL_533_BEFORE,
 							MD5_PROGRESSBARIMPL_533_AFTER));
@@ -213,6 +242,19 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 			pd.withClass(new PatchableClass(CLASS_READERUIIMPL_533)
 					.withChecksums(MD5_READERUIIMPL_533_BEFORE,
 							MD5_READERUIIMPL_533_AFTER));
+		} else if ("5.3.4".equals(firmware)) {
+			pd.withClass(new PatchableClass(CLASS_PROGRESSBARIMPL_534)
+					.withChecksums(MD5_PROGRESSBARIMPL_534_BEFORE,
+							MD5_PROGRESSBARIMPL_534_AFTER));
+			pd.withClass(new PatchableClass(CLASS_FONTDIALOG_534)
+					.withChecksums(MD5_FONTDIALOG_534_BEFORE,
+							MD5_FONTDIALOG_534_AFTER));
+			pd.withClass(new PatchableClass(CLASS_READERSTATEDATA_534)
+					.withChecksums(MD5_READERSTATEDATA_534_BEFORE,
+							MD5_READERSTATEDATA_534_AFTER));
+			pd.withClass(new PatchableClass(CLASS_READERUIIMPL_534)
+					.withChecksums(MD5_READERUIIMPL_534_BEFORE,
+							MD5_READERUIIMPL_534_AFTER));
 		}
 	}
 
@@ -235,16 +277,25 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 			return patchReaderUiImpl53x(clazz, "vr");
 		} else if (md5.equals(MD5_READERUIIMPL_533_BEFORE)) {
 			return patchReaderUiImpl53x(clazz, "Yp");
+		} else if (md5.equals(MD5_READERUIIMPL_534_BEFORE)) {
+			return patchReaderUiImpl53x(clazz, "lR");
 		} else if (md5.equals(MD5_READERSTATEDATA_531_BEFORE)) {
 			return patchReaderStateData53x(clazz, "CW");
 		} else if (md5.equals(MD5_READERSTATEDATA_532_BEFORE)) {
 			return patchReaderStateData53x(clazz, "oV");
 		} else if (md5.equals(MD5_READERSTATEDATA_533_BEFORE)) {
 			return patchReaderStateData53x(clazz, "oV");
-		} else if (md5.equals(MD5_FONTDIALOG_531_BEFORE) || md5.equals(MD5_FONTDIALOG_532_BEFORE) || md5.equals(MD5_FONTDIALOG_533_BEFORE)) {
+		} else if (md5.equals(MD5_READERSTATEDATA_534_BEFORE)) {
+			return patchReaderStateData53x(clazz, "RV");
+		} else if (md5.equals(MD5_FONTDIALOG_531_BEFORE)
+				|| md5.equals(MD5_FONTDIALOG_532_BEFORE)
+				|| md5.equals(MD5_FONTDIALOG_533_BEFORE)
+				|| md5.equals(MD5_FONTDIALOG_534_BEFORE)) {
 			return patchFontDialog53x(clazz);
 		} else if (md5.equals(MD5_PROGRESSBARIMPL_531_BEFORE)
-				|| md5.equals(MD5_PROGRESSBARIMPL_532_BEFORE) || md5.equals(MD5_PROGRESSBARIMPL_533_BEFORE)) {
+				|| md5.equals(MD5_PROGRESSBARIMPL_532_BEFORE)
+				|| md5.equals(MD5_PROGRESSBARIMPL_533_BEFORE)
+				|| md5.equals(MD5_PROGRESSBARIMPL_534_BEFORE)) {
 			return patchProgressBarImpl53x(clazz);
 		}
 		return "Unexpected error: unknown MD5 " + md5;
@@ -258,7 +309,8 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 		return null;
 	}
 
-	private String patchReaderUiImpl53x(BCClass clazz, String methodName) throws Throwable {
+	private String patchReaderUiImpl53x(BCClass clazz, String methodName)
+			throws Throwable {
 		Code c = clazz.getDeclaredMethod("<init>").getCode(false);
 		c.before(11);
 		((ConstantInstruction) c.next()).setValue(ReaderResources.class
@@ -330,7 +382,8 @@ public class MarginsPatch extends Patch implements MarginsPatchKeys {
 		return null;
 	}
 
-	private String patchReaderStateData53x(BCClass clazz, String methodName) throws Throwable {
+	private String patchReaderStateData53x(BCClass clazz, String methodName)
+			throws Throwable {
 		Code c = clazz.getDeclaredMethod(methodName).getCode(false);
 		c.before(5);
 		((ConstantInstruction) c.next()).setValue(ReaderResources.class

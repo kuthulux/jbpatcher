@@ -113,6 +113,24 @@ public abstract class Patch implements Comparable, ResourceMapProvider {
 	}
 
 	/**
+	 * Returns whether this patch is available in the current constellation.
+	 * Patches would usually use the {@link Environment#getFirmware()} or
+	 * {@link Environment#getJBPatchVersionDate()} methods to determine whether
+	 * they can run on a particular constellation.
+	 * 
+	 * @return <tt>false</tt> (default implementation) if the patch can't work
+	 *         in the current constellation, or <tt>true</tt> if it can. The
+	 *         default was deliberately chosen to be restrictive - in other
+	 *         words, a patch is NOT considered to work in a specific
+	 *         constellation, unless it guarantees that it does. If this method
+	 *         returns false, then the patch will be completely discarded (not
+	 *         considered, and not shown in the UI).
+	 */
+	public boolean isAvailable() {
+		return false;
+	}
+
+	/**
 	 * Actually applies the patch to the given input. The class definition can
 	 * be altered in whichever way you see fit.
 	 * 
