@@ -10,3 +10,4 @@ dist/common/*.azw2
 dist/*/install/*.zip
 dist/opt/jbpatch
 l10n/*.txt
+!lib/*
