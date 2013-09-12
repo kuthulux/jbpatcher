@@ -27,6 +27,7 @@ import com.mobileread.ixtab.patch.hyphenation.HyphenationPatch;
 import com.mobileread.ixtab.patch.margins.MarginsPatch;
 import com.mobileread.ixtab.patch.passwd.PasswordPatch;
 import com.mobileread.ixtab.patch.progressbar.ProgressBarPatch;
+import com.mobileread.ixtab.patch.tapzones.TapZonesPatch;
 
 /*
  * This isn't really a Unit Test, I know. It ended up just being a quick way to
@@ -37,10 +38,10 @@ public class TestCurrentGoal extends TestCase {
 	public void testAndDump() throws Throwable {
 		Project p = new Project();
 
-//		BCClass cls = p
-//				.loadClass(new File(
-//						System.getProperty("user.home")
-//								+ "/kindle-touch/fw-531/java/classes/com/amazon/ebook/booklet/reader/impl/E.class"));
+		BCClass cls = p
+				.loadClass(new File(
+						System.getProperty("user.home")
+								+ "/kindle-touch/fw-534/java/classes/com/amazon/ebook/booklet/reader/impl/b.class"));
 //		
 //		String[] locales = new String[] {"", "_de", "_en", "_en_GB", "_es", "_fr", "_it", "_pt"};
 //		String[] classes = new String[] {"com.amazon.ebook.booklet.reader.resources.ReaderResources","com.amazon.ebook.booklet.mobireader.impl.resources.MobiReaderImplResources","com.amazon.ebook.booklet.reader.utils.resources.ReaderUtilsResources"};
@@ -61,9 +62,9 @@ public class TestCurrentGoal extends TestCase {
 //		}
 //		if (1 == 1) return;
 		
-		BCClass cls = p.loadClass(com.amazon.ebook.booklet.reader.impl.E.class);
-		String result = new MarginsPatch().perform(
-				MarginsPatch.MD5_READERUIIMPL_531_BEFORE, cls);
+//		BCClass cls = p.loadClass(com.amazon.ebook.booklet.reader.impl.b.class);
+		String result = new TapZonesPatch().perform(
+				TapZonesPatch.MD5_B_534_BEFORE, cls);
 		if (result != null) {
 			System.err.println("patch failed to perform, error is: " + result);
 			fail(result);
@@ -79,22 +80,29 @@ public class TestCurrentGoal extends TestCase {
 	}
 
 	public String reflected() throws Exception {
-		return super.toString();
+		float f1 = TestCurrentGoal.getSomeFloat();
+		float f2 = TestCurrentGoal.getSomeFloat();
+		float f3 = TestCurrentGoal.getSomeFloat();
+		float f4 = TestCurrentGoal.getSomeFloat();
+		System.out.println(f1+f2+f3+f4);
+		return null;
+	}
+
+	private static float getSomeFloat() {
+		return 0;
 	}
 
 	public void doThings(Object o) throws Exception {
 
 	}
 
-	public void testReflect() throws Throwable {
-		if (1 == 1)
-			return;
+	public void donttestReflect() throws Throwable {
 		BCClass cls = new Project().loadClass(TestCurrentGoal.class);
 		Code c = cls.getDeclaredMethod("reflected").getCode(false);
 		Patch.dump(c);
 	}
 
-	public void testThosePeskyTranslationsForFontSizePatch() throws Throwable {
+	public void donttestThosePeskyTranslationsForFontSizePatch() throws Throwable {
 		// not really a test either, just a method to ensure that we provide correct metadata (md5 sums) for all locales.
 		
 		Project project = new Project();

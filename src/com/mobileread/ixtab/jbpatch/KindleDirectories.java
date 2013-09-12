@@ -304,12 +304,12 @@ public class KindleDirectories {
 
 	private static class FileModificationInfo {
 		private final long sourceTimestamp;
-		private final long targetTimestamp;
+//		private final long targetTimestamp;
 
 		public FileModificationInfo(long sourceTimestamp, long targetTimestamp) {
 			super();
 			this.sourceTimestamp = sourceTimestamp;
-			this.targetTimestamp = targetTimestamp;
+//			this.targetTimestamp = targetTimestamp;
 		}
 
 	}

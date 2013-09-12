@@ -238,6 +238,15 @@
 			</fileset>
 		</jar>
 
+		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.tapzones.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.tapzones.TapZonesPatch" />
+			</manifest>
+			<fileset dir="${build.dir}">
+				<include name="com/mobileread/ixtab/patch/tapzones/*.class" />
+			</fileset>
+		</jar>
+
 		<jar destfile="dist/opt/jbpatch/com.mobileread.ixtab.patch.tts.jar">
 			<manifest>
 				<attribute name="Main-Class" value="com.mobileread.ixtab.patch.tts.TTSPatch" />
